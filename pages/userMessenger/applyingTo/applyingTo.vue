@@ -1,11 +1,6 @@
 <template>
 	<view>
 		<subunit titel='申请成为'></subunit>
-		<view class="navBox" :style="{height: this.$store.state.customBar + 'rpx'}">
-			<view @click="goRecord" class="record pos-abs">
-					申请进度
-			</view>
-		</view>
 		<view class="flex-d al-center">
 			<view class="msgBox">
 				<view class="msgTil">
@@ -26,13 +21,13 @@
 				<view class="accTitle flex al-center">
 					附件凭证
 					<view class="annotation">
-						（截图、拍照 不超过三张）
+						（工装照、身份证明等）
 					</view>
 				</view>
 				<view class="flex ju-center">
 					<view class="fileBox flex">
-						<view class="" v-for="item in image" :key='item.id'>
-							<image :src="item" class="itenImg" mode="aspectFill"></image>
+						<view class="" v-for="(item,index) in image" :key='item.id'>
+							<image :src="item" class="itenImg" :class="index+1%3==0?'dv':''" mode="aspectFill"></image>
 						</view>
 						<view @click="pushBtn" class="pushBtn flex-d al-center ju-center">
 							<image src="https://oss.kuaitongkeji.com/static/img/app/home/push.png" class="pushimg" mode=""></image>
@@ -43,13 +38,13 @@
 					</view>
 				</view>
 			</view>
-
+<!-- 
 			<view class="remarkBox">
 				<view class="reTil">
 					备注
 				</view>
 				<textarea v-model="remark" class="reArea"></textarea>
-			</view>
+			</view> -->
 
 			<view @click="submit" class="Submit mar-t  flex al-center ju-center">
 				<image class="Submit pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/login/ccuc.png" mode=""></image>
@@ -195,15 +190,21 @@
 					return;
 				}
 				if (this.isLoding == true) return;
+				if(this.image.length == 0){
+					uni.showToast({
+						title: "请上传工装照,身份证明等",
+						icon: 'none'
+					})
+					return;
+				}
 				uni.showLoading({
 					title: '加载中'
 				})
 				home.applyToBecome({
 					data: {
 						platform: this.locdata[1].value,
-						code: this.locdata[2].value,
+						job_number: this.locdata[2].value,
 						files: this.image,
-						user_remark: this.remark
 					},
 					fail: () => {
 						uni.hideLoading()
@@ -234,7 +235,7 @@
 						this.locdata[1].value = ''
 						this.locdata[2].value = ''
 						this.image = []
-						this.remark = ''
+						// this.remark = ''
 					}
 				})
 			},
@@ -324,6 +325,10 @@
 		color: #666;
 			box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 	}
+	
+	.dv{
+		margin-right: 0;
+	}
 
 	.msgTil {
 
@@ -331,7 +336,7 @@
 	}
 
 	.msgItem {
-		width: 100%;
+		padding: 0 10rpx;
 		height: 80rpx;
 		border-bottom: 1px solid #BFBFBF;
 	}
@@ -375,20 +380,22 @@
 
 	.fileBox {
 		margin-top: 20rpx;
-		width: 600rpx;
+		width: 620rpx;
 		flex-wrap: wrap;
 	}
 
 	.pushBtn {
-		width: 130rpx;
-		height: 150rpx;
+		width: 140rpx;
+		height: 160rpx;
 		background: rgb(244, 245, 246);
+		border-radius: 10rpx;
 	}
 
 	.itenImg {
-		width: 130rpx;
-		height: 150rpx;
+		width: 140rpx;
+		height: 160rpx;
 		margin-right: 20rpx;
+		border-radius: 10rpx;
 	}
 
 	.pushimg {
@@ -398,7 +405,7 @@
 
 	.Submit {
 		width: 358rpx;
-		height: 68rpx;
+		height: 70rpx;
 	}
 
 	.subText {
@@ -407,7 +414,7 @@
 	}
 
 	.mar-t {
-		margin-top: 60rpx;
+		margin-top: 100rpx;
 		margin-bottom: 20rpx;
 	}
 

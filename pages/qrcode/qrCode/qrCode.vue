@@ -133,12 +133,30 @@
 							return;
 						}
 
-						if (res.data.code != 200) {
+						if (res.data.code != 200 && res.data.code != 4405) {
 							uni.showToast({
 								title: res.data.msg,
 								icon: 'none'
 							})
 							return
+						}
+						
+						if(res.data.code == 4405){
+							uni.showModal({
+								content:'请完善您的身份信息',
+								success: (res) => {
+									if (res.confirm) {
+										uni.navigateTo({
+											url: '/pages/user/realInformation/realInformation'
+										})
+									} else if (res.cancel) {
+										uni.navigateBack({
+											delta: 1
+										})
+									}
+								}
+							})
+							return;
 						}
 						this.code = res.data.code
 						this.val = res.data.data.content
@@ -158,10 +176,10 @@
 			}
 		},
 		onShow() {
-			
+			this.loadUserData()
 		},
 		mounted() {
-            this.loadUserData()
+            
 		},
 		onLoad() {
 

@@ -41,7 +41,6 @@
 		methods: {
 			// 查看详情
 			lookup(item) {
-				console.log(item);
 				home.infordils({
 					data: {
 						id: item.id

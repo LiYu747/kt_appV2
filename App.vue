@@ -4,13 +4,13 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
-			if(!cache.get('first')){
-				cache.set('Gshow',{'key':'开启',value:0})
-			}
+			// if(!cache.get('first')){
+			//   cache.set('Gshow',{'key':'开启',value:0})
+			// }
 			// #ifdef APP-PLUS
-			if(cache.get('first')){
-				cache.forget('Gshow')
-			}
+			// if(cache.get('first')){
+			// 	cache.forget('Gshow')
+			// }
 			// #endif
 		},
 		onShow: function() {

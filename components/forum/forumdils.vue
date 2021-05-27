@@ -1,89 +1,100 @@
 <template>
 	<view class="">
 		<subunit titel="详情"></subunit>
-		<view class="woer">
-			<view class="nav flex">
-				<image class="img" :src="user.avatar" mode="aspectFill"></image>
-				<view class="m-l2 text">
-					<view class="">
-						{{user.nickname}}
+		<view v-if="code == 200" class="">
+			<view class="woer"> 
+				<view class="nav flex">
+					<image class="img" :src="user.avatar" mode="aspectFill"></image>
+					<view class="m-l2 text">
+						<view class="">
+							{{user.nickname}}
+						</view>
+						<view class="small">
+							{{arr.created_at}}
+						</view>
 					</view>
-					<view class="small">
-						{{arr.created_at}}
+				</view>
+				<!-- 标题 -->
+				<view class="title">
+					{{arr.title}}
+				</view>
+				<!-- 内容 -->
+				<view class=" flex ju-center">
+					<view class="content">
+						{{arr.content}}
+					</view>
+				</view>
+				<!-- 图片 -->
+				<view class="flex al-center imgbx">
+					<view class="" v-for="(item,index) in arr.album" @click="look(item)" :key='item.id'>
+						<image class="itemimg" :src="item" :class="(index+1)%3 == 0?'dv':''" mode="aspectFill"></image>
+					</view>
+				</view>
+				<view class="layou pos-rel">
+					<view class=" move pos-abs">
+						<image @click="open" src="https://oss.kuaitongkeji.com/static/img/app/forum/pinlun.png"
+							class="plimg" mode=""></image>
 					</view>
 				</view>
 			</view>
-			<!-- 标题 -->
-			<view class="title">
-				{{arr.title}}
-			</view>
-			<!-- 内容 -->
-			<view class=" flex ju-center">
-				<view class="content">
-					{{arr.content}}
-				</view>
-			</view>
-			<!-- 图片 -->
-			<view class="flex al-center imgbx">
-				<view class="" v-for="(item,index) in arr.album" @click="look(item)" :key='item.id'>
-					<image class="itemimg" :src="item.url" :class="(index+1)%3 == 0?'dv':''" mode="aspectFill"></image>
-				</view>
-			</view>
-			<view class="layou pos-rel">
-				<view class=" move pos-abs">
-					<image @click="open" src="https://oss.kuaitongkeji.com/static/img/app/forum/pinlun.png" class="plimg" mode=""></image>
-				</view>
-			</view>
-		</view>
-		<view class="topLine">
+			<view class="topLine">
 			
-		</view>
-		<!-- 评论 -->
-		<view v-if="comments.length>0" class="">
-			<view class="line flex pos-rel" v-for="(item,index) in comments" :key='item.id'>
-				<view class="marg">
-					<image v-if="item.own_user" class="img" :src="item.own_user.avatar" mode="aspectFill"></image>
+			</view>
+			<!-- 评论 -->
+			<view v-if="comments.length>0" class="">
+				<view class="line flex pos-rel"  v-for="(item,index) in comments"
+					:key='item.id'>
+					<view class="marg">
+						<image v-if="item.own_commentator" class="img" :src="item.own_commentator.avatar" mode="aspectFill">
+						</image>
+					</view>
+					<view class="rigBox">
+						<view v-if="item.own_commentator" class="nickname">
+							{{item.own_commentator.nickname}}
+						</view>
+						<view class="texbox">
+							{{item.content}}
+						</view>
+						<!-- 时间 -->
+						<view class="postime m-t1 m-b2 flex">
+							<view v-show="item.Isdel==true" @click="delmsg(item,index)" class="fz-12  delTxt ">
+								删除
+							</view>{{item.created_at}}
+						</view>
+					</view>
+					
 				</view>
-				<view class="rigBox">
-					<view v-if="item.own_user" class="nickname">
-						{{item.own_user.nickname}}
-					</view>
-					<view class="texbox">
-						{{item.content}}
-					</view>
-					<!-- 时间 -->
-					<view class="postime m-t1 m-b2">
-						{{item.created_at}}
-					</view>
+				<view v-show="isLoding == true" class=" flex ju-center al-center lodbox">
+					<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
+					加载中...
+				</view>
+				<view class="flex  ju-center lodbox  fz-12" v-if="hasMore == false">
+					{{text}}
 				</view>
 			</view>
-			<view v-show="isLoding == true" class=" flex ju-center al-center lodbox">
-				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
-				加载中...
+			<view class="nono flex al-center ju-center" v-if="comments.length==0&&isLoding==false">
+				还没有任何评论哦
 			</view>
-			<view class="flex  ju-center lodbox  fz-12" v-if="hasMore == false">
-				{{text}}
+			
+			<view v-show="flag===true" class="posbot flex al-center pos-rel">
+				<textarea :autoHeight="auto" @input="change" id="area" placeholder='评论' v-model="context"
+					class="ch flex al-center"></textarea>
+				<view @click="send" class="btn flex pos-abs al-center ju-center" :class="context != ''?'sendStyle':''">
+					发送
+				</view>
 			</view>
-		</view>
-		<view class="nono flex al-center ju-center" v-if="comments.length==0&&isLoding==false">
-			还没有任何评论哦
-		</view>
-
-		<view v-show="flag===true" class="posbot flex al-center pos-rel">
-			<textarea :autoHeight="auto" @input="change" id="area" placeholder='评论' v-model="context" class="ch flex al-center"></textarea>
-			<view @click="send" class="btn flex pos-abs al-center ju-center" :class="context != ''?'sendStyle':''">
-				发送
+			<!-- 查看图片 -->
+			<view v-show="see == true" @click="off" class="look flex al-center ju-center">
+				<image :src="src" class="srcimg" mode="aspectFit"></image>
 			</view>
-		</view>
-		<!-- 查看图片 -->
-		<view v-show="see == true" @click="off" class="look flex al-center ju-center">
-			<image :src="src" class="srcimg" mode="aspectFit"></image>
 		</view>
 
 		<view v-show="isLoding == true&&comments.length==0" class="showloding flex al-center ju-center">
 			<view class="loding flex-d al-center ju-center">
 				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 				</view>
 				加载中
 			</view>
@@ -95,6 +106,7 @@
 	import subunit from '../sub-unit/subunit.vue'
 	import village from '../../vendor/village/village.js'
 	import jwt from '../../vendor/auth/jwt.js'
+	import userDetails from '../../vendor/user/userDetails.js'
 	export default {
 		name: "",
 		components: {
@@ -103,7 +115,9 @@
 		props: {},
 		data() {
 			return {
-				auto:true,
+				code:0,
+				userID: '', //用户id
+				auto: true,
 				id: "",
 				arr: {}, //数据
 				user: {},
@@ -113,14 +127,135 @@
 				src: '', //查看图片路径
 				see: false, //图片遮罩层
 				page: 1,
-				pageSize:15,
+				pageSize: 15,
 				isLoding: false,
 				hasMore: true,
 				text: '',
-	
+
 			}
 		},
 		methods: {
+
+			//删除
+			delmsg(item, index) {
+				//帖子是自己发布的
+				if (this.user.id == this.userID) {
+					uni.showModal({
+						content: "您确定要删除吗",
+						success: (res) => {
+							if(res.confirm){
+								this.deluserPost(item.id)
+								this.comments.splice(index, 1)
+							}
+						}
+					})
+					return;
+				}
+				//删除别人帖子中自己的评论
+				if (item.own_commentator.id == this.userID) {
+					uni.showModal({
+						content: "您确定要删除吗",
+						success: (res) => {
+							if(res.confirm){
+								this.delPost(item.id)
+								this.comments.splice(index, 1)
+							}
+						}
+					})
+					
+				}
+
+			},
+			//长按显示删除
+			logoTime(item, index) {
+				
+			},
+			//删除自己帖子的评论
+			deluserPost(id) {
+				village.deluserPost({
+					data: {id:id},
+					fail: () => {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					},
+					success: (res) => {
+						if (res.statusCode != 200) {
+							uni.showToast({
+								title: '网络错误',
+								icon: 'none'
+							})
+							return;
+						}
+						if (res.data.code != 200) {
+							uni.showToast({
+								title: res.data.msg,
+								icon: 'none'
+							})
+							return;
+						}
+						this.text = ''
+						uni.showToast({
+							title: res.data.msg,
+							icon: 'none'
+						})
+					}
+				})
+			},
+			
+			//删除自己的评论
+			delPost(id) {
+				village.delPost({
+					data: {id:id},
+					fail: () => {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					},
+					success: (res) => {
+						if (res.statusCode != 200) {
+							uni.showToast({
+								title: '网络错误',
+								icon: 'none'
+							})
+							return;
+						}
+						if (res.data.code != 200) {
+							uni.showToast({
+								title: res.data.msg,
+								icon: 'none'
+							})
+							return;
+						}
+						this.text = ''
+						uni.showToast({
+							title: res.data.msg,
+							icon: 'none'
+						})
+					}
+				})
+			},
+
+			// 获取用户资料
+			getUser() {
+				userDetails.userDeta({
+					data: {},
+					fail: () => {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					},
+					success: (res) => {
+						this.userID = res.data.data.id
+						this.Data()
+					
+					},
+
+				})
+			},
 			// 详情数据 
 			Data() {
 				this.isLoding = true;
@@ -137,13 +272,14 @@
 					},
 					success: (res) => {
 						this.isLoding = false;
-						// console.log(res.data.data);
 						if (res.statusCode != 200) return
+						this.code = res.data.code
 						if (res.data.code == 200) {
 							let data = res.data.data
 							data.created_at = data.created_at.slice(0, 16)
 							this.arr = data
-							this.user = data.own_user
+							this.user = data.own_poster
+								this.loadPageData()
 						} else {
 							uni.showToast({
 								title: res.data.msg,
@@ -159,9 +295,9 @@
 				this.isLoding = true;
 				village.postComments({
 					data: {
-						tribune_id: this.id,
+						post_id: this.id,
 						page: this.page,
-						pageSize:this.pageSize
+						pageSize: this.pageSize
 					},
 					fail: () => {
 						this.isLoding = false;
@@ -169,22 +305,29 @@
 							title: '网络错误',
 							icon: 'none'
 						})
-						// console.log(err);
 					},
 					success: (res) => {
 						this.isLoding = false;
 						if (res.statusCode != 200) return;
 
 						if (res.data.code != 200) return;
-
 						let data = res.data.data;
-						// console.log(data.data);
 						data.data.map(item => {
 							item.created_at = item.created_at.slice(0, 16)
+						    //帖子是自己发布的
+						    if (this.user.id == this.userID) {
+						    	item.Isdel = true;
+								return;
+						    }
+							 //别人帖子中自己的评论
+							if (item.own_commentator.id == this.userID) {
+								item.Isdel = true;
+								return;
+							}
 						})
 						this.hasMore = data.next_page_url ? true : false;
 						this.page = data.current_page + 1
-						this.comments = this.comments.concat(data.data) 
+						this.comments = this.comments.concat(data.data)
 					},
 				})
 			},
@@ -195,27 +338,27 @@
 			// 查看图片
 			look(item) {
 				this.see = true
-				this.src = item.url
+				this.src = item
 			},
 			// 关闭
 			off() {
 				this.see = false
 			},
-	
-			change(){
-			const query = uni.createSelectorQuery().in(this);
-			           query.select('#area').boundingClientRect(data => {
-						   if(data.height > 80){ 
-							   this.auto = false
-						   }
-			           }).exec();
+
+			change() {
+				const query = uni.createSelectorQuery().in(this);
+				query.select('#area').boundingClientRect(data => {
+					if (data.height > 80) {
+						this.auto = false
+					}
+				}).exec();
 			},
 			// 发送评论
 			send() {
-				if(this.context == ''){
+				if (this.context == '') {
 					uni.showToast({
-						title:'请输入评论内容',
-						icon:'none'
+						title: '请输入评论内容',
+						icon: 'none'
 					})
 					return;
 				}
@@ -224,7 +367,7 @@
 				})
 				village.relComments({
 					data: {
-						tribune_id: this.id,
+						post_id: this.id,
 						content: this.context
 					},
 					fail: () => {
@@ -235,7 +378,6 @@
 						})
 					},
 					success: (res) => {
-						// console.log(res);
 						uni.hideLoading()
 						if (res.statusCode != 200) return
 						if (res.data.code == 200) {
@@ -244,9 +386,10 @@
 							this.comments = []
 							this.loadPageData()
 							this.flag = false
-							this.auto = true 
+							this.auto = true
 							uni.showToast({
 								title: res.data.msg,
+								icon: 'none',
 								duration: 2000
 							})
 							this.$store.commit("isComment", res.data.code);
@@ -263,26 +406,26 @@
 
 		},
 		mounted() {
-			this.Data()
-			this.loadPageData()
-		},
+			this.getUser()
 		
-		onShow(){
 			
+		},
+
+		onShow() {
+
 		},
 		// 下拉加载更多
 		onReachBottom() {
 			this.text = '没有更多了'
-		   if (this.isLoding == true || this.hasMore == false) return;
-		    this.loadPageData()
+			if (this.isLoding == true || this.hasMore == false) return;
+			this.loadPageData()
 		},
 		onLoad(val) {
-			// console.log('详情', val.id);
 			this.id = val.id
 		},
-         onPageScroll() {
-			 this.flag = false
-         },
+		onPageScroll() {
+			this.flag = false
+		},
 		filters: {
 
 		},
@@ -290,7 +433,7 @@
 
 		},
 		watch: {
-   
+
 		},
 		directives: {
 
@@ -308,7 +451,7 @@
 		height: 1px;
 		width: 100%;
 		background-color: #BFBFBF;
-		    
+
 	}
 
 	.actfixed {
@@ -357,8 +500,8 @@
 
 
 	.woer {
-		width: 92%;
-		padding: 4%;
+		width: 690rpx;
+		padding: 30rpx;
 		color: #666666;
 	}
 
@@ -366,8 +509,8 @@
 		width: 100%;
 		height: 60rpx;
 	}
-	
-	.rigBox{
+
+	.rigBox {
 		width: 600rpx;
 		border-bottom: 1px solid #eee;
 	}
@@ -395,13 +538,13 @@
 
 	.title {
 		margin-top: 30rpx;
-		font-size: 28rpx;
+		font-size: 16px;
 	}
 
 	.content {
 		margin-top: 20rpx;
 		width: 680rpx;
-		font-size: 24rpx;
+		font-size: 14px;
 	}
 
 	.imgbx {
@@ -416,8 +559,8 @@
 		border-radius: 10rpx;
 		margin-bottom: 10rpx;
 	}
-	
-	.dv{
+
+	.dv {
 		margin-right: 0;
 	}
 
@@ -435,7 +578,7 @@
 	.line {
 		width: 690rpx;
 		padding: 30rpx;
-	
+
 	}
 
 	.nickname {
@@ -450,7 +593,7 @@
 	.texbox {
 		margin: 10rpx 0;
 		width: 560rpx;
-		font-size: 12px;
+		font-size: 14px;
 	}
 
 	.postime {
@@ -496,7 +639,7 @@
 		color: #FFFFFF;
 		right: 90rpx;
 		bottom: 35rpx;
-	    border-radius: 10rpx;
+		border-radius: 10rpx;
 	}
 
 	.btom {
@@ -536,7 +679,7 @@
 	}
 
 	.showloding {
-		position: absolute;
+		position: fixed;
 		width: 100%;
 		height: 100vh;
 		top: 0;
@@ -552,9 +695,14 @@
 		width: 260rpx;
 		height: 200rpx;
 		background: rgba(88, 88, 88, 0.8);
+		border-radius: 10rpx ;
 	}
-	
-	.sendStyle{
+
+	.sendStyle {
 		background: #F07535;
+	}
+
+	.delTxt {
+		margin-right: 20rpx;
 	}
 </style>

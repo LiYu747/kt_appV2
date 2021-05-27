@@ -2,6 +2,12 @@
 	<view class="">
 		<subunit titel="详情"></subunit>
 		<view class="woer">
+			<view class="flex al-center m-t3">
+				<image src="https://oss.kuaitongkeji.com/static/img/app/visit/gnt.png" class="img" mode=""></image>
+				<view  class="text m-l2">
+					{{arr.verify_status}}
+				</view> 
+			</view>
 			<!-- 标题 -->
 			<view class="title">
 				{{arr.title}}
@@ -13,9 +19,9 @@
 				</view>
 			</view>
 			<!-- 图片 -->
-			<view class="flex al-center imgbx">
+			<view v-if="arr.album" class="flex al-center imgbx">
 				<view class="" v-for="(item,index) in arr.album" :key='item.id'>
-					<image class="itemimg" :src="item.url" :class="(index+1)%3 == 0?'dv':''" mode="aspectFill"></image>
+					<image class="itemimg" :src="item" :class="(index+1)%3 == 0?'dv':''" mode="aspectFill"></image>
 				</view>
 			</view>
 			<view class="fz-12 m-t2 time">
@@ -23,7 +29,7 @@
 			</view>
 
 
-			<view class=" flex-d al-center m-t4">
+		<!-- 	<view class=" flex-d al-center m-t4">
 				<view @click="seeShow = true" class="contentBox pos-rel">
 					<view class="tabbar flex al-center">
 						谁能看见
@@ -33,7 +39,7 @@
 						</view>
 						<image class="reimg" src="https://oss.kuaitongkeji.com/static/img/app/address/retrue.png" mode=""></image>
 					</view>
-				</view>
+				</view> -->
 				<!-- 提交 -->
 				<view @click="delt" class="matop flex al-center ju-center">
 					<image class="Submit" src="https://oss.kuaitongkeji.com/static/img/app/login/ccuc.png" mode=""></image>
@@ -209,8 +215,18 @@
 						if (res.data.code == 200) {
 							let data = res.data.data
 							data.created_at = data.created_at.slice(0, 16)
+							switch(data.verify_status){
+								case 1:
+								data.verify_status = "待审核"
+								break;
+								case 2:
+								data.verify_status = "已通过"
+								break;
+								case 3:
+								data.verify_status = "未通过"
+								break;
+							}
 							this.arr = data
-							// console.log(this.arr)
 							this.idx = data.visible
 						} else {
 							uni.showToast({
@@ -358,13 +374,13 @@
 
 	.title {
 		margin-top: 30rpx;
-		font-size: 28rpx;
+		font-size: 16px;
 	}
 
 	.content {
 		margin-top: 20rpx;
 		width: 680rpx;
-		font-size: 24rpx;
+		font-size: 14px;
 	}
 
 	.imgbx {
@@ -478,4 +494,10 @@
 		height: 70rpx;
 
 	}
+	
+	.img {
+		width: 40rpx;
+		height: 40rpx;
+	}
+	
 </style>

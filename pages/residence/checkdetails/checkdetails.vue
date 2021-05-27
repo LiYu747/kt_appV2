@@ -19,6 +19,16 @@
 			<view class="line">
 
 			</view>
+			<view v-if="pics.length>0" class="">
+			 <view class="tex1">
+			 	附件
+			 </view>	
+			 <view class="imgBox flex">
+			 	<view class="" v-for="item in pics" :key="item.id">
+			 		<image :src="item" mode="aspectFill" class="itemImg"></image>
+			 	</view>
+			 </view>
+			</view>
 			<view class="tex1">
 				备注
 			</view>
@@ -29,6 +39,9 @@
 			</view>
 			<textarea v-model="result" disabled='true' class="frame">
 			</textarea>
+			<view class="btoLine">
+				
+			</view>
 		</view>
 	</view>
 </template>
@@ -49,6 +62,7 @@
 				text: '',  //申请结果
 				remark: '',  //备注
 				result: '', //结果
+				pics:[],//附件
 				locadata: [{
 						titel: '姓名',
 						value: ''
@@ -85,12 +99,13 @@
 						})
 					},
 					success: (res) => {
-						// console.log(res);
+						console.log(res);
 						uni.hideLoading()
 						if (res.statusCode != 200) return;
 
 						if (res.data.code != 200) return;
 						let data = res.data.data
+						if(!data) return;
 						if (data.verify_status == 1) {
 							data.verify_status_text = '审核中'
 						}
@@ -104,12 +119,15 @@
 						// console.log(data);
 						if(data.own_village){
 							this.locadata[1].value = '' + data.own_village.name + data.own_building.name + data.own_apartment.name + data.own_building
-								.name + data.own_room.room_number
+								.name + data.own_room.name
 						}
 						this.locadata[2].value = data.created_at.slice(0, 16)
 						this.text = data.verify_status_text
 						this.remark = data.user_remark
 						this.result = data.verify_msg
+						if(data.pics){
+							this.pics = data.pics
+						}
 					},
 					
 				})
@@ -203,6 +221,17 @@
 		font-size: 30rpx;
 		color: rgb(165, 165, 165);
 	}
+	
+	.imgBox{
+		width: 94%;
+		padding: 3%;
+		border-radius: 10rpx;
+		background: #FFFFFF;
+		font-size: 26rpx;
+		 box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+		color: rgb(165, 165, 165);
+		flex-wrap: wrap;
+	}
 
 	.frame {
 		width: 94%;
@@ -234,5 +263,17 @@
 		border: 1rpx solid rgb(240, 117, 53);
 		font-size: 28rpx;
 		color: rgb(240, 117, 53);
+	}
+	
+	.itemImg{
+		width: 140rpx;
+		height: 160rpx;
+		border-radius: 10rpx;
+		margin-right: 20rpx;
+		margin-bottom: 10rpx;
+	}
+	
+	.btoLine{
+		height: 40rpx;
 	}
 </style>

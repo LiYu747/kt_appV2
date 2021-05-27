@@ -5,59 +5,77 @@
 			<view class="searchBox ">
 				<view @click="xlshow = !xlshow" class="allTx flex al-center">
 					筛选
-					<image src="https://oss.kuaitongkeji.com/static/img/app/propertyManagement/pullDown.png" class="pullDown" mode=""></image>
+					<image src="https://oss.kuaitongkeji.com/static/img/app/propertyManagement/pullDown.png"
+						class="pullDown" mode=""></image>
 				</view>
 				<view v-show="xlshow==true" class="celBox pos-abs flex-d al-center">
 					<view class="trilateral">
 
 					</view>
 					<view class="xlshow flex-d al-center">
-						<view class="itemLabel flex al-center ju-center" @click="select(item,index)" :class="{'back':index==idx}" v-for="(item,index) in condition"
-						 :key='item.id'>
+						<view class="itemLabel flex al-center ju-center" @click="select(item,index)"
+							:class="{'back':index==idx}" v-for="(item,index) in condition" :key='item.id'>
 							{{item.label}}
 						</view>
 					</view>
 				</view>
 			</view>
 		</view>
-		<view v-if="lists.length>0" class="flex-d al-center">
-			<view class="itemBox" @click="goDetails(item,index)" v-for="(item,index) in lists" :key='item.id'>
-				<view class="layoutBox flex al-center ju-between">
-					标题 : {{item.title}}
-					<view :class="item.verify_status_text=='通过审核'?'dv':'nodv'">
-						{{item.verify_status_text}} >
-					</view>
-				</view>
-				<view class="layoutBox">
-					发布时间 : {{item.created_at}}
-				</view>
+		<view class="search flex al-center ju-center">
+			<view class="searchBack flex al-center">
+				<image src="https://oss.kuaitongkeji.com/static/img/app/propertyManagement/serach.png" class="serachImg"
+					mode=""></image>
+				<input type="text" class="ipt m-l1" v-model="value" @confirm="search" placeholder="请输入关键词" />
+			</view>
+			<view @click="cancel" v-show="ISseach==true" class="cancel pos-abs">
+				取消
 			</view>
 		</view>
+		<view class="topLine">
 
-		<view v-if="lists.length==0&&isLoading==false&&falg==false" class="noPost flex ju-center">
-			暂时还没有发布的帖子
 		</view>
-		<view v-if="lists.length==0&&isLoading==false&&falg == true" class="noPost flex ju-center">
-			没有您要看的帖子
-		</view>
-
-		<view v-if="hasMore==false" class="bomLine flex ju-center al-center">
-			{{noText}}
-		</view>
-		<view v-show="isLoading == true && lists.length>0" class=" flex ju-center al-center lodbox">
-			<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
-			加载中...
+		<view v-if="code == 200" class="">
+			<view v-if="lists.length>0" class="flex-d al-center">
+				<view class="itemBox" @click="goDetails(item,index)" v-for="(item,index) in lists" :key='item.id'>
+					<view class="layoutBox flex  ju-between">
+						<view class="itemTil">
+							标题 : {{item.title}}
+						</view>
+						<view :class="item.verify_status_text=='已通过'?'dv':'nodv'">
+							{{item.verify_status_text}} >
+						</view>
+					</view>
+					<view class="layoutBox">
+						发布时间 : {{item.created_at}}
+					</view>
+				</view>
+			</view>
+			
+			<view v-if="lists.length==0&&isLoading==false&&falg==false" class="noPost flex ju-center">
+				暂时还没有发布的帖子
+			</view>
+			<view v-if="lists.length==0&&isLoading==false&&falg == true" class="noPost flex ju-center">
+				没有您要查看的帖子
+			</view>
+			<view v-if="hasMore==false" class="bomLine flex ju-center al-center">
+				{{noText}}
+			</view>
+			<view v-show="isLoading == true && lists.length>0" class=" flex ju-center al-center lodbox">
+				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+				加载中...
+			</view>
 		</view>
 		<view v-show="isLoading == true && lists.length == 0" class="showloding flex al-center ju-center">
 			<view class="loding flex-d al-center ju-center">
 				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 				</view>
 				加载中
 			</view>
 		</view>
-	  <view v-show="xlshow==true" @click="xlshow = false"  class="showBox">
-			
+		<view v-show="xlshow==true" @click="xlshow = false" class="showBox">
+
 		</view>
 	</view>
 </template>
@@ -73,6 +91,7 @@
 		props: {},
 		data() {
 			return {
+				code: 0,
 				xlshow: false,
 				falg: false, //判断筛选结果
 				idx: 0,
@@ -89,23 +108,26 @@
 					},
 					{
 						label: '待审核',
-						status: '0'
-					},
-					{
-						label: '已通过',
 						status: '1'
 					},
 					{
-						label: '未通过',
+						label: '已通过',
 						status: '2'
 					},
+					{
+						label: '未通过',
+						status: '3'
+					},
 				],
-				index1: 0
+				index1: 0,
+				ISseach: false, //判断是否搜索value
+				value: ''
 			}
 		},
 		methods: {
 			// 筛选
 			select(item, index) {
+				this.value = ""
 				this.idx = index
 				this.xlshow = false
 				this.falg = true
@@ -130,7 +152,8 @@
 					data: {
 						page: this.page,
 						pageSize: this.pageSize,
-						verify_status: this.status
+						verify_status: this.status,
+						kw: this.value
 					},
 					fail: () => {
 						this.isLoading = false
@@ -159,23 +182,51 @@
 							})
 							return;
 						}
-						if (res.data.code == 200) {
-							let data = res.data.data
-							// console.log(data.data);
-							this.page = data.current_page + 1;
-							this.hasMore = data.next_page_url ? true : false;
-							data.data.map(item => {
-								item.created_at = item.created_at.slice(0, 16)
-							})
-							this.lists = this.lists.concat(data.data)
-						} else {
+						if (res.data.code != 200) {
 							uni.showToast({
 								title: res.data.msg,
 								icon: "none"
 							})
+							return;
 						}
+						this.code = res.data.code
+						let data = res.data.data
+						this.page = data.current_page + 1;
+						this.hasMore = data.next_page_url ? true : false;
+						data.data.map(item => {
+							item.created_at = item.created_at.slice(0, 16)
+							switch(item.verify_status){
+								case 1:
+								item.verify_status_text = '审核中'
+								break;
+								case 2:
+								item.verify_status_text = '已通过'
+								break;
+								case 3:
+								item.verify_status_text = '未通过'
+							}
+						})
+						this.lists = this.lists.concat(data.data)
 					}
 				})
+			},
+			//搜索
+			search() {
+				this.lists = []
+				this.status = ''
+				this.page = 1
+				this.getData()
+				this.ISseach = true
+				this.noText = ''
+			},
+			//取消
+			cancel() {
+				this.ISseach = false
+				this.lists = []
+				this.status = ''
+				this.value = ''
+				this.page = 1
+				this.getData()
 			}
 		},
 		mounted() {
@@ -217,14 +268,6 @@
 </script>
 
 <style scoped lang="scss">
-	.navBox {
-		width: 30%;
-		top: 0;
-		right: 0;
-		position: fixed;
-		z-index: 999;
-	}
-
 	.fixed {
 		position: fixed;
 		z-index: 9;
@@ -234,6 +277,14 @@
 		height: 148rpx;
 	}
 
+	.navBox {
+		width: 30%;
+		top: 0;
+		right: 0;
+		position: fixed;
+		z-index: 999;
+	}
+
 	.searchBox {
 		position: absolute;
 		right: 50rpx;
@@ -241,6 +292,50 @@
 		font-size: 16px;
 		z-index: 9;
 		bottom: 20rpx;
+	}
+
+	.search {
+		position: fixed;
+		width: 100%;
+		height: 88rpx;
+		background: #FFFFFF;
+		border-bottom: 1px solid #eeeeee;
+		z-index: 99;
+	}
+
+	.topLine {
+		height: 88rpx;
+	}
+
+	.searchBack {
+		width: 494rpx;
+		height: 54rpx;
+		background: rgba(204, 204, 204, 0.35);
+		border-radius: 27rpx;
+	}
+
+
+	.cancel {
+		font-size: 14px;
+		color: #666666;
+		margin-left: 30rpx;
+		right: 50rpx;
+	}
+
+	.uni-input-placeholder {
+		font-size: 12px;
+	}
+
+	.ipt {
+		margin-left: 20rpx;
+		width: 400rpx;
+		font-size: 14px;
+	}
+
+	.serachImg {
+		width: 34rpx;
+		height: 34rpx;
+		margin-left: 20rpx;
 	}
 
 	.xlshow {
@@ -280,15 +375,17 @@
 		font-size: 14px;
 		padding-bottom: 50rpx;
 		color: #666666;
-			box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+	}
+
+	.itemTil {
+		width: 520rpx;
 	}
 
 	.layoutBox {
 		width: 100%;
-		height: 80rpx;
+		padding: 20rpx 0;
 		border-bottom: 1px solid #CCCCCC;
-		display: flex;
-		align-items: center;
 	}
 
 	.dv {
@@ -325,8 +422,8 @@
 	}
 
 	.lodbox {
-		padding: 20rpx 0;
-		font-size: 24rpx;
+		padding: 30rpx 0;
+		font-size: 12px;
 	}
 
 	.loimg {
@@ -342,10 +439,6 @@
 		border-radius: 10rpx;
 	}
 
-	.bomLine {
-		height: 50rpx;
-	}
-
 	.celBox {
 		right: -32rpx;
 		margin-top: 10rpx;
@@ -358,8 +451,8 @@
 		border-style: solid;
 		border-color: transparent transparent #FFFFFF;
 	}
-	
-	.showBox{
+
+	.showBox {
 		width: 100%;
 		height: 100vh;
 		position: fixed;

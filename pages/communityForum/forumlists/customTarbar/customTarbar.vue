@@ -104,6 +104,7 @@
 		flex-wrap: wrap;
 		font-size: 13px;
 		border-radius: 20rpx;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 	}
 
 	.title {

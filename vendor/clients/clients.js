@@ -82,16 +82,18 @@ class Clients {
 	}
 
 	create() {
+		return;
 		let that = this;
 		uni.request({
-			url: routes.client.reg,
-			method: 'POST',
+			url: routes.client.config,
+			method: 'GET',
 			header: {
 				'client-type': that.clientType,
 				'client-version': that.version,
 			},
 			data: {
-				sys_info: uni.getSystemInfoSync()
+				type:uni.getSystemInfoSync().platform,
+				info: uni.getSystemInfoSync()
 			},
 			fail: () => {
 				uni.showModal({
@@ -126,11 +128,11 @@ class Clients {
 	}
 
 	update() {
-
+		return;
 		let that = this;
 		uni.request({
-			url: routes.client.reg,
-			method: 'POST',
+			url: routes.client.config,
+			method: 'GET',
 			header: {
 				'client-type': that.clientType,
 				'client-version': that.version,
@@ -139,7 +141,7 @@ class Clients {
 			},
 			data: {
 				_method: 'patch',
-				sys_info: uni.getSystemInfoSync()
+				info: uni.getSystemInfoSync()
 			},
 			fail: () => {
 				uni.showModal({
@@ -161,7 +163,7 @@ class Clients {
 				// let data = res.data.data;
 				// that.clientInfo = data;
 				// that.clientId = data.client_id;
-				// that.secret = data.secret;
+				// that.secret = data.secret; 
 				// cache.set(that.cacheKey,data);
 			}
 		})
@@ -177,7 +179,7 @@ class Clients {
 
 	//从服务端获取最新的版本信息
 	getLatestVersion(params) {
-		params.url = routes.client.version.latest;
+		params.url = routes.client.config;
 
 		if (params.header === undefined) params.header = {};
 
@@ -201,6 +203,7 @@ class Clients {
 						break;
 					case 'ios':
 						_this.updateIos(res.data);
+						console.log(res.data.data);
 						break;
 				}
 			}
@@ -212,8 +215,8 @@ class Clients {
 
 
 	updateAndr(data) {
-		let androidVersion = data.data.app_android_latest_version;
-		let androiddata = data.data
+		let androidVersion = data.data.app_client.app_android_latest_version;
+		let androiddata = data.data.app_client
 		if (androidVersion) {
 			let d = str.diffVersion(this.version, androidVersion);
 
@@ -268,8 +271,8 @@ class Clients {
 	}
 
 	updateIos(data) {
-		let IosVersion = data.data.app_ios_latest_version;
-		let Iosdata = data.data
+		let IosVersion = data.data.app_client.app_ios_latest_version;
+		let Iosdata = data.data.app_client
 		if (IosVersion) {
 			let d = str.diffVersion(this.version, IosVersion);
 

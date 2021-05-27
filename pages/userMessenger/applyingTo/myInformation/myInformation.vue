@@ -1,18 +1,18 @@
 <template>
 	<view>
 		<subunit titel='我的信息'></subunit>
-		<view class="contentBox">
+		<view v-if="code == 200" class="contentBox">
 			<view class="infoBox">
-                  <view class="itemBox flex al-center ju-between" v-for="item in locdata" :key='item.id'>
-                  	 <view class="itemLb">
-                  	 	{{item.label}}
-                  	 </view>
-					 <view class="">
-					 	{{item.value}}
-					 </view>
-                  </view>
+				<view class="itemBox flex al-center ju-between" v-for="item in locdata" :key='item.id'>
+					<view class="itemLb">
+						{{item.label}}
+					</view>
+					<view class="">
+						{{item.value}}
+					</view>
+				</view>
 			</view>
-			
+
 			<view class="accessoryBox">
 				<view class="accessoryTxt">
 					附件
@@ -38,7 +38,8 @@
 		props: {},
 		data() {
 			return {
-				files:[],
+				code:0,
+				files: [],
 				locdata: [{
 						label: '申请平台',
 						value: ''
@@ -58,16 +59,16 @@
 
 			getData() {
 				uni.showLoading({
-					title:'加载中'
+					title: '加载中'
 				})
 				home.lookMymsg({
 					data: {},
 					fail: () => {
 						uni.hideLoading()
-                        uni.showToast({
-                        	title: '网络错误',
-                        	icon: "none"
-                        })
+						uni.showToast({
+							title: '网络错误',
+							icon: "none"
+						})
 					},
 					success: (res) => {
 						uni.hideLoading()
@@ -78,7 +79,7 @@
 							})
 							return;
 						}
-						if (res.data.code == 403) {
+						if (res.data.code == 5403) {
 							uni.showModal({
 								content: res.data.msg,
 								success: (res) => {
@@ -89,20 +90,19 @@
 							})
 							return;
 						}
-						if (res.data.code == 200) {
-							// console.log(res.data.data);
-							let data = res.data.data
-							this.locdata[0].value = data.info.platform
-							this.locdata[1].value = data.info.code
-							this.locdata[2].value = data.info.created_at.slice(0,16)
-							this.files = data.files
-						} else {
+						if (res.data.code != 200) {
 							uni.showToast({
 								title: res.data.msg,
 								icon: 'none'
 							})
+							return;
 						}
-						
+						this.code = res.data.code
+						let data = res.data.data
+						this.locdata[0].value = data.platform
+						this.locdata[1].value = data.job_number
+						this.locdata[2].value = data.created_at.slice(0, 16)
+						this.files = data.files
 					}
 				})
 			}
@@ -139,18 +139,18 @@
 		padding: 20rpx 3%;
 		background: #FFFFFF;
 		border-radius: 10rpx;
-			box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 		font-size: 15px;
 		color: #666666;
 		padding-bottom: 50rpx;
 	}
-	
-	.itemBox{
+
+	.itemBox {
 		height: 80rpx;
 		border-bottom: 1px solid #CCCCCC;
-		}
-		
-	.accessoryBox{
+	}
+
+	.accessoryBox {
 		margin-top: 50rpx;
 		width: 94%;
 		padding: 0rpx 3%;
@@ -158,22 +158,22 @@
 		padding-bottom: 30rpx;
 		border-radius: 10rpx;
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
-	}	
-		
-	.accessoryTxt{
+	}
+
+	.accessoryTxt {
 		display: flex;
 		align-items: center;
-	    height: 70rpx;
+		height: 70rpx;
 		color: #666666;
 		border-bottom: 1px solid #CCCCCC;
-	}	
-	
-	.filesBox{
+	}
+
+	.filesBox {
 		margin-top: 20rpx;
 		flex-wrap: wrap;
 	}
-	
-	.itemImg{
+
+	.itemImg {
 		width: 120rpx;
 		height: 140rpx;
 		margin-right: 20rpx;

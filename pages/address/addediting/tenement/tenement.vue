@@ -1,36 +1,24 @@
 <template>
 	<view class="">
-		<submit titel="房屋报修"></submit>
-		<view class="navBox" :style="{height: this.$store.state.customBar + 'rpx'}">
-			<view @click="GoRecord" class=" pos-abs remak">
-				报修记录
-			</view>
-		</view>
+		<submit titel="物业留言反馈"></submit>
 		<view class="flex-d al-center">
 			<view class="formBox fz-14">
 				<view class="itemStyle flex ju-between al-center pos-rel" @click="celClass(index)" v-for="(item,index) in formData"
 				 :key="item.id">
-					<view :class="index==2?'textColor':''">
+					<view >
 						{{item.label}}
 					</view>
 					<view class="flex al-center">
 						<input :type="item.type" class="ipt fz-14" :placeholder="item.ploder" :disabled="item.dised" :value="item.value" />
 						<image v-if="index == 0" class="reimg pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/address/retrue.png"
 						 mode=""></image>
-						<image v-if="index == 2" src="https://oss.kuaitongkeji.com/static/img/app/home/xiala.png" class="xiala pos-abs"
-						 mode=""></image>
-					</view>
-				</view>
-				<view v-show="celShow == true" class="showBxo pos-abs">
-					<view class="m-t2 m-b1" @click="addIssue(item)" v-for="item in celCals" :key="item.id">
-						{{item}}
 					</view>
 				</view>
 				<view class="m-t2">
-					<textarea placeholder="请输入详细问题信息" maxlength="200" class="textAr fz-12"></textarea>
+					<textarea placeholder="请输入详细问题信息" maxlength="200" v-model="remak" class="textAr fz-14"></textarea>
 				</view>
 			</view>
-			<u-select v-model="show" mode="mutil-column-auto" :default-value='value' :list="renderVillageLists" @confirm="confirm"></u-select>
+			<u-select v-model="show" mode="single-column" value-name="id" label-name="name" :default-value='value' :list="orgVillageLists" @confirm="confirm"></u-select>
 			<view class="picturesBox flex al-center">
 				<view class="" v-for="(item,index) in images" :key="item.id">
 					<image :src="item" class="itemImg" :class="(index+1)%4==0?'dv':''" mode="aspectFill"></image>
@@ -47,7 +35,7 @@
 				</view>
 			</view>
 
-			<view class="">
+			<view  @click="submit" class="">
 				<view class="submit flex al-center ju-center bai">
 					提交
 				</view>
@@ -61,9 +49,6 @@
 				上传中
 			</view>
 		</view>
-		<view v-show="celShow == true" @click="celShow = false" class="layout">
-
-		</view>
 	</view>
 </template>
 
@@ -71,6 +56,8 @@
 	import submit from '../../../../components/sub-unit/subunit.vue'
 	import village from '../../../../vendor/village/village.js'
 	import route from '../../../../vendor/request/routes.js'
+	import address from '../../../../vendor/address/address.js'
+	import user from '../../../../vendor/user/userDetails.js'
 	export default {
 		name: "",
 		components: {
@@ -88,41 +75,96 @@
 					{
 						label: '联系电话',
 						value: '',
-						type: "number"
-					},
-					{
-						label: '报修',
-						value: '',
-						dised: true
+						type: "text"
 					}
 				],
-				celCals: ['报修', '反馈'],
-				celShow: false,
-				//服务端返回的原始数据
+				//服务端返回的原始数据 
 				orgVillageLists: [],
-				renderVillageLists: [],
 				show: false,
 				value: [], //小区列表默认选择的对象
-				ids:[],//选择的id
+				ids:'',//选择的小区id
 				images:[],//上传的图片
 				isLoding:false,
+				remak:''
 			}
 		},
 		methods: {
 			
-			//去报修记录
-			GoRecord(){
-				uni.navigateTo({
-					url:"/pages/address/addediting/temtRecord/temtRecord"
+			//提交
+			submit(){
+				if(this.isLoding == true)return;
+				if(!this.ids){
+					uni.showToast({
+						title:'请选择小区',
+						icon:"none"
+					})
+					return;
+				}
+				if(!this.remak){
+					uni.showToast({
+						title:'请输入问题信息',
+						icon:"none"
+					})
+					return;
+				}
+				address.feedback({
+					data:{
+						village_id:this.ids,
+						content:this.remak,
+						files:this.images,
+						tel:this.formData[1].value
+					},
+					fail: () => {
+						uni.showToast({
+							title:'网络错误',
+							icon:"none"
+						})
+					},
+					success : (res) => {
+						if(res.statusCode != 200) {
+							uni.showToast({
+								title:'网络出错了',
+								icon:"none"
+							})
+							return;
+						}
+						if(res.data.code != 200) {
+							uni.showToast({
+								title:res.data.msg,
+								icon:"none"
+							})
+							return;
+						}
+						uni.showToast({
+							title:res.data.msg,
+						})
+						this.remak = ""
+						this.images = []
+					}
 				})
+			},
+			
+			//去报修记录
+			// GoRecord(){
+			// 	uni.navigateTo({
+			// 		url:"/pages/address/addediting/temtRecord/temtRecord"
+			// 	})
+			// },
+			
+			//打开小区选择
+			celClass(index){
+				if(index != 0) return;
+				this.show = true
 			},
 			//选择地址
 			confirm(e){
-			 e.map(item => {
-				 this.formData[0].value += item.label
-				 this.ids.push(item.extra)
-				 this.value.push(item.value)
-			 })	
+				this.formData[0].value = e[0].label
+				this.ids = e[0].value
+				let index  = e[0].extra
+				if(e[0].extra == undefined){
+					index = 0
+				}
+				this.value[0] = index
 			},
 			//上传图片
 			upPictures(){
@@ -182,134 +224,64 @@
 					})
 				})
 			},
-			// 选择类型
-			addIssue(item) {
-				this.formData[2].label = item
-				this.celShow = false
+			
+			// 用户所有地址
+			userAlladd(){
+				 address.alladd({
+				 	data: {
+				 	},
+				 	fail: () => {
+				 		this.isLoding = false;
+				 		this.stopRefreshIcon();
+				 		uni.showToast({
+				 			title: '网络错误',
+				 			icon: 'none'
+				 		})
+				 	},
+				 	success: (res) => {
+				             
+				 		if (res.statusCode != 200) return;
+				 
+				 		if (res.data.code != 200) return;
+				 
+				 		let data = res.data.data;
+						var obj = {};
+						data = data.reduce((item, next) => {
+						   obj[next.own_village.name] ? '' : obj[next.own_village.name] = true && item.push(next);
+						   return item;
+						}, []);
+						 data.map( (item,index) =>{
+							 item.own_village.extra = index
+							 this.orgVillageLists.push(item.own_village)
+						 })
+				 	}
+				 })
 			},
-			// 表单选择
-			celClass(index) {
-				if (index == 0) {
-					this.show = true
-				};
-				if (index == 2) {
-					this.celShow = !this.celShow
-				}
-			},
-			//小区列表
-			loadVillageLists() {
-				let that = this;
-				// 小区列表
-				village.selectLists({
-					data: {},
-					fail: (err) => {
-						uni.showToast({
-							title: '网络错误',
-							icon: 'none'
-						})
-					},
-					success: (res) => {
-
-						if (res.statusCode != 200) return;
-
-						if (res.data.code != 200) return;
-
-						this.orgVillageLists = res.data.data;
-						this.renderMSelect();
-					},
-
-				})
-			},
-
-			//使用返回的数据进行渲染select
-			renderMSelect() {
-				//renderVillageLists
-				if (!this.orgVillageLists || this.orgVillageLists.length == 0) {
-					this.renderVillageLists = [];
-					return;
-				}
-
-				//进行修改
-				let tmp = [];
-
-				this.orgVillageLists.forEach((item, index) => {
-					let villages = {
-						label: item.name,
-						value: index,
-						extra: item.id,
-						children: [],
-					};
-
-					if (!item.buildings) return true;
-					//楼栋
-					item.buildings.forEach((item2, idx2) => {
-						let buildings = {
-							label: item2.name,
-							value: idx2,
-							extra: item2.id,
-							children: [],
-						};
-						// console.log('buildings', item2, !item2.apartments)
-						if (!item2.apartments) return true;
-						item2.apartments.forEach((item5, idx3) => {
-
-							//单元楼
-							let ap = {
-								label: item5.name,
-								value: idx3,
-								extra: item5.id,
-								children: [],
-							};
-
-							if (!item5.floors) return true;
-
-							item5.floors.forEach((item3, index3) => {
-
-								//楼层
-								let floors = {
-									label: item3.name,
-									value: index3,
-									extra: item3.id,
-									children: [],
-								};
-
-								// console.log('item3', item3)
-								if (!item3.rooms) return true;
-								//门牌号
-								item3.rooms.forEach((item4, idx4) => {
-									floors.children.push({
-										label: item4.room_number,
-										value: idx4,
-										extra: item4.id,
-									});
-								})
-
-								ap.children.push(floors);
-							})
-
-
-							buildings.children.push(ap);
-
-						})
-
-						villages.children.push(buildings);
-					})
-
-					tmp.push(villages);
-				})
-
-
-				this.renderVillageLists = tmp;
-				// console.log(tmp);
-			},
-
+           // 获取用户资料
+           Userdata() {
+           	user.userDeta({
+           		data: {},
+           		fail: (err) => {
+           			uni.showToast({
+           				title: '网络错误',
+           				icon: 'none'
+           			})
+           		},
+           		success: (res) => {
+           			if (res.statusCode != 200) return;
+           			if (res.data.code != 200) return;
+           			let Users = res.data.data
+           			this.formData[1].value = Users.tel
+           		},
+           	})
+           }
 		},
 		mounted() {
-			this.loadVillageLists()
+			this.userAlladd()
+			this.Userdata()
 		},
 		onLoad(val) {
-			console.log(val);
-
+            
 		},
 		filters: {
 
@@ -435,13 +407,10 @@
 	}
 
 	/deep/ .u-select__body__picker-view__item[data-v-a577ac80] {
-		font-size: 24rpx !important;
+		font-size: 14px !important;
 		text-align: center !important;
 	}
 
-	.textColor {
-		color: #F07535;
-	}
 
 	.showBxo {
 		margin-top: -10rpx;

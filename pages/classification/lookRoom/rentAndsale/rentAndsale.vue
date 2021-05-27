@@ -19,7 +19,7 @@
 				 @refresherrefresh='fresh' :refresher-triggered='isPull'   @scrolltolower="onreachBottom1">
 					<view v-if="lists.length>0" class="flex-d al-center">
 						<view class="item m-t3 flex" @click="gotoD(item,index)" v-for="(item,index) in lists" :key='item.id'>
-							<image :src="item.faceimg" class="itemImg" mode="aspectFill"></image>
+							<image :src="item.cover" class="itemImg" mode="aspectFill"></image>
 							<view class="m-l2 rigBox fz-16 pos-rel">
 								{{item.title}}
 								<view class="flex fz-12 m-t1 cl9">
@@ -30,14 +30,16 @@
 										{{item.introduce}}/{{item.zx}}
 									</view>
 								</view>
-								<view class="m-t3 flex al-b fz-16 itemtext">
+								<view class="fz-12 szcolor">
+									{{item.address_name}}
+								</view>
+								<view class="m-t1 flex al-b fz-16 itemtext">
 									{{item.rents}}
 									<view class="fz-12">
 										元/月
 									</view>
 								</view>
-								<view class="nextTex fz-12 flex al-center">
-									{{item.pv}}人浏览
+								<view class="nextTex  pos-abs">
 									<image src="https://oss.kuaitongkeji.com/static/img/app/classification/Healthcare/next.png" class="nextImg"
 									 mode=""></image>
 								</view>
@@ -67,8 +69,8 @@
 				<scroll-view scroll-y style="height: calc(100vh - 240rpx);;width: 100%" 
 			refresher-enabled='true'  @refresherrefresh='fresh' :refresher-triggered='isPull'  	@scrolltolower="onreachBottom2">
 					<view class="flex-d al-center" v-if="data1.length>0">
-						<view class="item m-t3 flex" @click="reply(item,index)" v-for="(item,index) in data1" :key='index'>
-							<image :src="item.faceimg" class="itemImg" mode="aspectFill"></image>
+						<view class="item m-t3 flex " @click="reply(item,index)" v-for="(item,index) in data1" :key='index'>
+							<image :src="item.cover" class="itemImg" mode="aspectFill"></image>
 							<view class="m-l2 rigBox fz-16 pos-rel">
 								{{item.title}}
 								<view class="flex fz-12 m-t1 cl9">
@@ -80,16 +82,17 @@
 									</view>
 								</view>
 								<view class="fz-12 cl9 m-t1">
-									{{item.village}}
+									{{item.address_name}}
 								</view>
 								<view class="m-t1 flex al-b fz-16 itemtext">
 									{{item.sale_price}}万
 								</view>
-								<view class="nextTex fz-12 flex al-center">
+								<view class="nextTex pos-abs">
 									<image src="https://oss.kuaitongkeji.com/static/img/app/classification/Healthcare/next.png" class="nextImg"
 									 mode=""></image>
 								</view>
 							</view>
+							
 						</view>
 						<view v-show="isLoding1 == true" class="m-t2 flex ju-center al-center lodbox">
 							<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
@@ -283,13 +286,13 @@
 			
 			// 下拉加载更多
 			onreachBottom1(e) {
-				this.text = '没有更多了~'
+				this.text = '没有更多了'
 				if (this.isLoding == true || this.hasMore == false) return;
 				this.loadPageData()
 			},
 			// 下拉加载更多
 			onreachBottom2(e) {
-				this.text1 = '没有更多了~'
+				this.text1 = '没有更多了'
 				if (this.isLoding1 == true || this.hasMore1 == false) return;
 				this.SelfPost()
 			},
@@ -323,6 +326,7 @@
 		onLoad(val) {
 		},
 		onShow() {
+		
 			if(this.$store.state.roomisDel == 200){
 				this.lists.splice(this.index1,1)
 			}
@@ -333,6 +337,8 @@
         onHide() {
         	this.$store.commit('roomisDel','')
 			this.$store.commit('saleDel','')
+			this.text = ''
+			this.text1 = ''
         },
 		filters: {
 
@@ -392,6 +398,7 @@
 	.itemImg {
 		width: 200rpx;
 		height: 190rpx;
+		border-radius: 10rpx;
 	}
 
 	.item {
@@ -539,8 +546,12 @@
 	}
 	
 	.nextTex {
-		color: #CCCCCC;
-		display: flex;
-		justify-content: flex-end;
+		bottom: 0rpx;
+		right: 0rpx;
+	}
+	
+	.szcolor {
+		margin-top: 10rpx;
+		color: #999999;
 	}
 </style>

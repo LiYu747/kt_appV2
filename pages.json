@@ -3,12 +3,12 @@
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-	    
+
 		// 主页
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationStyle": "custom",
+				"navigationStyle": "custom", 
 				"enablePullDownRefresh": true
 			}
 		},
@@ -112,6 +112,16 @@
 				"navigationStyle": "custom"
 			}
 
+		},
+		 //入住申请，申请拜访搜索
+		{
+			"path": "pages/residence/seachVill/seachVill",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		
 		},
 		//入住申请
 		{
@@ -783,22 +793,41 @@
 
 		}
 
-	    ,
+		,
 		//联系物业
 		{
-            "path" : "pages/address/addediting/tenement/tenement",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false,
+			"path": "pages/address/addediting/tenement/tenement",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
 				"navigationStyle": "custom"
-            }
-            
-        }
-        ,
+			}
+
+		},
 		//报修记录
 		{
-            "path" : "pages/address/addediting/temtRecord/temtRecord",
+			"path": "pages/address/addediting/temtRecord/temtRecord",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+
+		},
+		//更多周边消息
+		{
+			"path": "pages/index/peripheryMore/peripheryMore",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+
+		}
+	    ,
+		//小区信息
+		{
+            "path" : "pages/propertyManagement/Villageletter/Villageletter",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
@@ -808,14 +837,14 @@
             
         }
         ,
-		//更多周边消息
+		//找回密码
 		{
-            "path" : "pages/index/peripheryMore/peripheryMore",
+            "path" : "pages/user/findPsw/findPsw",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
                 "enablePullDownRefresh": false,
-				"navigationStyle": "custom"
+					"navigationStyle": "custom"
             }
             
         }
@@ -831,8 +860,7 @@
 		"selectedColor": "#F95454",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
-		"list": [
-			{
+		"list": [{
 				"pagePath": "pages/index/index",
 				"iconPath": "static/tabbar/home1.png",
 				"selectedIconPath": "static/tabbar/home2.png",

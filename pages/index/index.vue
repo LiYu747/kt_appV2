@@ -20,12 +20,12 @@
 				<input class="input" type="text" v-model="value" confirm-type="search" @confirm='confirm' placeholder="请输入小区名称关键词" />
 
 				<view v-if='user' @click="goInform" class="informBox pos-abs">
-					<view v-if="0<informmsg.total_unread && informmsg.total_unread< 100" class="munber flex al-center ju-center pos-abs">
+					<view v-if="0<informmsg.unread && informmsg.unread< 100" class="munber flex al-center ju-center pos-abs">
 						<view class="">
-							{{informmsg.total_unread}}
+							{{informmsg.unread}}
 						</view>
 					</view>
-					<view v-if='informmsg.total_unread >99' class="munMore  flex al-center ju-center pos-abs">
+					<view v-if='informmsg.unread >99' class="munMore  flex al-center ju-center pos-abs">
 						99+
 					</view>
 					<image src="https://oss.kuaitongkeji.com/static/img/app/home/infos.png" class="infosImg" mode=""></image>
@@ -112,7 +112,8 @@
 			<!-- 资讯 -->
 			<information ref="infor"></information>
 			<!-- 社区新闻 -->
-			<CommunityNews ref='news' v-if='user'></CommunityNews>
+			<!-- <CommunityNews ref='news' v-if='user'></CommunityNews> -->
+			<CommunityNews ref='news' ></CommunityNews>
 			<!-- 周边 -->
 			<periphery ref='peri'></periphery>
 
@@ -166,6 +167,10 @@
 				<image src="https://oss.kuaitongkeji.com/static/img/app/Newguidance/home.png" class="addLogo" mode=""></image>
 			</view>
 		</view>
+		
+		<view v-show="isShowType == true" @click="isShowType = false" class="showBox">
+			
+		</view>
 	</view>
 </template>
 
@@ -208,7 +213,11 @@
 					}
 				],
 				isShowType: false,
-				localdata: [],
+				localdata: [
+				{image:require('@/image/home/rz.png'),name:'入住申请',url:'/pages/residence/seachVill/seachVill?code=1'},
+				{image:require('@/image/home/bf.png'),name:'拜访申请',url:'/pages/residence/seachVill/seachVill?code=2'},
+				{image:require('@/image/home/lf.png'),name:'来访记录',url:'/pages/operation/visitRecord/visitRecord'},
+				{image:require('@/image/home/code.png'),name:'回家二维码',url:'/pages/qrcode/qrCode/qrCode'}], 
 				list: [], //轮播图
 				value: '', //搜索绑定v-model
 				user: {}, //用户资料
@@ -251,6 +260,30 @@
 				})
 			},
 			gogo() {
+				  // 预览图片
+					return;
+				uni.previewImage({
+					urls:[
+					'https://oss.kuaitongkeji.com/static/img/app/Newguidance/home.png'], 
+					current: 0,
+					indicator:"default",
+					longPressActions: {
+						itemList: [ '保存图片'],
+						success: function() {
+							    uni.showToast({
+							    	icon:"none",
+									title:'图片已保存至相册'  
+							    })
+								
+								uni.saveImageToPhotosAlbum({
+								    filePath:'https://oss.kuaitongkeji.com/static/img/app/Newguidance/home.png',    
+								}); 
+						},
+						fail: function() {
+						}
+					}
+				});
+				return;
 				uni.navigateTo({
 					url: '/components/forum/setting/lianx'
 				})
@@ -302,7 +335,7 @@
 			addswiper(val) {
 				let movie = this.list[val]
 				if (movie.video) {
-					this.videoUrl = movie.video
+					this.videoUrl = movie.video 
 					this.cover = movie.image
 					this.paly = true
 					return;
@@ -324,18 +357,9 @@
 					this.nextT()
 					return;
 				};
-				if (item.page) {
-					urlUtil.to({
-						pageAlias: item.page,
-						options: item.params,
-					})
-					return;
-				}
-				if (item.web_url) {
 					uni.navigateTo({
-						url: '/pages/web/index/index?url=' + encodeURIComponent(item.web_url),
+						url: item.url
 					})
-				}
 			},
 
 			// 轮播图数据
@@ -355,30 +379,7 @@
 						this.stopRefreshIcon()
 						if (res.statusCode != 200) return
 						if (res.data.code != 200) return
-						this.list = res.data.data.ads
-						// console.log(this.list);
-					},
-				})
-			},
-			// 操作数据
-			operationData() {
-				home.chart({
-					data: {
-						code: 'home_quick_nav_1'
-					},
-					fail: () => {
-						this.stopRefreshIcon()
-						uni.showToast({
-							title: '网络出错',
-							icon: 'none'
-						})
-					},
-					success: (res) => {
-						this.stopRefreshIcon()
-						if (res.statusCode != 200) return
-						if (res.data.code != 200) return
-						this.localdata = res.data.data.ads
-						// console.log(this.localdata);
+						this.list = res.data.data
 					},
 				})
 			},
@@ -396,7 +397,6 @@
 		},
 		mounted() {
 			this.Chart()
-			this.operationData()
 			this.iStatusBarHeight = uni.getSystemInfoSync().statusBarHeight + 128
 			cache.set("customBar", this.iStatusBarHeight)
 		},
@@ -447,7 +447,6 @@
 			if (this.user) {
 				this.$refs.news.getData()
 			}
-			this.operationData()
 			this.Chart()
 			this.getInform()
 		},
@@ -644,6 +643,7 @@
 
 	.userSelection {
 		left: 50rpx;
+		z-index: 999;
 	}
 
 	.sjxlIcon {
@@ -714,6 +714,14 @@
 		height: 100vh;
 		background: rgba(0, 0, 0, 0.75);
 		z-index: 999;
+	}
+	
+	.showBox{
+		position: fixed;
+		top: 0;
+		width: 100%;
+		height: 100vh;
+		z-index: 9;
 	}
 
 	.btmbox {
@@ -837,5 +845,6 @@
 		background: #FFFFFF;
 		font-size: 14px;
 		color: #666666;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 	}
 </style>

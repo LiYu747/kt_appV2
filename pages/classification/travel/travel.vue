@@ -49,7 +49,7 @@
 <script>
 	import subclass from '../../../components/sub-class/subclass.vue'
 	import userDetails from '../../../vendor/user/userDetails.js'
-	import cfg from '../../../vendor/config/config.js'
+	// import cfg from '../../../vendor/config/config.js'
 	export default {
 		name: "",
 		components: {
@@ -63,7 +63,7 @@
 				myPosition: '', //开始的位置
 				goPosition: '', //要去的位置
 				latitude: '', //自动获取的经度
-				longitude: '', //自动获取的纬度
+				longitude: '', //自动获取的纬度 
 				markers: [{ 
 					id: 1,              
 					title: '我的位置', //地图标题 

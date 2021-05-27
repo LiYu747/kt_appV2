@@ -6,20 +6,16 @@
 				<image class="img pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/home/ss.png" mode=""></image>
 				<input class="input" type="text" v-model.trim="value" @confirm='confirm' placeholder="请输入帖子关键词" />
 				<image @click="empty" src="https://oss.kuaitongkeji.com/static/img/app/forum/clier.png" class="clierimg" mode=""></image>
-				<view v-show="value !=''" @click="remove" class="rig m-l2">
+				<view v-show="flag == true" @click="remove" class="rig m-l2">
 					取消
 				</view>
 			</view>
 		</view>
 		<!-- tag标签 -->
 		<view v-if="flag == false" class="back">
-			<view class="wid">
-				<u-tabs-swiper ref="uTabs" active-color='#F07535' :list="tagdata" :current="current" @change="tabsChange"
+			<view class="wid" >
+				<u-tabs-swiper v-if="code == 200" ref="uTabs" active-color='#F07535' :list="tagdata" :current="current" @change="tabsChange"
 				 :is-scroll="true" swiperWidth="750"></u-tabs-swiper>
-			</view>
-			<view class="posclassfiy flex al-center ju-center">
-				<image @click="custom" src="https://oss.kuaitongkeji.com/static/img/app/forum/classfiy.png" class="classfiyimg"
-				 mode=""></image>
 			</view>
 		</view>
 		<view v-if="flag == false" class="lines">
@@ -31,14 +27,15 @@
 				<swiper-item class="swiper-item" v-for="(items, index) in tagdata" :key="index">
 					<scroll-view scroll-y style="height:100%;width: 100%;" @scrolltolower="onreachBottom">
 						<view class="">
+							
 							<view class="item" @click="gotoD(item)" v-for="item in items.list" :key='item.id'>
 								<view class="flex">
 									<!-- 头像 -->
-									<image :src="item.own_user.avatar" class="itemimg" mode="aspectFill"></image>
+									<image :src="item.own_poster.avatar" class="itemimg" mode="aspectFill"></image>
 									<view class="name m-l1 m-t1">
-										{{item.own_user.nickname}}
+										{{item.own_poster.nickname}}
 										<view class="time">
-											{{item.created_at.slice(0,16)}}
+											{{item.created_at}}
 										</view>
 									</view>
 								</view>
@@ -49,9 +46,9 @@
 									</view>
 								</view>
 								<!-- 图片 -->
-								<view class="flex al-center m-t4">
-									<view v-for="(itemss,indexss) in item.album.slice(0,3)" :key='indexss'>
-										<image :src="itemss.url" class="items" :class="(indexss+1)%3 == 0?'onmargin':''" mode="aspectFill"></image>
+								<view  class="flex al-center m-t4">
+									<view v-for="(itemss,indexss) in item.album" :key='indexss'>
+										<image :src="itemss" class="items" :class="(indexss+1)%3 == 0?'onmargin':''" mode="aspectFill"></image>
 									</view>
 								</view>
 								
@@ -64,10 +61,11 @@
 							<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
 							加载中...
 						</view>
-						<view v-if="items.text" class="flex ju-center btom fz-12">
-							{{items.text}}
+						<view v-show="Isnext == false" class="flex ju-center btom fz-12">
+							{{showtext}}
 						</view>
-						<view class="nono flex al-center ju-center" v-if="items.list.length==0 && isLoding == false">
+						
+						<view class="nono flex al-center ju-center" v-if="items.list&&items.list.length == 0 && isLoding == false">
 							没有您想看类型的帖子,试试其他的吧
 						</view>
 
@@ -82,11 +80,11 @@
 				<view class="item" @click="gotoD(item)" v-for="(item,index) in lists" :key='index'>
 					<view class="flex">
 						<!-- 头像 -->
-						<image :src="item.own_user.avatar" class="itemimg" mode="aspectFill"></image>
+						<image :src="item.own_poster.avatar" class="itemimg" mode="aspectFill"></image>
 						<view class="name m-l1 m-t1">
-							{{item.own_user.nickname}}
+							{{item.own_poster.nickname}}
 							<view class="time">
-								{{item.created_at.slice(0,16)}}
+								{{item.created_at}}
 							</view>
 						</view>
 					</view>
@@ -98,8 +96,8 @@
 					</view>
 					<!-- 图片 -->
 					<view class="flex al-center m-t4">
-						<view v-for="(items,indexs) in item.album.slice(0,3)" :key='indexs'>
-							<image :src="items.url" class="items" mode="aspectFill"></image>
+						<view v-for="(items,indexs) in item.album" :key='indexs'>
+							<image :src="items" class="items" mode="aspectFill"></image>
 						</view>
 					</view>
 					<view class="Hline">
@@ -151,10 +149,12 @@
 		},
 		data() {
 			return {
+				code:0,
+				showtext:'',
 				hig:"",
 				id: '', //传的id
 				flag: false, //判断有没有搜索结果
-				tagdata: [],
+				tagdata: [{name:"全部"}],
 				idx: 0, //选择类型
 				selectID: '', //选择的id
 				current: 0, // tabs组件的current值，表示当前活动的tab选项
@@ -167,16 +167,18 @@
 				lists: [], //数据列表
 				text: '', //没有更多的提示
 				value: '',
-				hasMore: true
+				hasMore: true,
+				isUser:false
 			}
 		},
 		methods: {
 			//滑动切换
 			Onchange(e) {
+				this.showtext = ""
 				let current = e.detail.current;
 				this.idx = e.detail.current
 				if (this.tagdata[current].list.length > 0) return;
-				this.loadPageData(this.tagdata[current].id, current)
+				this.loadPageData(this.tagdata[current].name, current)
 			},
 			// tabs通知swiper切换
 			tabsChange(index) {
@@ -198,12 +200,15 @@
 			},
 
 			// 获取数据
-			loadPageData(id, idx) {
+			loadPageData(name, idx) {
+				if(name == "全部"){
+					name = ''
+				}
 				this.isLoding = true
 				village.communityPost({
 					data: {
-						villageId: this.id,
-						tribune_cat: id,
+						village_id: this.id,
+						cate: name,
 						kw: this.keyword,
 						page: this.page,
 						pageSize: this.ps
@@ -218,12 +223,25 @@
 					success: (res) => {
 						this.isLoding = false
 						if (res.statusCode != 200) return;
-
+                        if(res.data.code == 403){
+							uni.showModal({
+								content:res.data.msg,
+								success:() => {
+									uni.navigateBack({
+										delta:1
+									})
+								}
+							})
+							return;
+						}
 						if (res.data.code != 200) return;
+						this.isUser = true
 						let data = res.data.data;
 						data.data.map(item => {
 							item.created_at = item.created_at.slice(0, 16)
-							item.album = item.album.slice(0, 3)
+							if(item.album){
+								item.album = item.album.slice(0, 3)
+							}
 						})
 						this.tagdata.map((item, index) => {
 							if (index == idx) {
@@ -232,12 +250,8 @@
 								item.hasMore = data.next_page_url ? true : false
 							}
 						})
-						
-
 					}
-
 				})
-
 			},
 			//获取默认栏目列表
 			grtColumn() {
@@ -252,38 +266,38 @@
 					success: (res) => {
 						if (res.statusCode != 200) return;
 						if (res.data.code != 200) return;
+						this.code = res.data.code
 						// console.log(this.tagdata );
 						res.data.data.map(item => {
 							item.list = []
 							item.hasMore = false
 							item.page = 1
-							item.text = null
+							item.text = ""
 							item.nono = null
+							this.tagdata.push(item)
 						})
-						this.tagdata = res.data.data
-						this.loadPageData(res.data.data[this.idx].id, this.idx)
+						this.loadPageData('', this.idx)
 					}
 				})
 			},
 			// scroll-view到底部加载更多
 			onreachBottom() {
+				this.showtext = "没有更多了"
 				let idx = this.idx
 				if (this.isLoding == true || this.Isnext == true) return;
 				if(this.tagdata[idx].text) return; 
 				if (this.tagdata[idx].hasMore == false) {
-					this.tagdata.map((item, index) => {
-						if (idx == index) {
-							item.text = '没有更多了'
-						} 
-						
-					})
 					return;
 				}
 				this.Isnext = true
+				let name  = this.tagdata[idx].name
+				if(name == "全部"){
+					name = ''
+				}
 				village.communityPost({
 					data: {
-						villageId: this.id,
-						tribune_cat: this.tagdata[idx].id,
+						village_id: this.id,
+						cate: name,
 						page: this.tagdata[idx].page,
 						pageSize: this.ps
 					},
@@ -303,7 +317,9 @@
 						let data = res.data.data;
 						data.data.map(item => {
 							item.created_at = item.created_at.slice(0, 16)
-							item.album = item.album.slice(0, 3)
+							if(item.album){
+								item.album = item.album.slice(0, 3)
+							}
 						})
 						this.tagdata.map((item, index) => {
 							if (index == idx) {
@@ -345,7 +361,7 @@
 				this.isLoding = true
 				village.communityPost({
 					data: {
-						villageId: this.id,
+						village_id: this.id,
 						kw: this.value,
 						page: this.page,
 						pageSize: this.ps
@@ -363,14 +379,22 @@
 
 						if (res.data.code != 200) return;
 						let data = res.data.data;
+					
 						this.hasMore = data.next_page_url ? true : false;
 						this.page = data.current_page + 1 
+						data.data.map(item => {
+							item.created_at = item.created_at.slice(0,16)
+							if(item.album){
+								item.album = item.album.slice(0,3)
+							}
+						})
 						this.lists = this.lists.concat(data.data)
 					},
 				})
 			},
 			// 取消
 			remove() {
+				this.empty()
 				uni.hideKeyboard()
 			},
 
@@ -380,24 +404,24 @@
 					url: '/pages/communityForum/forumlists/customTarbar/customTarbar'
 				})
 			},
-			iSlogin() {
-				jwt.doOnlyTokenValid({
-					keepSuccess: false,
-					showModal: true,
-					fail: () => {
-						uni.navigateBack({
-							delta: 1
-						})
-					},
-					success: () => {
-
-					}
-				})
-			}
+		    // 判断是否登录
+		    loadUserData() {
+		    	jwt.doOnlyTokenValid({
+		    		showModal: true,
+		    		keepSuccess: false,
+		    		success: () => {
+					  this.grtColumn()
+		    		},
+		    		fail: () => {
+		    			uni.navigateBack({
+		    				delta:1
+		    			})
+		    		}
+		    	})
+		    },
 		},
 		mounted() {
-			this.grtColumn()
-			let num = this.$store.state.customBar + 188 + 'rpx' 
+			let num = this.$store.state.customBar + 192 + 'rpx' 
 			this.hig = `height:calc(100vh - ${num})`
 		},
 		onLoad(val) {
@@ -417,7 +441,8 @@
 
 		},
 		onShow() {
-			this.iSlogin()
+			if(this.isUser == true) return;
+			 this.loadUserData()
 		},
 
 		filters: {
@@ -454,7 +479,7 @@
 	}
 
 	.wid {
-		width: 90%;
+		width: 100%;
 	}
 
 	.tagpos {
@@ -500,7 +525,7 @@
 	.content {
 		margin-top: 30rpx;
 		width: 650rpx;
-		font-size: 28rpx;
+		font-size: 16px;
 	}
 
 	.show {
@@ -548,7 +573,7 @@
 
 	.btom {
 		  padding-top: 20rpx;
-		  padding-bottom: 34rpx;
+		  padding-bottom: 40rpx;
 	}
 	
 	.btm{
@@ -567,9 +592,9 @@
 	}
 
 	.lodbox {
-		font-size: 24rpx;
+		font-size: 12px;
 		padding-top: 20rpx;
-		padding-bottom: 34rpx;
+		padding-bottom: 40rpx;
 	}
 
 	.Hline {
@@ -585,7 +610,7 @@
 	}
 
 	.showloding {
-		position: absolute;
+		position: fixed;
 		width: 100%;
 		height: 100vh;
 		top: 0;

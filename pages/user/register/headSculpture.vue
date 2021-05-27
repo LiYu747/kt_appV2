@@ -55,7 +55,7 @@
 			// 返回
 			goback() {
 				uni.navigateBack({
-					url: `/pages/user/register/register?img=${this.img}`
+					delta:1
 				})
 			}
 		},
@@ -91,16 +91,15 @@
 							return;
 						}
 						this.img = data.data.url
-						cache.set('photo', data.data.url)
+						this.$store.commit("userPhoto",data.data.url)
 					}
 				});
 			})
 		},
 		mounted() {
-
+           this.img = this.$store.state.userPhoto
 		},
 		onShow() {
-			this.img = cache.get('photo')
 		},
 		onLoad(val) {
 
@@ -145,7 +144,7 @@
 	}
 
 	.showloding {
-		position: absolute;
+		position: fixed;
 		width: 100%;
 		height: 100vh;
 		top: 0;

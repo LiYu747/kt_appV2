@@ -25,12 +25,14 @@
 				 :pdground="pdground" :icon="icon" :iconSize="iconsize" :lv="lv" :showLoading='false' :onval="onval" :loadMake="loadMake"
 				 :usingComponents="true" />
 			</view>
-			<view v-if="redIMG" class="">
+			<view v-if="redIMG&&redIMG.length>0" class="">
 				<view class="tex1">
 				  补充图片
 				</view>
 				<view class="imgBox">
-					<image :src="redIMG" class="redImg" mode="aspectFill"></image>
+					<view class="" v-for="item in redIMG" :key="item.id">
+						<image :src="item" class="redImg" mode="aspectFill"></image>
+					</view>
 				</view>
 			</view>
 			<view class="tex1">
@@ -69,7 +71,7 @@
 				username: '', //处理结果 
 				remark: '', //备注
 				result: '', //结果
-				redIMG:'', //图片
+				redIMG:[], //图片
 				locadata: [{
 						titel: '姓名',
 						value: ''
@@ -123,17 +125,24 @@
 						let data = res.data.data
 						// console.log(res.data.data);
 						this.locadata[0].value = data.own_host.username
-						if (data.own_village) {
-							this.locadata[1].value = '' + data.own_village.name + data.own_building.name + data.own_apartment.name +
-								data.own_building
-								.name + data.own_room.room_number
-						}
+						this.locadata[1].value = data.place 
 						this.locadata[2].value = data.created_at.slice(0, 16)
-						this.username = data.verify_text
+							switch (data.verify_status) {
+								case 1:
+									data.verify_status = '审核中'
+									break;
+								case 2:
+									data.verify_status = '同意'
+									break;
+								case 3:
+									data.verify_status = '未同意'
+									break;
+									}
+						this.username = data.verify_status 
 						this.remark = data.visitor_remark
 						this.result = data.verify_msg
-						this.val = data.qr_content
-						this.redIMG = data.ext_img
+						this.val = data.encrypted_data
+						this.redIMG = data.pics
 					}),
 
 

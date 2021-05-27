@@ -3,8 +3,8 @@
 		<submit titel="更多新闻"></submit>
 		<view v-if="locdata.length>0" class="conBox m-t2">
 			<view class="itemBox" @click="godils(item)" v-for="item in locdata" :key="item.id">
-				<view v-if="flag == 0"  class="flex">
-					<image :src="item.faceimg" class="itemImg" mode=""></image>
+				<view v-if="flag == 0" class="flex">
+					<image :src="item.cover" class="itemImg" mode=""></image>
 					<view class="content m-l2 pos-rel">
 						<view class="conTex  m-t2">
 							{{item.title}}
@@ -12,12 +12,12 @@
 						<view class="timeBox fz-12 pos-abs flex ju-between">
 							{{item.created_at}}
 							<view class="">
-								512486人浏览
+								{{item.pv}}人浏览
 							</view>
 						</view>
 					</view>
 				</view>
-				<view  v-if="flag == 1" class="">
+				<view v-if="flag == 1" class="">
 					<view class="conTex fz-14">
 						{{item.title}}
 					</view>
@@ -35,7 +35,8 @@
 				</view>
 			</view>
 			<view v-show="isLoding == true" class=" fz-12 flex ju-center al-center lodbox">
-				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+				</image>
 				加载中...
 			</view>
 			<view class="flex ju-center lodbox  fz-12" v-if="hasMore == false">
@@ -45,7 +46,8 @@
 		<view v-show="isLoding == true&&locdata.length == 0" class="showloding flex al-center ju-center">
 			<view class="loding flex-d al-center ju-center">
 				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 				</view>
 				搜索中
 			</view>
@@ -70,7 +72,7 @@
 				flag: 0,
 				isLoding: false,
 				hasMore: true,
-				text:'',			
+				text: '',
 			}
 		},
 		methods: {
@@ -92,7 +94,7 @@
 						// console.log(res.data.data);
 						let content = {
 							title: res.data.data.title,
-							content: res.data.data.desc
+							content: res.data.data.content
 						}
 						this.$store.commit("homeContent", content);
 						uni.navigateTo({
@@ -103,7 +105,7 @@
 			},
 			// 数据
 			getData() {
-				if(this.isLoding == true || this.hasMore == false) return;
+				if (this.isLoding == true || this.hasMore == false) return;
 				this.isLoding = true
 				home.news({
 					data: {
@@ -128,8 +130,8 @@
 						data.data.map(item => {
 							item.created_at = item.created_at.slice(0, 10)
 						})
-						
-						this.locdata = this.locdata.concat(data.data) 
+
+						this.locdata = this.locdata.concat(data.data)
 					},
 				})
 			}
@@ -206,7 +208,7 @@
 		bottom: 0;
 		color: #666666;
 	}
-	
+
 	.showloding {
 		position: fixed;
 		width: 100%;
@@ -214,26 +216,26 @@
 		top: 0;
 		color: #FFFFFF;
 	}
-	
+
 	.loimg {
 		width: 50rpx;
 		height: 50rpx;
 	}
-	
+
 	.loding {
 		width: 260rpx;
 		height: 200rpx;
 		background: rgba(88, 88, 88, 0.8);
 		border-radius: 10rpx;
 	}
-	
+
 	.lodimg {
 		width: 30rpx;
 		height: 30rpx;
 		margin-right: 20rpx;
 	}
-	
-	.lodbox{
+
+	.lodbox {
 		padding: 30rpx 0;
 	}
 </style>

@@ -1,10 +1,10 @@
 <template>
 	<view class="">
-		<subunit :abel=able  titel="申请入住"></subunit>
+		<subunit :abel=able titel="申请入住"></subunit>
 		<view class="navBox" :style="{height:  this.$store.state.customBar + 'rpx'}">
 			<view @click="Application" class=" pos-abs move">
 				申请记录
-			</view> 
+			</view>
 		</view>
 		<view class="flex-d al-center">
 			<view class=" message">
@@ -12,46 +12,52 @@
 					基本信息
 				</view>
 				<view>
-					<view class="item flex al-center pos-rel" v-for="(item,index) in  record" @click="Onshow(index)" :key='item.id'
-					 :class="[index==record.length-1?'dv':'',index==4&&idx==0&&Gshow==3?'zIndex':'']" >
-						<u-field  v-model="item.value " :placeholder="item.placeholder" :label="item.label" :clearable=false :required='item.required'
-						 input-align='right' :disabled="item.disabled">
+					<view class="item flex al-center pos-rel" v-for="(item,index) in  record" @click="Onshow(index)"
+						:key='item.id' :class="[index==record.length-1?'dv':'',index==4&&idx==0&&Gshow==3?'zIndex':'']">
+						<u-field v-model="item.value " :placeholder="item.placeholder" :label="item.label"
+							:clearable=false :required='item.required' input-align='right' :disabled="item.disabled">
 						</u-field>
 						<view class="pos-abs righ" v-if="index===record.length-2">
-							<image src="https://oss.kuaitongkeji.com/static/img/app/home/xiala.png" class="xiala" mode=""></image>
+							<image src="https://oss.kuaitongkeji.com/static/img/app/home/xiala.png" class="xiala"
+								mode=""></image>
 							<view v-show="iSidentity==true" class="content">
 								<view class="itemBox" @click="selectOne(item)" v-for="item in options" :key='item.id'>
 									{{item.label}}
 								</view>
 							</view>
 						</view>
-						<view v-if="Gshow == 3&&idx==0"  class="Lutext bai fz-16 ">
-							 <image src="https://oss.kuaitongkeji.com/static/img/app/Newguidance/arrowsLU.png" class="arrowsLU m-r1" mode=""></image>
-							 选择您的小区地址
+						<view v-if="Gshow == 3&&idx==0" class="Lutext bai fz-16 ">
+							<image src="https://oss.kuaitongkeji.com/static/img/app/Newguidance/arrowsLU.png"
+								class="arrowsLU m-r1" mode=""></image>
+							选择您的小区地址
 						</view>
 						<view v-if="index===record.length-1" class="pos-abs righ">
-							<image src="https://oss.kuaitongkeji.com/static/img/app/home/xiala.png" class="xiala" mode=""></image>
+							<image src="https://oss.kuaitongkeji.com/static/img/app/home/xiala.png" class="xiala"
+								mode=""></image>
 						</view>
 					</view>
 				</view>
-				<u-select v-model="show" mode="mutil-column-auto" :default-value='value' :list="renderVillageLists" @confirm="confirm"></u-select>
+				<u-select v-model="show" mode="mutil-column-auto" title="腹地御香山" :default-value='value' :list="renderVillageLists"
+					@confirm="confirm"></u-select>
 			</view>
-		
+
 			<!-- 附件 -->
 			<view class="pos-rel" @click="nextTo" :class="idx==1?'enclText':''">
-				<enclosure ref='encl' :Gshow='Gshow'   @abb='add'></enclosure>
+				<enclosure ref='encl' :Gshow='Gshow' @abb='add'></enclosure>
 				<view v-if="Gshow == 3" class="pos-abs">
-					<image src="https://oss.kuaitongkeji.com/static/img/app/Newguidance/arrowsLU.png" mode="" class="arrowsLU m-l4 m-t2"></image>
+					<image src="https://oss.kuaitongkeji.com/static/img/app/Newguidance/arrowsLU.png" mode=""
+						class="arrowsLU m-l4 m-t2"></image>
 					<view class="bai pushMsg">
 						添加附件，租房合同、房产证等
 					</view>
 				</view>
 			</view>
-		       
+
 			<!-- 备注 -->
 			<view class="pos-rel" @click="nextTo" :class="idx==2?'enclText':''">
 				<view v-if="Gshow == 3" class=" m-l4 pos-abs llText flex bai">
-					<image src="https://oss.kuaitongkeji.com/static/img/app/Newguidance/leftLower.png" class="leftLower m-t2" mode=""></image>
+					<image src="https://oss.kuaitongkeji.com/static/img/app/Newguidance/leftLower.png"
+						class="leftLower m-t2" mode=""></image>
 					<view class="m-l1">
 						备注文字，审核人员可以看到
 					</view>
@@ -64,11 +70,11 @@
 					提交
 				</view>
 			</view>
-		
-		   <view v-if="Gshow == 3" @click="nextTo"  @touchmove.stop.prevent class="guideBox">
-		   
-		   </view>
-		 
+
+			<view v-if="Gshow == 3" @click="nextTo" @touchmove.stop.prevent class="guideBox">
+
+			</view>
+
 		</view>
 	</view>
 </template>
@@ -95,6 +101,7 @@
 		data() {
 			return {
 				value: [], //地址绑定v-model
+				Villid:'',//小区的id
 				options: [{
 						value: '1',
 						label: '户主'
@@ -154,15 +161,16 @@
 				household: '',
 				// 附件
 				files: [],
-				Gshow:0,
-                idx:0,
-				able:false
+				Gshow: 0,
+				idx: 0,
+				able: false
 			}
 		},
 		methods: {
-			nextTo(index){
-				this.idx ++
-				if(this.idx == 3){
+			nextTo(index) {
+				if(!cache.get('Gshow')) return;
+				this.idx++
+				if (this.idx == 3) {
 					this.Gshow = 4
 				}
 			},
@@ -178,15 +186,15 @@
 				this.household = options.value
 				// this.iSidentity = true
 			},
-		
-			
+
+
 			// 显示选择小区
 			Onshow(index) {
 				if (index == this.record.length - 2) {
 					this.iSidentity = !this.iSidentity
 				}
 				if (index == this.record.length - 1) {
-					if(this.Gshow == 3){
+					if (this.Gshow == 3) {
 						this.idx++
 						return;
 					}
@@ -250,16 +258,17 @@
 					title: '提交中...'
 				})
 				let mrak = this.$refs.marks.value
+
 				home.moveInApply({
 					data: {
 						type: this.household,
-						villageId: this.id[0],
-						buildingId: this.id[1],
-						apartmentId: this.id[2],
-						floorId: this.id[3],
-						roomId: this.id[4],
+						village_id: this.Villid,
+						building_id: this.id[0],
+						apartment_id: this.id[1],
+						floor_id: this.id[2],
+						room_id: this.id[3],
 						user_remark: mrak,
-						files: this.files
+						pics: this.files,
 					},
 					fail: () => {
 						uni.hideLoading()
@@ -285,24 +294,28 @@
 							});
 							return;
 						}
+						
 						uni.showToast({
 							title: res.data.msg,
 							duration: 2000
 						});
-						if(cache.get('Gshow')){
+						if (cache.get('Gshow')) {
 							let num = this.Gshow
-							cache.set('Gshow',{key:'步骤'+ num,value: num})
-							 
-						 const time = setTimeout(() => {
-							uni.switchTab({
-								url:'/pages/address/address/address'
+							cache.set('Gshow', {
+								key: '步骤' + num,
+								value: num
 							})
-							this.Gshow = 0  
-							clearTimeout(time)
-						 }, 2000)
-						 return;
+
+							const time = setTimeout(() => {
+								uni.switchTab({
+									url: '/pages/address/address/address'
+								})
+								this.Gshow = 0
+								clearTimeout(time)
+							}, 2000)
+							return;
 						}
-					
+
 						const time = setTimeout(() => {
 							uni.redirectTo({
 								url: '/pages/residence/checkRecord/checkRecord'
@@ -313,28 +326,6 @@
 				})
 			},
 
-			loadVillageLists() {
-				let that = this;
-				// 小区列表
-				village.selectLists({
-					data: {},
-					fail: (err => {
-						uni.showToast({
-							title: '网络错误',
-							icon: 'none'
-						})
-					}),
-					success: (res) => {
-						// console.log(res);
-						if (res.statusCode != 200) return;
-
-						if (res.data.code != 200) return;
-
-						this.orgVillageLists = res.data.data;
-						this.renderMSelect();
-					},
-				})
-			},
 
 			//使用返回的数据进行渲染select
 			renderMSelect() {
@@ -346,73 +337,57 @@
 
 				//进行修改
 				let tmp = [];
-
 				this.orgVillageLists.forEach((item, index) => {
+					//楼栋
 					let villages = {
 						label: item.name,
 						value: index,
 						extra: item.id,
 						children: [],
 					};
-
-					if (!item.buildings) return true;
-					//楼栋
-					item.buildings.forEach((item2, idx2) => {
-						let buildings = {
+					
+					if (!item.apartments) return true;
+					//单元
+					item.apartments.forEach((item2, idx2) => {
+						let apartments = {
 							label: item2.name,
 							value: idx2,
 							extra: item2.id,
 							children: [],
 						};
 						// console.log('buildings', item2, !item2.apartments)
-						if (!item2.apartments) return true;
-						item2.apartments.forEach((item5, idx3) => {
+						if (!item2.floors) return true;
+						   //楼层
+						item2.floors.forEach((item5, idx3) => {
 
-							//单元楼
-							let ap = {
+							//楼层
+							let floors = {
 								label: item5.name,
 								value: idx3,
 								extra: item5.id,
 								children: [],
 							};
 
-							if (!item5.floors) return true;
+							if (!item5.rooms) return true;
 
-							item5.floors.forEach((item3, index3) => {
-
-								//楼层
-								let floors = {
-									label: item3.name,
-									value: index3,
-									extra: item3.id,
-									children: [],
-								};
-
-								// console.log('item3', item3)
-								if (!item3.rooms) return true;
-								//门牌号
-								item3.rooms.forEach((item4, idx4) => {
-									floors.children.push({
-										label: item4.room_number,
-										value: idx4,
-										extra: item4.id,
-									});
-								})
-
-								ap.children.push(floors);
+							item5.rooms.forEach((item4, idx4) => {
+								floors.children.push({
+									label: item4.name,
+									value: idx4,
+									extra: item4.id,
+								});
 							})
 
+							apartments.children.push(floors);
 
-							buildings.children.push(ap);
 
 						})
+						villages.children.push(apartments);
 
-						villages.children.push(buildings);
 					})
 
 					tmp.push(villages);
 				})
-
 
 				this.renderVillageLists = tmp;
 				// console.log(tmp);
@@ -438,8 +413,9 @@
 								if (res.data.code != 200) return;
 								let Users = res.data.data
 								this.record[0].value = Users.username
-								this.record[1].value = Users.tel.slice(0, 3) + '****' + Users.tel.slice(7, 11)
-								if (!Users.id_card_no&&!cache.get('Gshow')) { 
+								this.record[1].value = Users.tel.slice(0, 3) + '****' + Users.tel
+									.slice(7, 11)
+								if (!Users.id_card_no && !cache.get('Gshow')) {
 									uni.showModal({
 										content: '请完善您的身份信息',
 										success: function(res) {
@@ -456,8 +432,9 @@
 									})
 									return;
 								}
-								this.record[2].value = Users.id_card_no.slice(0, 3) + '**********' + Users.id_card_no.slice(Users.id_card_no
-									.length - 4, Users.id_card_no.length)
+								this.record[2].value = Users.id_card_no.slice(0, 3) +
+									'**********' + Users.id_card_no.slice(Users.id_card_no
+										.length - 4, Users.id_card_no.length)
 							},
 
 						})
@@ -470,47 +447,72 @@
 				})
 			},
 
+			villDils() {
+				village.displayInformation({
+					data: {
+						id: this.Villid,
+						need_buildings: '1'
+					},
+					fail: (err) => {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					},
+					success: (res) => {
+						this.isLoding = false
+						if (res.statusCode != 200) return
+						if (res.data.code != 200) return
+						// console.log('小区展示', res);
+						let data = res.data.data.buildings
+						this.orgVillageLists = data;
+						this.renderMSelect();
+					}
+				})
+			}
+
 		},
 		mounted() {
 			// console.log(obj);
-			if(cache.get('Gshow')){
+			if (cache.get('Gshow')) {
 				// #ifdef APP-PLUS
 				var page = this.$mp.page.$getAppWebview();
-				page.setStyle({ popGesture: 'none' });
+				page.setStyle({
+					popGesture: 'none'
+				});
 				// #endif
 				this.Gshow = cache.get('Gshow').value
 				this.able = true
 			}
-			this.loadVillageLists();
+			this.villDils()
 		},
 		onShow() {
 			this.loadUserData()
 		},
-		onBackPress(e){
-			if(!cache.get('Gshow')) return;
-			if (e.from == 'backbutton') { 
+		onBackPress(e) {
+			if (!cache.get('Gshow')) return;
+			if (e.from == 'backbutton') {
 				uni.showModal({
 					content: '您确定要退出新手指导？您也可以到个人中心、关于快通中重新开启',
-					success: function (res) {
+					success: function(res) {
 						if (res.confirm) {
 							cache.forget('Gshow')
 							uni.navigateBack({
 								delta: 1
 							});
 						} else if (res.cancel) {
-							
+
 						}
-						
+
 					}
 				});
 				return true; //阻止默认返回行为
 			}
 		},
-		onLoad() {
-
+		onLoad(val) {
+				this.Villid = val.id	
 		},
-		onHide() {
-		},
+		onHide() {},
 		filters: {
 
 		},
@@ -527,13 +529,14 @@
 </script>
 
 <style scoped lang="scss">
-      .navBox {
-      	width: 30%;
-      	top: 0;
-      	right: 0;
-      	position: fixed;
-      	z-index: 99;
-      }
+	.navBox {
+		width: 30%;
+		top: 0;
+		right: 0;
+		position: fixed;
+		z-index: 99;
+	}
+
 	.message {
 		margin-top: 30rpx;
 		width: 644rpx;
@@ -572,21 +575,21 @@
 		color: #666666;
 		border-bottom: 1rpx solid #BFBFBF;
 	}
-     
-	 .zIndex{
+
+	.zIndex {
 		z-index: 99999;
-		background: #FFFFFF; 
-	 }
-	 
+		background: #FFFFFF;
+	}
+
 	.item {
 		height: 75rpx;
 		font-size: 24rpx;
 		color: #666666;
 		border-bottom: 1rpx solid #BFBFBF;
-		
+
 		/deep/ .u-field {
 			padding-left: 20rpx;
-		
+
 		}
 
 		/deep/ .uni-input-input {
@@ -649,7 +652,7 @@
 		right: 50rpx;
 		color: #FFFFFF;
 		font-size: 30rpx;
-		
+
 	}
 
 	/deep/ .u-select__body__picker-view__item[data-v-a577ac80] {
@@ -660,46 +663,46 @@
 	/deep/ .uni-picker-view-indicator {
 		height: 88rpx !important;
 	}
-	
-	.guideBox{
-	  position: fixed;
-	  top: 0;
-	  width: 100%;
-	  height: 100vh;
-	  background: rgba(0,0,0,0.75);  
-	  z-index: 999;
+
+	.guideBox {
+		position: fixed;
+		top: 0;
+		width: 100%;
+		height: 100vh;
+		background: rgba(0, 0, 0, 0.75);
+		z-index: 999;
 	}
-    
-	.Gitem{
+
+	.Gitem {
 		width: 100%;
 		height: 100vh;
 	}
-	
-	.arrowsLU{
+
+	.arrowsLU {
 		width: 120rpx;
 		height: 88rpx;
 	}
-	
-	.Lutext{
+
+	.Lutext {
 		position: absolute;
 		left: 50rpx;
 		top: 90rpx;
 	}
-	
-	.enclText{
+
+	.enclText {
 		z-index: 99999;
 	}
-	
-	.llText{
+
+	.llText {
 		margin-top: -100rpx;
 	}
-	
-	.leftLower{
+
+	.leftLower {
 		width: 100rpx;
 		height: 88rpx;
 	}
-	
-	.pushMsg{
+
+	.pushMsg {
 		margin-left: 170rpx;
 		margin-top: -40rpx;
 	}

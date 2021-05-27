@@ -17,14 +17,14 @@
 								{{item.title}}
 							</view>
 						</view>
-						<image v-if="item.faceimg" :src="item.faceimg" class="itemImg" mode=""></image>
+						<image v-if="item.cover" :src="item.cover" class="itemImg" mode=""></image>
 						<image v-else src="https://oss.kuaitongkeji.com/upload/2020/12/15/AY0xTVMZBzNuJ0acHphXphi4gewrdyJeuBoypUCH.jpeg"
 						 class="itemImg" mode=""></image>
 					</view>
 					<view class="fz-12 timeBox flex ju-between m-t2">
 						{{item.created_at}}
 						<view class="">
-							155787人浏览
+							{{item.pv}}人浏览
 						</view>
 					</view>
 				</view>
@@ -72,12 +72,13 @@
 						// console.log(res.data.data);
 						let content = {
 							title: res.data.data.title,
-							content: res.data.data.desc
+							content: res.data.data.content
 						}
 						this.$store.commit("homeContent", content);
 						uni.navigateTo({
 							url: '/pages/InformationDetails/InformationDetails/InformationDetails'
 						})
+						this.newsRead(res.data.data.id)
 					}
 				})
 			},
@@ -85,6 +86,23 @@
 			lookmore() {
 				uni.navigateTo({
 					url: "/pages/index/peripheryMore/peripheryMore"
+				})
+			},
+			//阅读统计
+			newsRead(id){
+				home.newsRead({
+					data:{id:id},
+					fail: () => {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					},
+					success: (res) => {
+						if (res.statusCode != 200) return
+						if (res.data.code != 200) return
+						// console.log(res.data.data.data);
+					},
 				})
 			},
 			// 数据

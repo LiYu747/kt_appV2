@@ -8,28 +8,44 @@
 					{{infomsg.verify_status_text}}
 				</view>
 			</view>
-			<view class=" flex-d  m-t4">
-				<view class="">
-					<image :src="userInfo.avatar" class="userAvatar" mode=""></image>
-				</view>
-				<view class="userName">
-					姓名：{{userInfo.nickname}}
-				</view>
-				<view class="margin-t5 flex  ">
-					<view class="titleTex">
-						标题：
+			<view class="conBox flex">
+				<view class="msgBox m-t1">
+					<view class="">
+						姓名：{{userInfo.username}}
 					</view>
-					<view class="fz-14 conBox">
-						{{infomsg.title}}
+					<view class="m-t2">
+						申请时间：{{infomsg.created_at}}
 					</view>
 				</view>
-				<view class="m-t4 flex">
-					<view class="titleTex">
-						内容：
+				<view class="m-l4">
+					<image :src="userInfo.avatar" class="avatar" mode="aspectFill"></image>
+				</view>
+			</view>
+			<view class="conBox m-t3">
+				<view class="flex flex-w">
+					类别：
+					<view class="m-r1" v-for="item in infomsg.cate" :key="item.id">
+						{{item}}
 					</view>
-					<view class="fz-14 conBox">
-						{{infomsg.content}}
+				</view>
+					<view class="m-t2 m-b2">
+						标题：{{infomsg.title}}
 					</view>
+					<view class="">
+						内容：{{infomsg.content}}
+					</view>
+					<view v-if="infomsg.album" class="flex flex-w m-t3" >
+						<view class="m-r2 m-b1" :class="(index+1)%3==0?'dv':''" v-for="(item,index) in infomsg.album" :key="item.id">
+						  <image :src="item" mode="aspectFill" class="itemImg"></image>
+						</view>
+					</view>
+			</view>
+			<view class="m-t5 fz-14">
+				<view class="cl3">
+					申请结果
+				</view>
+				<view class="conBox m-t2">
+					<textarea v-model="value" class="textBox" placeholder="您可以在这里告诉他同意或不同意的原因" />
 				</view>
 			</view>
 		</view>
@@ -46,6 +62,9 @@
 				不通过
 			</view>
 		</view>
+		<view class="btnLine">
+			
+		</view>
 	</view>
 </template>
 
@@ -61,22 +80,29 @@
 		data() {
 			return {
 				id: '',
-				statusCode:1,//审核状态码
 				userInfo: {}, //用户信息
 				infomsg: {},
 				verifyStatus:'',//是否通过
+				value:''
 			}
 		},
 		methods: {
 			// 通过
 			pass(){
-			this.verifyStatus = 1	
-			this.passReq('通过审核')
+			this.verifyStatus = 2	
+			this.passReq('已通过')
 			},
 			// 不通过
 			nopass(){
-				this.verifyStatus = 2
-				this.passReq('未通过审核')
+				if(!this.value){
+					uni.showToast({
+						title:'请填写不同意的原因告诉用户',
+						icon:"none"
+					})
+					return;
+				}
+				this.verifyStatus = 3
+				this.passReq('未通过')
 			},
 			// 是否通过
 			passReq(text){
@@ -86,7 +112,8 @@
 				home.ReviewPosts({
 					data:{
 						id:this.id,
-						verify_status:this.verifyStatus
+						verify_status:this.verifyStatus,
+						verify_msg:this.value
 					},
 					fail: () => {
 						uni.hideLoading()
@@ -112,7 +139,8 @@
 							return;
 						}
 						uni.showToast({
-							title: res.data.msg
+							title: res.data.msg,
+							icon:"none"
 						})
 						this.$store.commit('checkIspass',text)
 						const time = setTimeout(() => {
@@ -155,8 +183,19 @@
 							return;
 						}
 						let data = res.data.data
-						this.statusCode = data.verify_status
-						this.userInfo = data.own_user
+						switch(data.verify_status){
+							case 1:
+							data.verify_status_text = '待处理'
+							break;
+							case 2:
+							data.verify_status_text = '已通过'
+							break;
+							case 3:
+							data.verify_status_text = '未通过'
+							break; 
+						}
+						data.created_at = data.created_at.slice(0,16)
+						this.userInfo = data.own_poster
 						this.infomsg = data
 					}
 				})
@@ -184,6 +223,9 @@
 </script>
 
 <style scoped lang="scss">
+	.dv{
+		margin-right: 0;
+	}
 	.fixed {
 		position: fixed;
 		z-index: 9;
@@ -194,7 +236,7 @@
 	}
 
 	.contentBox {
-		padding: 0 20rpx;
+		padding: 0 30rpx;
 		color: #666666;
 	}
 
@@ -205,39 +247,41 @@
 
 	.state {
 		width: 100%;
-		height: 120rpx;
-		border-bottom: 1px solid #CCCCCC;
+		height: 100rpx;
 		font-size: 15px;
 		color: #F07535;
 	}
 
-	.userAvatar {
-		width: 120rpx;
-		height: 120rpx;
-		border-radius: 50%;
-
-	}
-
-	.textBox {
+    .conBox{
+		padding: 30rpx 20rpx;
+		border-radius: 10rpx;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 		font-size: 14px;
 	}
-
-	.margin-t5 {
-		margin-top: 50rpx;
+	
+	.msgBox{
+		width: 450rpx;
+		font-size: 14px;
 	}
-
-	.userName {
-
-		margin-top: 20rpx;
+	
+	.avatar{
+		width: 124rpx;
+		height: 124rpx;
+		border-radius: 50%;
 	}
-
-	.conBox {
-		margin-top: -4rpx;
-		width: 560rpx;
-		padding: 10rpx;
-		background: #FFFFFF;
+	
+	.itemImg{
+		width: 200rpx;
+		height: 200rpx;
 		border-radius: 10rpx;
-			box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+	}
+	
+	.textBox{
+		height: 150rpx;
+		font-size: 14px;
+	}
+	.textarea-placeholder{
+		font-size: 14px;
 	}
 	
 	.btn{
@@ -263,5 +307,9 @@
 		border: 1rpx solid rgb(240, 117, 53);
 		font-size: 28rpx;
 		color: rgb(240, 117, 53);
+	}
+	
+	.btnLine{
+		height: 60rpx;
 	}
 </style>

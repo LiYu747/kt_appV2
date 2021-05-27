@@ -52,19 +52,16 @@
 			</view>
 		</view>
 
-		<view class="flex-d al-center nointo" v-if="code==403">
+		<view class="flex-d al-center nointo" v-if="code==5403">
 			<view class="">
 				您还没有申请成为外卖或者快递员
 			</view>
 			<view @click="ApplyingTo" class="m-t2 gointo">
 				去申请成为
 			</view>
-			<view class="m-t4 flex al-center">
-				若您已申请
-				<view class="m-l2 gointo" @click="application">
-					去查看申请进度
-				</view>
-			</view>
+		</view>
+		<view v-show="isShowType == true" @click="isShowType = false" class="showBox">
+			
 		</view>
 	</view>
 </template>
@@ -121,7 +118,7 @@
 					url: '/pages/userMessenger/goQrCode/goQrCode'
 				})
 			},
-			// 我都信息
+			// 我的信息
 			myInfo() {
 				uni.navigateTo({
 					url: '/pages/userMessenger/applyingTo/myInformation/myInformation'
@@ -137,7 +134,7 @@
 			// 拜访申请
 			VisitToApply() {
 				uni.navigateTo({
-					url: '/pages/visitapplication/visit/visit?text=您好,我这边是外卖快递,请您通过一下 '
+					url: '/pages/residence/seachVill/seachVill?code=2'
 				})
 			},
 			// 路线导航
@@ -169,7 +166,7 @@
 							})
 							return;
 						}
-						if (res.data.code != 200 && res.data.code != 403) {
+						if (res.data.code != 200 && res.data.code != 5403) {
 							uni.showToast({
 								title: res.data.msg,
 								icon: "none"
@@ -214,7 +211,7 @@
 	.userSelection {
 		position: fixed;
 		top: 0;
-		z-index: 99;
+		z-index: 999;
 	}
 
 	.sjxlIcon {
@@ -242,7 +239,7 @@
 
 	.contenBox {
 		margin-top: 20rpx;
-		width: 100%;
+		width: 690rpx;
 		padding: 30rpx;
 	}
 
@@ -303,16 +300,26 @@
 	.trilateral {
 		width: 0;
 		height: 0;
-		border: 10rpx solid;
+		border: 14rpx solid;
 		border-color: transparent transparent white white;
 	}
 
 	.nomenBox {
+		margin-top: -10rpx;
 		border-radius: 10rpx;
 		width: 240rpx;
 		padding: 20rpx 30rpx;
 		background: #FFFFFF;
 		font-size: 14px;
 		color: #666666;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+	}
+	
+	.showBox{
+		width: 100%;
+		height: 100vh;
+		position: fixed;
+		top: 0;
+		z-index: 99;
 	}
 </style>

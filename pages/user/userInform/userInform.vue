@@ -1,30 +1,34 @@
 <template>
 	<view class="">
-			<subunit titel='消息' class=""></subunit>
+		<subunit titel='消息' class=""></subunit>
 		<view class="navBox" :style="{height: this.$store.state.customBar + 'rpx'}">
 			<view @click="ReadAll" class="empty pos-abs">
 				全部已读
 			</view>
 		</view>
 		<view v-if="infoLists.length>0" class="contenBox">
-			<view class="flex-d al-center"  v-for="item in infoLists" :key='item.id'>
-				<view class="itemTime">
-					{{item.created_at}}
-				</view>
-				<view @click="goDetails(item)" class="itemBox flex al-center pos-rel">
-					<view class="itemTxt">
-						{{item.title}}
+			<u-swipe-action :show="item.show" :index="index" v-for="(item, index) in infoLists" :key="item.id"
+				@click="click" @open="open" class="m-t3 item" btn-width="180" :options="options">
+				<view @click="goDetails(item)" class="itemBox flex-d ">
+					<view class="itemTime">
+						{{item.created_at}}
 					</view>
-					<view v-if="item.read_at == null" class="circle pos-abs">
-					
+					<view class="flex al-center pos-rel">
+						<view class="itemTxt">
+							{{item.title}}
+						</view>
+						<view v-if="item.read_at == null" class="circle pos-abs">
+
+						</view>
 					</view>
 				</view>
-			</view>
+			</u-swipe-action>
 			<view v-show="isLoding == true&&infoLists.length>0" class=" flex ju-center al-center lodbox">
-				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+				</image>
 				加载中...
 			</view>
-			<view class="flex ju-center m-b2 fz-12" v-if="hasMore == false">
+			<view class="flex ju-center lodbox  fz-12" v-if="hasMore == false">
 				{{text}}
 			</view>
 		</view>
@@ -34,7 +38,8 @@
 		<view v-show="isLoding == true&&infoLists.length==0" class="showloding flex al-center ju-center">
 			<view class="loding flex-d al-center ju-center">
 				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 				</view>
 				加载中
 			</view>
@@ -60,15 +65,74 @@
 				isLoding: false, //是否显示loding
 				hasMore: true, //是否还有更多
 				infoLists: [], //消息列表
-				text: ''
+				text: '',
+				options: [{
+					text: '删除',
+					style: {
+						backgroundColor: '#F07535'
+					}
+				}]
 			}
 		},
 		methods: {
+			click(index) {
+				uni.showModal({
+					content:'您确定要删除',
+					success: (res) => {
+						if(res.confirm){
+							this.delmsg(index)
+						}
+						
+					}
+				})
+			},
+            //删除请求
+			delmsg(index){
+			   	home.delMsg({
+			   		data:{id:this.infoLists[index].id},
+			   		fail: () => {
+						uni.showToast({
+							title:"网络错误",
+							icon:"none"
+						})
+					},
+					success: (res) => {
+						if(res.statusCode != 200){
+							uni.showToast({
+								title:"网络出错了",
+								icon:"none"
+							})
+							return;
+						}
+						if(res.data.code != 200){
+							uni.showToast({
+								title:res.data.msg,
+								icon:"none"
+							})
+							return;
+						}
+						this.text = ''
+						this.infoLists.splice(index, 1);
+					    	uni.showToast({
+					    		title:res.data.msg,
+					    		icon:"none"
+					    	})
+					}
+			   	})
+			},
+			open(index) {
+				// 先将正在被操作的swipeAction标记为打开状态，否则由于props的特性限制，
+				// 原本为'false'，再次设置为'false'会无效
+				this.infoLists[index].show = true;
+				this.infoLists.map((val, idx) => {
+					if (index != idx) this.infoLists[idx].show = false;
+				})
+			},
 			// 全部已读
 			ReadAll() {
-				if(this.infoLists.length == 0) return;
+				if (this.infoLists.length == 0) return;
 				uni.showLoading({
-					title:'加载中'
+					title: '加载中'
 				})
 				home.allRead({
 					data: {},
@@ -104,10 +168,10 @@
 
 			// 去详情页面
 			goDetails(item) {
-				if(!item.read_at){
+				if (!item.read_at) {
 					this.Read(item.id)
-					this.infoLists.map( items => {
-						if(items.id == item.id){
+					this.infoLists.map(items => {
+						if (items.id == item.id) {
 							items.read_at = '已读'
 						}
 					})
@@ -134,7 +198,7 @@
 						if (res.statusCode != 200) return;
 						if (res.data.code != 200) return;
 						// console.log(res);
-						
+
 					}
 				})
 			},
@@ -172,8 +236,9 @@
 						let data = res.data.data
 						this.page = data.current_page + 1;
 						this.hasMore = data.next_page_url ? true : false;
-						data.data.map( item => {
-							item.created_at = item.created_at.slice(0,16)
+						data.data.map(item => {
+							item.created_at = item.created_at.slice(0, 16),
+								item.show = false
 						})
 						this.infoLists = this.infoLists.concat(data.data)
 					}
@@ -181,16 +246,16 @@
 			},
 		},
 		onShow() {
-			
+
 		},
 		// 下拉加载更多
 		onReachBottom() {
-			this.text = '没有更多了~'
+			this.text = '没有更多了'
 			if (this.isLoding == true || this.hasMore == false) return;
 			this.getInform();
 		},
 		mounted() {
-           this.getInform()
+			this.getInform()
 		},
 		onLoad() {
 
@@ -211,7 +276,7 @@
 </script>
 
 <style scoped lang="scss">
-    .navBox{
+	.navBox {
 		width: 30%;
 		top: 0;
 		right: 0;
@@ -233,18 +298,21 @@
 
 	.contenBox {
 		width: 690rpx;
-		padding: 30rpx;
+		padding: 0 30rpx;
+	}
+
+	.item {
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+		border-radius: 10rpx;
 	}
 
 	.itemBox {
 		width: 650rpx;
 		padding: 30rpx 20rpx;
-		background: #FFFFFF;
-		margin-bottom: 30rpx;
+		// background: #FFFFFF;
 		font-size: 12px;
 		color: #666666;
-		border-radius: 10rpx;
-		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+
 	}
 
 	.itemTxt {
@@ -268,7 +336,8 @@
 	}
 
 	.lodbox {
-		font-size: 24rpx;
+		font-size: 12px;
+		padding: 30rpx 0;
 	}
 
 	.showloding {
@@ -303,8 +372,8 @@
 		background: red;
 		right: 20rpx;
 	}
-	
-	.itemTime{
+
+	.itemTime {
 		font-size: 12px;
 		color: #999999;
 		margin-bottom: 10rpx;

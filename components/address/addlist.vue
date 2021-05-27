@@ -107,6 +107,11 @@
 			} ,
 			// 预约电梯
 			order(item) {
+				this.flag = true
+				this.message = true
+				this.msg = '预约成功'
+				uni.hideTabBar()
+				return;
 				uni.showLoading({
 					title:'预约中...'
 				})
@@ -141,6 +146,7 @@
 			},
 			// 确定关闭遮罩
 			sure() {
+				uni.showTabBar()
 				this.flag = false
 			},
 		},
@@ -172,9 +178,9 @@
 <style scoped lang="scss">
 	.listbox {
 		margin-top: -96rpx;
-		width: 700rpx;
+		width: 690rpx;
 		padding-left: 30rpx;
-		padding-right: 20rpx;
+		padding-right: 30rpx;
 	}
 
 	.content {
@@ -289,10 +295,6 @@
 		height: 79rpx;
 	}
 
-	.loca {
-		position: fixed;
-		bottom: 537rpx;
-	}
 
 	.scrimg {
 		margin-top: -74rpx;

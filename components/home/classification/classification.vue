@@ -4,7 +4,7 @@
         	<view class="flex-d al-center loyout ju-around" v-for="(item,index) in lists" :key='index' @click="goclass(item)">
         		   <image :src="item.image" class="itemimg" mode=""></image>
 				   <view class="text">
-				   	{{item.name}}
+				   	{{item.title}}
 				   </view>
         	</view>
         </view>
@@ -13,7 +13,7 @@
 
 <script>
 	import home from '../../../vendor/home/home.js'
-	import urlUtil from '../../../vendor/common/url.js';
+	import urlUtil from '../../../vendor/common/url.js'; 
 export default {
 name: "",
 components: {
@@ -41,8 +41,7 @@ data () {
 	  		success: (res) => {
 	  			if (res.statusCode != 200) return
 	  			if (res.data.code != 200) return
-	  			this.lists = res.data.data.ads
-	  			// console.log(res);
+	  			this.lists = res.data.data
 	  		},
 	  	})
 	  },

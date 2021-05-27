@@ -1,35 +1,39 @@
 <template>
 	<view class="">
-		<subunit  titel="拜访记录"></subunit>
+		<subunit titel="拜访记录"></subunit>
 		<view class="flex-d al-center">
 			<view v-if="lists.length>0" class="">
-				<view class="card" @click="godetails(items)" v-for="(items,indexs) in lists" :key='items.id' >
+				<view class="card" @click="godetails(items)" v-for="(items,indexs) in lists" :key='items.id'>
 					<view class="bx1 flex al-center pos-rel">
-						<image src="https://oss.kuaitongkeji.com/static/img/app/visit/user.png" class="dv3" mode=""></image>
-						<view class="">
+						<image src="https://oss.kuaitongkeji.com/static/img/app/visit/user.png" class="dv3" mode="">
+						</image>
+						<view v-if="items.own_host" class="">
 							{{items.own_host.username}}
 						</view>
 						<view class=" pos-abs rig">
-							{{items.verify_text}}
+							{{items.verify_status}}
 							>
 						</view>
 					</view>
 					<view class="bx1 flex al-center">
-						<image src="https://oss.kuaitongkeji.com/static/img/app/visit/time.png" class="dv3" mode=""></image>
+						<image src="https://oss.kuaitongkeji.com/static/img/app/visit/time.png" class="dv3" mode="">
+						</image>
 						<view class="">
 							{{items.created_at.slice(0,16)}}
 						</view>
 					</view>
 					<view class="bx2 flex al-center">
-						<image src="https://oss.kuaitongkeji.com/static/img/app/visit/pos.png" class="dv3" mode=""></image>
-						<view v-if="items.own_village" class="">
-							{{items.own_village.name}}
+						<image src="https://oss.kuaitongkeji.com/static/img/app/visit/pos.png" class="dv3" mode="">
+						</image>
+						<view class="">
+							{{items.place}}
 						</view>
 					</view>
-		
+
 				</view>
 				<view v-show="isLoding == true" class=" flex ju-center al-center lodbox">
-					<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 					加载中...
 				</view>
 				<view class="flex ju-center notext fz-14" v-if="hasMore == false">
@@ -39,11 +43,12 @@
 			<view v-if="lists.length==0 && isLoding == false" class="nono flex al-center ju-center">
 				您还没有申请记录哦~
 			</view>
-		
+
 			<view v-show="isLoding == true&&lists.length==0" class="showloding flex al-center ju-center">
 				<view class="loding flex-d al-center ju-center">
 					<view class=" ">
-						<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+						<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif"
+							mode=""></image>
 					</view>
 					加载中
 				</view>
@@ -80,7 +85,7 @@
 					url: `/pages/visitapplication/goDetails/goDetails?id=${id}`
 				})
 			},
-		
+
 			// 获取数据
 			loadPageData() {
 
@@ -96,7 +101,7 @@
 						home.gorecord({
 							data: {
 								page: this.page,
-                                pageSize:this.ps
+								pageSize: this.ps
 							},
 							fail: (err) => {
 								this.isLoding = false;
@@ -117,7 +122,19 @@
 								// console.log(data);
 								this.page = data.current_page + 1;
 								this.hasMore = data.next_page_url ? true : false;
-
+								data.data.map(item => {
+									switch (item.verify_status) {
+										case 1:
+											item.verify_status = '待处理'
+											break;
+										case 2:
+											item.verify_status = '已同意'
+											break;
+										case 3:
+											item.verify_status = '未同意'
+											break;
+									}
+								})
 								this.lists = this.lists.concat(data.data);
 							},
 
@@ -129,14 +146,14 @@
 			},
 		},
 		mounted() {
-           this.loadPageData()
+			this.loadPageData()
 		},
 		onShow() {
-			
+
 		},
 		// 下拉加载更多
 		onReachBottom() {
-			this.text = '没有更多了~'
+			this.text = '没有更多了'
 			if (this.isLoding == true || this.hasMore == false) return;
 			this.loadPageData();
 
@@ -214,8 +231,8 @@
 		font-size: 14px;
 		color: #666666;
 	}
-	
-	.notext{
+
+	.notext {
 		padding: 30rpx 0;
 		font-size: 12px;
 	}

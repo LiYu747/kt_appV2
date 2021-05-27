@@ -1,7 +1,8 @@
 <template>
 	<view class="back">
 		<view class="nav pos-rel flex al-center ju-center">
-			<image @click="goback" class="img pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/login/fanhui.png" mode=""></image>
+			<image @click="goback" class="img pos-abs"
+				src="https://oss.kuaitongkeji.com/static/img/app/login/fanhui.png" mode=""></image>
 			<view class="text">
 				注册
 			</view>
@@ -9,7 +10,7 @@
 
 		<!-- logo -->
 		<view class="logo flex ju-center">
-			<image src="https://oss.kuaitongkeji.com/static/img/app/login/logo.png" class="logoimg" mode=""></image>
+			<image :src="avatar" @click="UploadAvatar" class="logoimg" mode="aspectFill"></image>
 		</view>
 		<!-- 输入框 -->
 		<view class="top flex-d al-center">
@@ -17,50 +18,62 @@
 				<!-- 昵称-->
 				<u-form-item label="" class="postop" prop="nickname">
 					<view class="uiput flex al-center pos-rel">
-						<image class="nameimg pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/register/my.png" mode=""></image>
+						<image class="nameimg pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/register/my.png"
+							mode=""></image>
 						<u-input class="ipt" :clearable='flag' v-model="form.nickname" placeholder="昵称(用于给他人展示)" />
 					</view>
 				</u-form-item>
-				<!-- 姓名-->
-				<u-form-item label="" class="postop" prop="name">
+				<!-- 性别-->
+				<u-form-item label="" class="postop" prop="sex">
 					<view class="uiput flex al-center pos-rel">
-						<image class="nameimg pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/register/my.png" mode=""></image>
-						<u-input class="ipt" :clearable='flag' v-model="form.name" placeholder="真实姓名" />
+						<image class="nameimg pos-abs" src="../../../image/Usersex.png" mode=""></image>
+						<view class="userSex">
+							性别
+						</view>
+						<view class="pos-abs celradio">
+							<u-radio-group v-model="value" @change="radioGroupChange">
+								<u-radio label-size="24" icon-size="24" active-color="#FF773C"
+									v-for="(item, index) in list" :key="index" :name="item.name"
+									:disabled="item.disabled">
+									{{item.name}}
+								</u-radio>
+							</u-radio-group>
+						</view>
 					</view>
 				</u-form-item>
-				<!-- 身份证号 -->
-				<!-- <u-form-item label="" class="postop" prop="idcard">
+				<!-- 设置密码-->
+				<u-form-item label="" class="postop" prop="password">
 					<view class="uiput flex al-center pos-rel">
-						<image class="idcardimg pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/register/card.png" mode=""></image>
-						<u-input class="ipt" :clearable='flag' v-model="form.idcard" placeholder="身份证号码" />
+						<image class="idptimg pos-abs" src="../../../image/userpawd.png" mode=""></image>
+						<u-input class="ipt" type="password" :clearable='flag' v-model="form.password"
+							placeholder="设置登录密码" />
 					</view>
-				</u-form-item> -->
-				<!-- 上传证件照-->
-				<u-form-item label="" class="postop" prop="idphoto">
+				</u-form-item>
+				<!-- 确认密码-->
+				<u-form-item label="" class="postop" prop="confirmPass">
 					<view class="uiput flex al-center pos-rel">
-						<image class="idptimg pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/register/photo.png" mode=""></image>
-						<u-input class="ipt" :disabled="true" :clearable='flag' v-model="form.idphoto" placeholder="上传人像照片" />
-						<view v-if="toot == false" @click="upload" class="upload pos-abs">
-							上传
-						</view>
-						<view v-else @click="preview" class="upload pos-abs">
-							预览
-						</view>
+						<image class="idptimg pos-abs" src="../../../image/userpawd.png" mode=""></image>
+						<u-input class="ipt" type="password" :clearable='flag' v-model="form.confirmPass"
+							placeholder="确认登录密码" />
 					</view>
 				</u-form-item>
 				<!-- 手机号 -->
 				<u-form-item class="postop" label="" prop="phone">
 					<view class="uiput flex al-center pos-rel">
-						<image class="iptimg pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/login/phone.png" mode=""></image>
+						<image class="iptimg pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/login/phone.png"
+							mode=""></image>
 						<u-input class="ipt" type="number" :clearable='flag' v-model="form.phone" placeholder="手机号" />
 					</view>
 				</u-form-item>
 				<!-- 验证码 -->
 				<u-form-item class="postop" label="" prop="Verification">
 					<view class="uiput flex al-center pos-rel">
-						<image class="iptimg2 pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/login/security.png" mode=""></image>
-						<u-input class="ipt" type="number" :clearable='flag' v-model="form.Verification" placeholder="验证码" />
-						<view @click="addvercode" ref='code' :class="{'dv':code===false}" class="vcode pos-abs flex al-center ju-center">
+						<image class="iptimg2 pos-abs"
+							src="https://oss.kuaitongkeji.com/static/img/app/login/security.png" mode=""></image>
+						<u-input class="ipt" type="number" :clearable='flag' v-model="form.Verification"
+							placeholder="验证码" />
+						<view @click="addvercode" ref='code' :class="{'dv':code===false}"
+							class="vcode pos-abs flex al-center ju-center">
 							<view class="tetxs">
 								{{text}}
 							</view>
@@ -84,7 +97,8 @@
 		<view v-show="isLoding == true" class="showloding flex al-center ju-center">
 			<view class="loding flex-d al-center ju-center">
 				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 				</view>
 				上传中
 			</view>
@@ -104,22 +118,63 @@
 		},
 		props: {},
 		data() {
+			const validatePass = (rule, value, callback) => {
+				if (value === "") {
+					callback(new Error("请输入密码"));
+				} else {
+					callback();
+				}
+			};
+			const validatePass2 = (rule, value, callback) => {
+				if (value === "") {
+					callback(new Error("请再次输入密码"));
+				} else if (value !== this.form.password) {
+					callback(new Error("两次输入密码不一致!"));
+				} else {
+					callback();
+				}
+			};
 			return {
 				flag: false, //验证码变量
-				toot: false, //预览变量
 				text: '获取验证码',
 				code: true, //验证码按钮
 				timer: 60, //倒计时时间
 				avatar: 'https://oss.kuaitongkeji.com/static/img/avatar/male_64.png', //用户头像
-				photo: '', //证件照
+				sex: 1, //用户性别默认男
 				form: {
 					nickname: '',
-					name: '',
+					password: '',
+					confirmPass: '',
 					phone: '',
-					Verification: '',
-					// idcard: ''
+					Verification: ''
 				},
-				isLoding: false //上传照片 
+				rules: {
+					password: [{
+							min: 6,
+							message: '密码至少6位',
+							trigger: 'blur'
+						},
+						{
+							validator: validatePass,
+							trigger: "blur"
+						}
+					],
+					confirmPass: [{
+						validator: validatePass2,
+						trigger: "blur"
+					}],
+				},
+				isLoding: false, //上传照片 
+				list: [{
+						name: '男',
+						disabled: false
+					},
+					{
+						name: '女',
+						disabled: false
+					},
+				],
+				value: '男',
 			}
 		},
 		methods: {
@@ -136,8 +191,9 @@
 				uni.showLoading({
 					title: '发送中...'
 				})
-				sms.userRegCode({
+				sms.smsSend({
 					data: {
+						use_to: 'user_reg',
 						tel: this.form.phone
 					},
 					fail: () => {
@@ -168,8 +224,6 @@
 							title: res.data.msg,
 							icon: 'none'
 						})
-						// this.form.Verification = res.data.data.code
-						// console.log(res.data.data.code);
 						const authtime = setInterval(() => {
 							this.code = false
 							this.timer--
@@ -195,17 +249,17 @@
 					})
 					return;
 				}
-				if (this.form.name == '') {
+				if (this.form.password == '') {
 					uni.showToast({
-						title: '请输入姓名',
+						title: '请输入登录密码',
 						icon: 'none'
 					})
 					return;
 				}
-				if( this.photo == ''){
+				if (this.form.confirmPass == '') {
 					uni.showToast({
-					title:'请上传人像照片',
-					icon:'none'
+						title: '请输入确认密码',
+						icon: 'none'
 					})
 					return;
 				}
@@ -228,14 +282,13 @@
 				})
 				userinfo.register({
 					data: {
-						tel: this.form.phone,
-						smsCode: this.form.Verification,
 						nickname: this.form.nickname,
-						username: this.form.name,
-						// idCardNo: this.form.idcard,
+						sex: this.sex,
+						secret: this.form.password,
+						secret_confirmation: this.form.confirmPass,
+						tel: this.form.phone,
+						sms_code: this.form.Verification,
 						avatar: this.avatar,
-						faceimg: this.photo,
-						sex: 1
 					},
 					fail: (err) => {
 						uni.hideLoading()
@@ -245,8 +298,6 @@
 						})
 					},
 					success: (res) => {
-						// console.log(res);
-
 						uni.hideLoading()
 						if (res.statusCode != 200) {
 							uni.showToast({
@@ -264,14 +315,17 @@
 							return;
 						}
 
-
-						this.$refs.uToast.show({
+						uni.showToast({
 							title: res.data.msg,
-							// type: 'success',
-							url: `/pages/auth/login/login?register=${true}`
-						});
+							icon: "none"
+						})
+						const timeOut = setTimeout(() => {
+							uni.navigateBack({
+								delta: 1
+							})
+							clearTimeout(timeOut)
+						}, 2000)
 
-						// console.log(res);
 					},
 
 				})
@@ -282,9 +336,17 @@
 					delta: 1
 				})
 			},
-			// 上传
-			upload() {
-				cache.forget('photo')
+			// 选中任一radio时，由radio-group触发
+			radioGroupChange(e) {
+				if (e == '男') {
+					this.sex = 1
+				} else {
+					this.sex = 2
+				}
+
+			},
+			// 上传头像
+			UploadAvatar() {
 				this.$u.route({
 					// 关于此路径，请见下方"注意事项"
 					url: '/uview-ui/components/u-avatar-cropper/u-avatar-cropper',
@@ -299,12 +361,6 @@
 					}
 				})
 			},
-			// 预览
-			preview() {
-				uni.navigateTo({
-					url: `/pages/user/register/headSculpture`
-				})
-			}
 		},
 		created() {
 			// 监听从裁剪页发布的事件，获得裁剪结果
@@ -338,13 +394,11 @@
 							title: '上传成功',
 							icon: 'none'
 						})
-						// console.log(res);
-						this.photo = data.data.url
-						cache.set('photo', data.data.url)
-						this.toot = true
+						this.avatar = data.data.url
 					}
 				});
 			})
+
 		},
 		mounted() {
 
@@ -353,10 +407,7 @@
 			this.$refs.uForm.setRules(this.rules);
 		},
 		onShow() {
-			if (cache.get('photo')) {
-				this.photo = cache.get('photo')
-				// console.log(this.photo);
-			}
+
 		},
 		onLoad() {
 
@@ -395,6 +446,11 @@
 		left: 50rpx;
 	}
 
+	.userSex {
+		color: #ffa67f;
+		font-size: 12px;
+	}
+
 	.text {
 		font-size: 36rpx;
 		color: #FF773C;
@@ -407,8 +463,9 @@
 	}
 
 	.logoimg {
-		width: 128rpx;
-		height: 169rpx;
+		width: 130rpx;
+		height: 130rpx;
+		border-radius: 50%;
 	}
 
 	.uiput {
@@ -423,14 +480,17 @@
 		/deep/ .uni-input-input {
 			color: #FF773C;
 			font-size: 12px;
-			// background: red;
 			width: 350rpx;
 		}
 
 		/deep/ .uni-input-placeholder {
-			color: #FF773C !important;
+			color: #ffa67f !important;
 			font-size: 12px;
 		}
+	}
+
+	.celradio {
+		right: 0rpx;
 	}
 
 	.top {

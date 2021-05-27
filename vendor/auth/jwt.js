@@ -55,7 +55,6 @@ class JWT{
 	}
 	
 	parseToken(token){
-		
 		let jwt_token = token
 		let jwtPre = "Bearer ";
 		let str = jwt_token.slice(jwtPre.length);

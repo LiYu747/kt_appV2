@@ -8,10 +8,6 @@
    					{{titel}}
    				</view>
    			</view>
-			<!-- <view v-if="showmap == true" class="map pos-abs flex al-center">
-				复地.御香山3悦
-				<image src="../../images.kuaitongkeji.com/static/img/app/classification/map.png" class="mapimg" mode=""></image>
-			</view> -->
    		</view>
 		<view :style="{height: this.$store.state.customBar + 'rpx' }">
 			

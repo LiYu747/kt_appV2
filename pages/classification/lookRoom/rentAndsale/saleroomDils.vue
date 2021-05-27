@@ -17,7 +17,13 @@
 				<view class="nameDetail">
 					{{roomInof.title}}
 				</view>
-				<view class="fz-12 m-t2 haveSeen">
+				<view class="pritext flex m-t1">
+					{{roomInof.avg_price}}
+					<view class="fz-12">
+						元/㎡
+					</view>
+				</view>
+				<view class="fz-12  haveSeen">
 					已有{{roomInof.pv}}人浏览
 				</view>
 			</view>
@@ -71,7 +77,7 @@
 			<view @click="Address" class="addressBox m-t3 flex  fz-14">
 				<image src="https://oss.kuaitongkeji.com/static/img/app/lookroom/add.png" class="addImg" mode=""></image>
 				<view class="m-l2 addressmsg">
-					{{roomInof.village}}
+					{{roomInof.address}}
 				</view>
 			</view>
 
@@ -193,7 +199,7 @@
 						this.locdata[1].value = data.room + '室' + hall + bathroom;
 						this.locdata[2].value = data.area + '㎡'
 						this.id = data.id
-						cache.set('isShow',data.is_show)
+						this.$store.commit('userIschenge',data.is_show)
 						if (data.zx == 'low') {
 							data.zx = '清水房'
 						}
@@ -217,7 +223,7 @@
 			// 地址
 			Address(){
 				let latitude = Number(this.roomInof.lat)
-				let longitude = Number(this.roomInof.lgt)
+				let longitude = Number(this.roomInof.lng)
 				uni.openLocation({
 				    latitude: latitude,
 				    longitude: longitude, 

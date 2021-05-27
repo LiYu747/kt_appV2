@@ -6,7 +6,7 @@
 				{{item.titel}}
 			</view>
 					<image class="reimg" src="../../image/goIn.png" mode=""></image>
-			<view v-if="index ==6" class="">
+			<view v-if="index ==5" class="">
 				<view v-if="0<informmsg && user" class="munber flex al-center ju-center">
 					{{informmsg}}
 				</view>
@@ -55,11 +55,11 @@
 						titel: '回家二维码',
 						url: '/pages/qrcode/qrCode/qrCode'
 					},
-					{
-						image: 'https://oss.kuaitongkeji.com/static/img/app/user/Trecords.png',
-						titel: '出行记录',
-						url: '/pages/user/travelRecords/travelRecords'
-					},
+					// {
+					// 	image: 'https://oss.kuaitongkeji.com/static/img/app/user/Trecords.png',
+					// 	titel: '出行记录',
+					// 	url: '/pages/user/travelRecords/travelRecords'
+					// },
 					{
 						image: "https://oss.kuaitongkeji.com/static/img/app/lookroom/zoom.png",
 						titel: '房屋租售',
@@ -130,7 +130,7 @@
 		width: 690rpx;
 		height: 90rpx;
 		background: #FFFFFF;
-		border-bottom: 1rpx solid rgb(231, 231, 231);
+		border-bottom: 1px solid rgb(231, 231, 231);
 	}
 
 	.itemtext {

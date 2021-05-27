@@ -22,13 +22,19 @@ class Home {
 	// 标记所有未读为已读
 	allRead(params) {
 		params.url = routes.home.adPos.allRead;
-		req.patch(params);
+		req.post(params);
 	}
 
 	// 标为已读
 	userRead(params) {
 		params.url = routes.home.adPos.userRead;
-		req.patch(params);
+		req.post(params);
+	}
+	
+	//删除消息
+	delMsg(params) {
+		params.url = routes.home.adPos.delMsg;
+		req.delete(params);
 	}
 
 	//发布出租房消息
@@ -114,6 +120,12 @@ class Home {
 		params.url = routes.home.classifyPost.roomDateils;
 		req.get(params);
 	}
+	
+	// 出租房浏览统计
+	rentalView(params) {
+		params.url = routes.home.classifyPost.rentalView;
+		req.post(params);
+	}
 
 	// 查看平台所有房屋出售记录
 	sellRecords(params) {
@@ -126,6 +138,18 @@ class Home {
 		params.url = routes.home.classifyPost.sellDetails;
 		req.get(params);
 	}
+	
+	//售房信息浏览统计
+	saleView(params) {
+		params.url = routes.home.classifyPost.saleView;
+		req.post(params);
+	}
+	
+	////运动店铺
+	motionshop(params) {
+		params.url = routes.home.classifyPost.motionshop;
+		req.get(params);
+	}
 
 	// 周边消息
 	news(params) {
@@ -136,6 +160,11 @@ class Home {
 	//周边详情
 	surroundingDetails(params) {
 		params.url = routes.home.news.surroundingDetails
+		req.get(params)
+	}
+	//阅读统计
+	newsRead(params) {
+		params.url = routes.home.news.newsRead
 		req.get(params)
 	}
 
@@ -268,7 +297,7 @@ class Home {
 	// 审核某条记录
 	auditRecord(params) {
 		params.url = routes.propertyManagement.auditRecord
-		req.patch(params)
+		req.post(params)
 	}
 
 	//获取所有帖子
@@ -286,7 +315,7 @@ class Home {
 	// 审核帖子
 	ReviewPosts(params) {
 		params.url = routes.propertyManagement.ReviewPosts
-		req.patch(params)
+		req.post(params)
 	}
 
 	// 小区内的住户
@@ -294,7 +323,19 @@ class Home {
 		params.url = routes.propertyManagement.allResident
 		req.get(params)
 	}
-
+	
+	//小区内住户详情
+	ResidentD(params) {
+		params.url = routes.propertyManagement.ResidentD
+		req.get(params)
+	}
+	
+	//管理的小区信息 
+     getVillageinfo(params) {
+     	params.url = routes.propertyManagement.getVillageinfo
+     	req.get(params)
+     }
+	 
 	//查看申请记录的进度
 	applicationProgress(params) {
 		params.url = routes.propertyManagement.applicationProgress

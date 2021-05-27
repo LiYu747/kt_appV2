@@ -9,9 +9,13 @@
 			上传头像
 		</view>
 		<view class="postop">
-			<view class="fied flex al-center" v-for="(item,index) in parameter" @click="xuaz(index)" :key='item.id' :class="{'dv':index===parameter.length-1,'colr':item.value==='预览'}">
-				<u-field label-width=300 v-model="item.value" :label="item.label" :clearable=false input-align='right' :disabled="item.disabled">
+			<view class="fied flex al-center" :class="index == 4 ? 'nodv':''" v-for="(item,index) in parameter" @click="xuaz(index)" :key='item.id' >
+				<u-field label-width=270 v-model="item.value" :label="item.label" :clearable=false input-align='right' :disabled="item.disabled">
 				</u-field>
+				<view v-if="index>1" @click="add(index)" class="">
+					<image v-show="item.show == false"  src="../../../image/user/onshow.png" class="onshow" mode=""></image>
+					<image v-show="item.show == true" src="../../../image/user/show.png" class="onshow"  mode=""></image>
+				</view>
 			</view>
 			<u-select v-model="show" :default-value='value' @confirm='ok' :list="list"></u-select>
 		</view>
@@ -59,24 +63,22 @@
 						disabled: true
 					},
 					{
-						value: '预览',
-						label: '正面免冠照',
-						disabled: true
-					},
-					{
 						value: '',
 						label: '真实姓名',
-						disabled: true
+						disabled: true,
+						show:false
 					},
 					{
 						value: '',
 						label: '手机号码',
-						disabled: true
+						disabled: true,
+						show:false
 					},
 					{
 						value: '',
 						label: '身份证号码',
-						disabled: true
+						disabled: true,
+						show:false
 					}
 				],
 				show: false, //打开性别选择
@@ -93,60 +95,56 @@
 				flag: false, //判断用户是否选择了头像
 				faceimg: '', //证件照
 				value: [], //默认选择
-				isLoding: false //上传照片
+				isLoding: false ,//上传照片
+				usermsg:{} //用户资料
 			} 
 		},
 		methods: {
-			
+			add(index){
+				this.parameter.map( (item,idx) => {
+					if(index == idx){
+						item.show = !item.show
+						if(item.show == true){
+							switch(index){
+								case 2:
+								item.value = this.usermsg.username
+								break;
+								case 3:
+								item.value =  this.usermsg.tel
+								break;
+								case 4:
+								item.value = this.usermsg.id_card_no
+							}
+						}else{
+							switch(index){
+								case 2:
+								item.value = this.usermsg.username.slice(0,1) + '**'
+								break;
+								case 3:
+								item.value =  this.usermsg.tel.slice(0,3) + '****' +this.usermsg.tel.slice(7,11)
+								break;
+								case 4:
+								item.value =  this.usermsg.id_card_no.slice(0,3) + '**********' + this.usermsg.id_card_no.slice(this.usermsg.id_card_no.length-4,this.usermsg.id_card_no.length)
+							}
+						}
+					}
+				})
+			},
 			// 上传头像
 			UploadAvatar() {
-				uni.chooseImage({
-					success: (chooseImageRes) => {
-						this.isLoding = true
-						const tempFilePaths = chooseImageRes.tempFilePaths;
-						if (tempFilePaths.length == 0) return;
-						uni.uploadFile({
-							url: route.services.file.upload, //仅为示例，非真实的接口地址
-							filePath: tempFilePaths[0],
-							name: 'file',
-							fail: () => {
-								this.isLoding = false;
-								uni.showToast({
-									title: '网络出错',
-									icon:'none'
-								});
-							},
-							success: (val) => {
-								// console.log(val);
-								this.isLoding = false;
-								if (val.statusCode != 200) {
-									uni.showToast({
-										title: '网络请求出错',
-										icon:'none'
-									});
-									return;
-								}
-
-								let data = JSON.parse(val.data)
-
-								if (data.code != 200) {
-									uni.showToast({
-										title: data.msg,
-										icon:'none'
-									});
-									return;
-								}
-
-								uni.showToast({
-									title: '上传成功',
-									icon: "none"
-								})
-								this.image = data.data.url
-								this.flag = false
-							}
-						})
+				this.$u.route({
+					// 关于此路径，请见下方"注意事项"
+					url: '/uview-ui/components/u-avatar-cropper/u-avatar-cropper',
+					// 内部已设置以下默认参数值，可不传这些参数
+					params: {
+						// 输出图片宽度，高等于宽，单位px
+						destWidth: 250,
+						// 裁剪框宽度，高等于宽，单位px
+						rectWidth: 250,
+						// 输出的图片类型，如果'png'类型发现裁剪的图片太大，改成"jpg"即可
+						fileType: 'jpg',
 					}
-				});
+				})
 			},
 			xuaz(index) {
 				// 选择性别
@@ -159,12 +157,6 @@
 					if (sex == '女') {
 						this.value = [1]
 					}
-				}
-				// 预览证件照
-				if (index == 2) {
-					uni.navigateTo({
-						url: `/components/idPhoto/idPhoto/idPhoto?photo=${this.faceimg}`
-					})
 				}
 			},
 			// 性别确定按钮
@@ -249,6 +241,7 @@
 						}
 						// console.log(res.data.data);
 						let data = res.data.data
+						this.usermsg = data
 						if(data.avatar == 'https://oss.kuaitongkeji.com/static/img/avatar/male_64.png'){
 							this.flag = true
 						}	
@@ -261,21 +254,60 @@
 						if (data.sex == 2) {
 							this.parameter[1].value = '女'
 						}
-						this.parameter[3].value = data.username
-						this.parameter[4].value =   data.tel.slice(0,3) + '****' +data.tel.slice(7,11)
+						this.parameter[2].value = data.username.slice(0,1) + '**'
+						this.parameter[3].value =   data.tel.slice(0,3) + '****' +data.tel.slice(7,11)
 						if(data.id_card_no){
-							this.parameter[5].value =  data.id_card_no.slice(0,3) + '**********' + data.id_card_no.slice(data.id_card_no.length-4,data.id_card_no.length)
+							this.parameter[4].value =  data.id_card_no.slice(0,3) + '**********' + data.id_card_no.slice(data.id_card_no.length-4,data.id_card_no.length)
 						}
 					},
 				})
 			}
 		},
+		created() {
+			// 监听从裁剪页发布的事件，获得裁剪结果
+			uni.$on('uAvatarCropper', path => {
+				this.isLoding = true
+				// 可以在此上传到服务端
+				uni.uploadFile({
+					url: route.services.file.upload,
+					filePath: path,
+					name: 'file',
+					complete: (res) => {
+						this.isLoding = false;
+						if (res.statusCode != 200) {
+							uni.showToast({
+								title: '网络请求出错',
+								icon: 'none'
+							});
+							return;
+						}
+		
+						let data = JSON.parse(res.data)
+		
+						if (data.code != 200) {
+							uni.showToast({
+								title: data.msg,
+								icon: 'none'
+							});
+							return;
+						}
+						uni.showToast({
+							title: '上传成功',
+							icon: 'none'
+						})
+						this.image = data.data.url
+						this.flag = false
+					}
+				});
+			})
+		
+		},
 		mounted() {
-
+           this.UserData()
 		},
 		onLoad(val) {},
 		onShow() {
-			this.UserData()
+			
 		},
 		filters: {
 
@@ -293,6 +325,12 @@
 </script>
 
 <style scoped lang="scss">
+	
+	.onshow{
+		width: 32rpx;
+		height: 20rpx;
+		margin-right: 12rpx;
+	}
 	.activ {
 		width: 148rpx;
 		height: 148rpx;
@@ -315,13 +353,12 @@
 
 	.fied {
 		width: 630rpx;
-		height: 81rpx;
+		height: 90rpx;
 		padding-left: 40rpx;
 		padding-right: 20rpx;
 		background: #FFFFFF;
-		border-bottom: 1rpx solid #BFBFBF;
-		font-size: 30rpx;
-
+		border-bottom: 1px solid #BFBFBF;
+		font-size: 15px;
 		/deep/ .u-field {
 			width: 100%;
 			padding: 0;
@@ -337,10 +374,9 @@
 		border: none;
 	}
 
-	.colr {
-		/deep/ .uni-input-input {
-			color: #F07535;
-		}
+	/deep/ 
+	.uni-input-input{
+		width: 300rpx;
 	}
 
 	.end {
@@ -359,7 +395,7 @@
 	}
 
 	.showloding {
-		position: absolute;
+		position: fixed;
 		width: 100%;
 		height: 100vh;
 		top: 0;
@@ -376,5 +412,9 @@
 		height: 200rpx;
 		background: rgba(88, 88, 88, 0.8);
 		border-radius: 10rpx;
+	}
+	
+	.nodv{
+		border-bottom: none;
 	}
 </style>

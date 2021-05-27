@@ -1,37 +1,39 @@
 <template>
 	<view class="">
-			<subunit titel='进出记录'></subunit>
-		<view v-if="lists.length>0" class="flex-d al-center ">
-			<view class="itemBox" v-for="item in lists" :key='item.id'>
-				   <view class="layoutBox">
-				   	 地址：{{item.village_name}}
-				   </view>
-				   <view class="layoutBox">
-				   	 入门时间： {{item.open_gate_at}}
-				   </view>
-				   <view class="layoutBox">
-				   出门时间： 	{{item.created_at}}
-				   </view>
-				   <view class="m-t2 descTex">
-				   {{item.desc}}
-				   </view>
+		<subunit titel='进出记录'></subunit>
+		<view v-if="code == 200" class="">
+			<view v-if="lists.length>0" class="flex-d al-center ">
+				<view class="itemBox" v-for="item in lists" :key='item.id'>
+					<view class="layoutBox">
+						地址：{{item.village_name}}
+					</view>
+					<view class="layoutBox">
+						入门时间： {{item.open_gate_at}}
+					</view>
+					<view class="layoutBox">
+						出门时间： {{item.created_at}}
+					</view>
+					<view class="m-t2 descTex">
+						{{item.desc}}
+					</view>
+				</view>
 			</view>
-		</view>
-		<view class="noaccess flex ju-center" v-if="lists.length==0&&isLoading==false">
-			  暂无出行记录
-		</view>
-
-		<view v-if="hasMore == false" class="bomLine flex ju-center al-center">
-			{{noText}}
-		</view>
-		<view v-show="isLoading == true && lists.length>0" class=" flex ju-center al-center lodbox">
-			<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
-			加载中...
+			<view class="noaccess flex ju-center" v-if="lists.length==0">
+				暂无出行记录
+			</view>
+			<view v-if="hasMore == false" class="bomLine flex ju-center al-center">
+				{{noText}}
+			</view>
+			<view v-show="isLoading == true && lists.length>0" class=" flex ju-center al-center lodbox">
+				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+				加载中...
+			</view>
 		</view>
 		<view v-show="isLoading == true&&lists.length==0" class="showloding flex al-center ju-center">
 			<view class="loding flex-d al-center ju-center">
 				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 				</view>
 				加载中
 			</view>
@@ -50,12 +52,13 @@
 		props: {},
 		data() {
 			return {
+				code: 0,
 				noText: '',
 				page: 1,
 				pageSize: 15,
 				isLoading: false,
 				hasMore: true,
-				lists:[]
+				lists: []
 			}
 		},
 		methods: {
@@ -93,22 +96,23 @@
 							})
 							return;
 						}
-						if(res.data.code == 200){
-							let data = res.data.data
-							this.page = data.current_page + 1;
-							this.hasMore = data.next_page_url ? true : false;
-							data.data.map( item => {
-								item.open_gate_at = item.open_gate_at.slice(0,16)
-								item.created_at = item.created_at.slice(0,16)
-							})
-							this.lists = this.lists.concat(data.data)
-						}
-                        else{
+						if (res.data.code != 200) {
 							uni.showToast({
-								title:res.data.msg,
-								icon:'none'
+								title: res.data.msg,
+								icon: 'none'
 							})
+							return;
 						}
+						this.code = res.data.code
+						let data = res.data.data
+						this.page = data.current_page + 1;
+						this.hasMore = data.next_page_url ? true : false;
+						data.data.map(item => {
+							item.open_gate_at = item.open_gate_at.slice(0, 16)
+							item.created_at = item.created_at.slice(0, 16)
+						})
+						this.lists = this.lists.concat(data.data)
+
 					}
 				})
 			}
@@ -194,11 +198,13 @@
 	.uni-input-placeholder {
 		font-size: 12px;
 	}
-    .descTex{
+
+	.descTex {
 		font-size: 12px;
 		color: #999999;
 	}
-	.itemBox{
+
+	.itemBox {
 		margin-top: 30rpx;
 		width: 650rpx;
 		background: #FFFFFF;
@@ -207,36 +213,39 @@
 		border-radius: 10rpx;
 		color: #666666;
 		padding-bottom: 40rpx;
-			box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 	}
-	.layoutBox{
+
+	.layoutBox {
 		width: 100%;
 		height: 80rpx;
 		display: flex;
 		align-items: center;
 		border-bottom: 1px solid #CCCCCC;
 	}
-	
-	.noaccess{
+
+	.noaccess {
 		margin-top: 100rpx;
 		font-size: 14px;
 		color: #666666;
 	}
-	
-    .lodimg {
-    	width: 30rpx;
-    	height: 30rpx;
-    	margin-right: 20rpx;
-    }
-    
-    .lodbox {
-    	font-size: 24rpx;
-		padding: 20rpx 0;
-    }
+
+	.lodimg {
+		width: 30rpx;
+		height: 30rpx;
+		margin-right: 20rpx;
+	}
+
+	.lodbox {
+		font-size: 12rpx;
+		padding: 30rpx 0;
+	}
+
 	.bomLine {
 		padding: 30rpx 0;
 		font-size: 12px;
 	}
+
 	.showloding {
 		position: absolute;
 		width: 100%;
@@ -244,12 +253,12 @@
 		top: 0;
 		color: #FFFFFF;
 	}
-	
+
 	.loimg {
 		width: 50rpx;
 		height: 50rpx;
 	}
-	
+
 	.loding {
 		width: 260rpx;
 		height: 200rpx;

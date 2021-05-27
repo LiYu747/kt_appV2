@@ -37,13 +37,13 @@
 					</view>
 				</view>
 			</view>
-			<view v-show="isLoding == true" class=" flex ju-center al-center lodbox">
+	<!-- 		<view v-show="isLoding == true" class=" flex ju-center al-center lodbox">
 				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
 				加载中...
 			</view>
 			<view class="flex ju-center lodbox fz-12" v-if="hasMore == false">
 				{{text}}
-			</view>
+			</view> -->
 
 		</view>
 		<view v-show="isLoding == true&&locdata.length==0" class="showloding flex al-center ju-center">
@@ -74,7 +74,6 @@
 				locdata: [], //搜索的数据
 				value: '', //搜索框绑定v-model
 				text: '', //没有更多的提示
-				page: 1,
 				isLoding: false,
 				hasMore: true,
 			}
@@ -83,9 +82,8 @@
 			// 搜索数据
 			getData() {
 				this.isLoding = true
-				village.allvillage({
+				village.searchVill({
 					data: {
-						page: this.page,
 						kw: this.value
 					},
 					fail: () => {
@@ -101,12 +99,9 @@
 						if (res.statusCode != 200) return;
 
 						if (res.data.code != 200) return;
-
+           
 						let data = res.data.data
-						this.page = data.current_page + 1
-						this.hasMore = data.next_page_url ? true : false;
-
-						this.locdata = this.locdata.concat(data.data)
+						this.locdata = data
 					}
 				})
 			},
@@ -124,7 +119,7 @@
 				})
 			},
 			change() {
-				this.page = 1
+				if(this.value == '') return;
 				this.locdata = []
 				this.getData()
 			}
@@ -142,9 +137,9 @@
 			this.value = val.value
 		},
 		onReachBottom() {
-			this.text = '没有更多了'
-			if (this.isLoding == true || this.hasMore == false) return;
-			this.getData()
+			// this.text = '没有更多了'
+			// if (this.isLoding == true || this.hasMore == false) return;
+			// this.getData()
 
 		},
 		filters: {

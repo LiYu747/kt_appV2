@@ -60,6 +60,36 @@
 				uni.navigateBack({
 					delta: 1
 				})
+			},
+			// 获取用户资料
+			UserData() {
+				userDetails.userDeta({
+					fail: (err) => {
+						uni.showToast({
+							title: '网络错误',
+							icon:'none'
+						})
+					},
+					success: (res) => {
+						if (res.statusCode != 200) {
+							uni.showToast({
+								title: '网络请求出错',
+								icon:'none'
+							});
+							return;
+						}
+						if (res.data.code != 200) {
+							uni.showToast({
+								title:res.data.msg,
+								icon:'none'
+							});
+							return;
+						}
+						// console.log(res.data.data);
+						let data = res.data.data
+						this.img = data.faceimg
+					},
+				})
 			}
 		},
 		created() {
@@ -133,14 +163,12 @@
 			})
 		},
 		mounted() {
-
+         this.UserData()
 		},
 		onShow() {
 
 		},
 		onLoad(val) {
-			// console.log(val);
-			this.img = val.photo
 		},
 		filters: {
 
@@ -198,6 +226,7 @@
 		width: 260rpx;
 		height: 200rpx;
 		background: rgba(88, 88, 88, 0.8);
+		border-radius: 10rpx;
 	}
 	
 	.informTxt{

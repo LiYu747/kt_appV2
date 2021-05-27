@@ -16,8 +16,8 @@
 		</view>
 		<view class="flex-d al-center">
 			<view v-if="rentingRoom.length > 0" class="flex-d al-center">
-				<view class="contenBox m-t3 flex ju-between" @click="gotoDetails(item)" v-for="item in rentingRoom" :key='item.id'>
-					<image v-if="item.faceimg" :src="item.faceimg" class="itemImg" mode="aspectFill"></image>
+				<view class="contenBox m-t3 flex pos-rel ju-between" @click="gotoDetails(item)" v-for="item in rentingRoom" :key='item.id'>
+					<image v-if="item.cover" :src="item.cover" class="itemImg" mode="aspectFill"></image>
 					<image v-else src="https://oss.kuaitongkeji.com/upload/2021/02/20/Kztg485iqwsrKNrDLXKIeQ7apbhuyi4v1SHpslOv.jpeg"
 					 class="itemImg" mode="aspectFill"></image>
 					<view class="msgBox">
@@ -25,20 +25,23 @@
 							{{item.title}}
 						</view>
 						<view class="fz-12 szcolor">
-							{{item.area}}㎡ {{item.brief}} /{{item.zx}}/{{item.village}}
+							{{item.area}}㎡ {{item.brief}} /{{item.zx}}
 						</view>
-						<view class=" szcolor  pritext flex al-center pos-rel">
+						<view class="szcolor fz-12">
+							{{item.address_name}}
+						</view>
+						<view class=" szcolor  pritext flex al-center ">
 							<view class=" fz-16">
 								{{item.sale_price}}万
 							</view>
 							<view class="fz-12 m-l2 pricolor">
-								{{item.avg_price}}元/平
-							</view>
-							<view class="nextTex  pos-abs fz-12 flex al-center">
-								<image src="https://oss.kuaitongkeji.com/static/img/app/classification/Healthcare/next.png" class="nextImg"
-								 mode=""></image>
+								{{item.avg_price}}元/㎡
 							</view>
 						</view>
+					</view>
+					<view class="nextTex  pos-abs">
+						<image src="https://oss.kuaitongkeji.com/static/img/app/classification/Healthcare/next.png" class="nextImg"
+						 mode=""></image>
 					</view>
 				</view>
 				<view v-if="hasMore == false" class="notext fz-12">
@@ -217,6 +220,7 @@
 	.itemImg {
 		width: 200rpx;
 		height: 190rpx;
+		border-radius: 10rpx;
 	}
 
 	.msgBox {
@@ -252,9 +256,8 @@
 	}
 
 	.nextTex {
-		right: 0;
-		top: 20rpx;
-		color: #CCCCCC;
+		right: 30rpx;
+		bottom: 20rpx;
 	}
 
 	.pritext {

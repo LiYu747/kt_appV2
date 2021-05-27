@@ -89,7 +89,7 @@
 				<view class="flex al-center">
 					联系人
 					<view class=" m-l3 fz-14">
-						{{username}}
+						<input type="text" v-model="username" value="" />
 					</view>
 				</view>
 				<view class="Hline">
@@ -98,7 +98,7 @@
 			    <view class=" flex al-center">
 			    	联系电话
 					<view class=" m-l3 fz-14">
-						{{tel}}
+						<input type="text" value="" v-model="tel" />
 					</view>
 			    </view>
 			</view>
@@ -234,15 +234,14 @@ data () {
 				 zx:this.celFit,
 				 sale_price:this.rentNum,
 				 album:this.image,
-				 village:this.formlist[0].value,
+				 address_name:this.formlist[0].value,
 				 desc:this.textvalue,
 				 tel:this.tel,
 				 contact_name:this.username,
-				// 可选
-				  location:this.addDetails,
-				  lgt:this.lgt,
+				  address:this.addDetails,
+				  lng:this.lgt,
 				  lat:this.lat,
-				  faceimg:faceimg
+				  cover:faceimg
 			 },
 			 fail: () => {
 				 uni.hideLoading()
@@ -312,9 +311,11 @@ data () {
 	  confirmFitment(e){
 		 this.formlist[3].value = e[0].label
 		 this.celFit = e[0].value
-		 let Default = []
-		 Default.push(e[0].extra)
-		 this.defaultFitment = Default
+		 let extra = e[0].extra
+		 if(extra == undefined){
+		 			   extra = 0
+		 }
+		 this.defaultFitment = [extra]
 	  },
 	  // 选择楼层
 	  confirmFloor(e){
@@ -536,14 +537,31 @@ data () {
 						if (res.statusCode != 200) return;
 						if (res.data.code != 200) return;
 						let Users = res.data.data
+						if (!Users.id_card_no) {
+							uni.showModal({
+								content: '请完善您的身份信息',
+								success: function(res) {
+									if (res.confirm) {
+										uni.navigateTo({
+											url: '/pages/user/realInformation/realInformation'
+										})
+									} else if (res.cancel) {
+										uni.navigateBack({
+											delta: 1
+										})
+									}
+								}
+							})
+							return;
+						}
 						this.username = Users.username
 						this.tel = Users.tel
 					},
 				})
 			},
 			fail: () => {
-				uni.switchTab({
-					url: '/pages/index/index'
+				uni.navigateBack({
+					delta:1
 				})
 			}
 		})

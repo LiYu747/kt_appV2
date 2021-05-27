@@ -8,6 +8,12 @@ class Allvillage{
 		req.get(params)
 	}
 	
+	//搜索小区
+	searchVill  (params){
+		params.url = routes.village.vagelist.searchVill;
+		req.get(params)
+	}
+	
 	// 获取某单元楼不受访问限制的楼层
 	foolropen (params){
 		params.url = routes.village.vagelist.foolropen;
@@ -108,6 +114,18 @@ class Allvillage{
 	 customLists (params) {
 		 params.url = routes.village.vagelist.customLists
 		 req.get(params)
+	 }
+	 
+	 //删除自己帖子的评论
+	 deluserPost (params) {
+		 params.url = routes.village.vagelist.deluserPost
+		 req.delete(params)
+	 }
+	 
+	 //删除自己的评论
+	 delPost (params) {
+		 params.url = routes.village.vagelist.delPost
+		 req.delete(params)
 	 }
 }
 module.exports = new Allvillage;

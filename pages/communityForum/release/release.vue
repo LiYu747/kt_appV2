@@ -18,11 +18,12 @@
 				</view>
 			</view>
 			<!-- //标题 -->
-			<view class="titel flex al-center">
+			<view class="titel flex ">
 				<view class="tex1">
 					标题 ：
 				</view>
-				<input class="ipt" v-model="title" type="text" value="" />
+				<!-- <input class="ipt" v-model="title" type="text" value="" /> -->
+				<textarea value="" auto-height="true" class="ipt" v-model="title" placeholder="" />
 			</view>
 			<!-- 标签 -->
 			<view @click="show = true" class="tagbox flex pos-rel">
@@ -61,9 +62,9 @@
 				<textarea class="are" v-model="content" maxlength='1000'></textarea>
 			</view>
              <!-- //自己可见 -->
-             <view @click="seeShow = true" class="celShow flex al-center pos-rel">
+         <!--    <view @click="seeShow = true" class="celShow flex al-center pos-rel">
               	<image :src="seeTet.img" class="uplockImg" mode=""></image>
-			  <view class=" fz-14 m-l2">
+			  <view class=" fz-16 m-l2">
 			  	{{seeTet.text}}
 			  </view>
 			  <image class="reimg" src="https://oss.kuaitongkeji.com/static/img/app/address/retrue.png" mode=""></image>
@@ -84,7 +85,7 @@
 						取消
 					</view>
 				</view>
-			 </u-popup>
+			 </u-popup> -->
 			 
 			<!-- 提交 -->
 			<view @click="Submit" class="matop flex al-center ju-center">
@@ -129,21 +130,16 @@
 				show: false, //弹出层的显示与隐藏
 				tagdata: [
 					{
-					 name:'推荐',
+					 name:'全部',
 					 type:true,
 					 default: true
 					},
-					{
-					 name:'热榜',
-					 type:true,
-					  default: true
-					}
 				],
 				choiceData:[] ,//选中标签的数组
 				title: '', // 标题
 				content: '', //内容
 				isLoding: false,
-				choiceID:''  , //标签选中的id
+				choiceID:[] , //标签选中的id
 				seeShow:false,
 				idx:"",
 				visible:'1',
@@ -188,10 +184,8 @@
 				})
 				this.choiceData.map( item => {
 					if (item.default) return
-					this.choiceID += item.id + ','
+					this.choiceID.push(item.id) 
 				})
-				this.choiceID = this.choiceID.slice(0,this.choiceID.length-1)
-				// console.log(this.choiceID)
                 this.show = false
 			},
 			// 上传文件
@@ -278,9 +272,9 @@
 						village_id: this.id,
 						title: this.title,
 						content: this.content,
-						albums: this.image,
-						tribune_cat:this.choiceID,
-						visible: this.visible
+						cate_id:this.choiceID,
+						// visible: this.visible,
+						album:this.image
 					},
 					fail: (err) => {
 						uni.hideLoading()
@@ -409,6 +403,7 @@
 		width: 180rpx;
 		height: 180rpx;
 		margin-right: 10rpx;
+		border-radius: 10rpx;
 	}
 
 	.timg {
@@ -434,21 +429,22 @@
 	.titel {
 		margin-top: -100rpx;
 		width: 649rpx;
-		height: 80rpx;
 		background: #FFFFFF;
 		border-radius: 10rpx;
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
-		padding: 0 20rpx;
+		padding: 20rpx;
 		color: #666666;
 	}
 	
 	.tex1 {
-		font-size: 28rpx;
+		font-size: 16px;
 	}
 
 	.ipt {
-		font-size: 24rpx;
-		width: 550rpx;
+		font-size: 14px;
+		width: 500rpx;
+		margin-top: 5rpx;
+		// background: red;
 	}
 	
 	.celShow{
@@ -473,11 +469,11 @@
 	}
 
 	.are {
-		margin-top: 4rpx;
+		margin-top: 5rpx;
 		margin-left: 10rpx;
 		height: 200rpx;
 		width: 550rpx;
-		font-size: 24rpx;
+		font-size: 14px;
 		align-content: center;
 	}
 

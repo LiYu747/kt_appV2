@@ -16,37 +16,46 @@
 		</view>
 		<view class="flex-d al-center">
 			<view v-if="rentingRoom.length > 0" class="flex-d al-center">
-				<view class="contenBox m-t3 flex ju-between" @click="gotoDetails(item)" v-for="item in rentingRoom" :key='item.id'>
-					<image v-if="item.faceimg" :src="item.faceimg" class="itemImg" mode="aspectFill"></image>
-					<image v-else src="https://oss.kuaitongkeji.com/upload/2021/02/20/Kztg485iqwsrKNrDLXKIeQ7apbhuyi4v1SHpslOv.jpeg"
-					 class="itemImg" mode="aspectFill"></image>
+				<view class="contenBox m-t3 flex ju-between pos-rel" @click="gotoDetails(item)" v-for="item in rentingRoom"
+					:key='item.id'>
+					<image v-if="item.cover" :src="item.cover" class="itemImg" mode="aspectFill"></image>
+					<image v-else
+						src="https://oss.kuaitongkeji.com/upload/2021/02/20/Kztg485iqwsrKNrDLXKIeQ7apbhuyi4v1SHpslOv.jpeg"
+						class="itemImg" mode="aspectFill"></image>
 					<view class="msgBox">
 						<view class="itemName">
 							{{item.title}}
 						</view>
-						<view class="fz-12 szcolor">
-							{{item.area}}㎡ {{item.brief}} {{item.zx}}
+						<view class="fz-12 flex szcolor">
+							<view v-if="item.area" class="">
+								{{item.area}}㎡
+							</view> 
+							{{item.brief}}/{{item.zx}}
 						</view>
-						<view class=" szcolor pritext flex al-center pos-rel">
+						<view class="fz-12 szcolor">
+							{{item.address_name}}
+						</view>
+						<view class=" szcolor pritext flex al-center ">
 							<view class=" fz-16">
 								{{item.rents}}
 							</view>
 							<view class="fz-12">
 								元/月
 							</view>
-							<view class="nextTex  pos-abs fz-12 flex al-center">
-								{{item.pv}}人浏览
-								<image src="https://oss.kuaitongkeji.com/static/img/app/classification/Healthcare/next.png" class="nextImg"
-								 mode=""></image>
-							</view>
 						</view>
+					</view>
+					<view class="nextTex  pos-abs">
+						<image
+							src="https://oss.kuaitongkeji.com/static/img/app/classification/Healthcare/next.png"
+							class="nextImg" mode=""></image>
 					</view>
 				</view>
 				<view v-if="hasMore == false" class="notext fz-12">
 					{{text}}
 				</view>
 				<view v-if="isLoding == true" class=" flex ju-center al-center lodbox">
-					<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 					加载中...
 				</view>
 			</view>
@@ -55,7 +64,8 @@
 		<view v-show="isLoding == true && rentingRoom.length==0" class="showloding flex al-center ju-center">
 			<view class="loding flex-d al-center ju-center">
 				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 				</view>
 				加载中
 			</view>
@@ -216,6 +226,7 @@
 	.itemImg {
 		width: 200rpx;
 		height: 190rpx;
+		border-radius: 10rpx;
 	}
 
 	.msgBox {
@@ -251,9 +262,8 @@
 	}
 
 	.nextTex {
-		right: 0;
-		top: 20rpx;
-		color: #CCCCCC;
+		bottom: 20rpx;
+		right: 30rpx;
 	}
 
 	.pritext {

@@ -89,7 +89,7 @@
 	import sms from '../../../vendor/sms/sms.js';
 	import userinfo from '../../../vendor/user/userinfo.js'
 	import jwt from '../../../vendor/auth/jwt.js';
-
+    import cache from '../../../vendor/cache/cache.js'
 
 	export default {
 		name: "",
@@ -104,7 +104,7 @@
 				text: '获取验证码',
 				code: true,
 				timer: 60,
-				loginMethod: 'secret', //默认密码登录为secret,验证码登录sms_code，
+				loginMethod: 'secret', //默认密码登录为secret,验证码登录sms，
 				form: {
 					phone: '',
 					password: '',
@@ -126,7 +126,6 @@
 						},
 					],
 				},
-				isRegister: 'false'
 			}
 		},
 		methods: {
@@ -144,8 +143,9 @@
 				uni.showLoading({
 					title: '发送中...'
 				})
-				sms.userLoginCode({
+				sms.smsSend({
 					data: {
+						use_to:'user_login',
 						tel: this.form.phone,
 					},
 					fail: () => {
@@ -201,7 +201,7 @@
 				this.iSlogin = !this.iSlogin
 				// this.iSlogin 为true 是验证码 ,反之
 				if (this.iSlogin == true) {
-						this.loginMethod = 'sms_code'
+						this.loginMethod = 'sms'
 				}
 				if (this.iSlogin == false) {
 					this.loginMethod = 'secret'
@@ -221,10 +221,8 @@
 			},
 			// 找回密码
 			find() {
-				uni.showToast({
-					title: '功能还未开发',
-					duration: 2000,
-					icon: "none"
+				uni.navigateTo({
+					url:'/pages/user/findPsw/findPsw'
 				})
 			},
 			// 登录
@@ -243,7 +241,7 @@
 					data: {
 						login_method: this.loginMethod,
 						tel: this.form.phone,
-						smsCode: this.form.Verification,
+						sms_code: this.form.Verification,
 						secret: this.form.password
 					},
 					fail: () => {
@@ -255,7 +253,6 @@
 					},
 					success: (res) => {
 						uni.hideLoading()
-						// console.log(res);
 						if (res.statusCode != 200) {
 							uni.showToast({
 								title: '网络出错了',
@@ -271,29 +268,22 @@
 							return;
 						}
 
-						let info = jwt.parseToken(res.data.data.jwt_token);
+						let info = jwt.parseToken(res.data.data.jwt.token);
 						if (!info) return;
 
-						// console.log('login data',info);
-
-						jwt.setToken(res.data.data.jwt_token, info.exp * 1000 - 10000, () => {
+						jwt.setToken(res.data.data.jwt.token, info.exp * 1000 - 10000, () => {
 							jwt.execTask();
 						})
+						cache.set('loginTel',this.form.phone)
 						// 
 						this.$refs.uToast.show({
 							title: res.data.msg,
 							type: 'success',
 						});
 						const time = setTimeout(() => {
-							if (this.isRegister == 'true') {
-								uni.navigateBack({
-									delta: 3
-								})
-							} else {
 								uni.navigateBack({
 									delta: 1
 								})
-							}
 							clearTimeout(time)
 						}, 2000)
 					},
@@ -301,15 +291,14 @@
 			}
 		},
 		mounted() {
-
+			if(!cache.get('loginTel')) return;
+			this.form.phone = cache.get('loginTel')
 		},
 		onReady() {
 			this.$refs.uForm.setRules(this.rules);
 		},
 		onLoad(val) {
-			if (!val.register) return;
-			// console.log(val);
-			this.isRegister = val.register
+		
 		},
 		filters: {
 

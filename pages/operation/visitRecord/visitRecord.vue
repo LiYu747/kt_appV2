@@ -10,7 +10,7 @@
 							{{items.own_visitor.username}}
 						</view>
 						<view class=" pos-abs rig">
-							{{items.verify_text}}
+							{{items.verify_status}}
 							>
 						</view>
 					</view>
@@ -23,13 +23,13 @@
 					<view class="bx1 flex al-center">
 						<image src="https://oss.kuaitongkeji.com/static/img/app/visit/time.png" class="dv3" mode=""></image>
 						<view class="">
-							{{items.created_at.slice(0,16)}}
+							{{items.created_at}}
 						</view>
 					</view>
 					<view class="bx2 flex al-center">
 						<image src="https://oss.kuaitongkeji.com/static/img/app/visit/pos.png" class="dv3" mode=""></image>
-						<view class="" v-if="items.own_village">
-							{{items.own_village.name}}
+						<view class="" v-if="items.place">
+							{{items.place}}
 						</view>
 					</view>
 				</view>
@@ -117,6 +117,18 @@
 						this.hasMore = data.next_page_url ? true : false;
 						data.data.map(item => {
 							item.own_visitor.tel = item.own_visitor.tel.slice(0, 3) + '****' + item.own_visitor.tel.slice(7, 11)
+					    	item.created_at  =	item.created_at.slice(0,16)
+							switch(item.verify_status){
+								case 1:
+								item.verify_status  = "待处理"
+								break;
+								case 2:
+								item.verify_status  = "已同意"
+								break;
+								case 3:
+								item.verify_status  = "未同意"
+								break;
+							}
 						})
 						this.lists = this.lists.concat(data.data);
 
@@ -156,7 +168,7 @@
 				}
 				this.lists.map((item, index) => {
 					if (index == this.idx) {
-						item.verify_text = msg
+						item.verify_status = msg
 					}
 				})
 			}
@@ -173,7 +185,7 @@
 		},
 		// 下拉触底
 		onReachBottom() {
-			this.text = '没有更多了~'
+			this.text = '没有更多了'
 			if (this.isLoding == true || this.hasMore == false) return;
 			this.loadPageData();
 

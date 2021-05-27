@@ -21,16 +21,16 @@
 							<view class="titel">
 								{{item.title}}
 							</view>
-							<view class="content">
+						<!-- 	<view class="content">
 								{{item.content}}
-							</view>
+							</view> -->
 							<!-- 图片 -->
-							<view class="flex al-center m-t4">
+							<view v-if="item.album" class="flex al-center m-t4">
 								<view v-for="(items,indexs) in item.album.slice(0,3)" :key='items.id'>
-									<image :src="items.url" class="items" :class="(indexs+1)%3 == 0?'onmargin':''" mode="aspectFill"></image>
+									<image :src="items" class="items" :class="(indexs+1)%3 == 0?'onmargin':''" mode="aspectFill"></image>
 								</view>
 							</view>
-							<view class="time">
+							<view class="time" :class="!item.album?'m-t3':''">
 								{{item.created_at.slice(0,16)}}
 							</view>
 							<view class="Hline">
@@ -74,8 +74,8 @@
 									回复的主题：
 								</view>
 								<view class="conten">
-									<view v-if="item.own_village_tribune" class="">
-										{{item.own_village_tribune.title}}
+									<view v-if="item.own_village_post" class="">
+										{{item.own_village_post.title}}
 									</view>
 									<view v-else class="nonoTet">
 										*该帖子已被用户删除
@@ -194,9 +194,9 @@
 				this.isLoding = true;
 				village.SelfComments({
 					data: {
-						villageId: this.id,
 						page: this.page,
-						pageSize: this.pageSize1
+						pageSize: this.pageSize1,
+						sort:"desc"
 					},
 					fail: (err) => {
 						this.isLoding = false;
@@ -239,7 +239,6 @@
 						})
 					},
 					success: (res) => {
-						// console.log(res);
 						this.isLoding1 = false;
 
 						if (res.statusCode != 200) return;
@@ -265,7 +264,7 @@
 			},
 			// 跳转回复的页面
 			reply(item) {
-				if (!item.own_village_tribune) {
+				if (!item.own_village_post) {
 					uni.showToast({
 						title: '该帖子已被用户删除',
 						icon: 'none'
@@ -274,7 +273,7 @@
 				}
 				// console.log(item);  
 				uni.navigateTo({
-					url: `/components/forum/forumdils?id=${item.tribune_id}`
+					url: `/components/forum/forumdils?id=${item.post_id}`
 				})
 			},
 			// 获取用户资料
@@ -314,7 +313,7 @@
 			this.SelfPost()
 			this.loadPageData()
 			this.Userdata()
-			let num = this.$store.state.customBar + 184 + 'rpx'
+			let num = this.$store.state.customBar + 192 + 'rpx'
 			this.hig = `height:calc(100vh - ${num})`
 		},
 		// 下拉加载更多
@@ -468,7 +467,6 @@
 		margin-left: 30rpx;
 		margin-top: 20rpx;
 		padding: 10rpx;
-		width: 89%;
 	}
 
 	.btom {
@@ -520,7 +518,7 @@
 	.lodbox {
 		font-size: 24rpx;
 		padding: 20rpx 0;
-		padding-bottom: 30rpx; 
+		padding-bottom: 40rpx; 
 	}
 
 	.showloding {

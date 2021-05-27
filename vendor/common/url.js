@@ -6,6 +6,9 @@ class url {
 		//APP首页
 		app_home_index : '/pages/index/index',
 		
+		// 用户的回家二维码页面
+		back_home_qr : '/pages/qrcode/qrCode/qrCode',
+		
 		// 填写入住小区申请的页面
 		apply_move_in_form : '/pages/residence/checkIn/checkIn',
 		
@@ -26,9 +29,6 @@ class url {
 		
 		// 来拜访自己的申请记录详情页
 		friends_visit_self_detail : '/pages/operation/details/details',
-		
-		// 用户的回家二维码页面
-		back_home_qr : '/pages/qrcode/qrCode/qrCode',
 		
 		// 找房
 		looking_for_room : '/pages/classification/lookRoom/lookRoom',
@@ -58,7 +58,10 @@ class url {
 		tea : '/pages/classification/teaBasedDrink/teaDrink',
 		
 		// 上门服务
-		door_to_door_service : '/pages/classification/service/service'
+		door_to_door_service : '/pages/classification/service/service',
+		
+		//住址详情
+		user_house_detail : '/pages/address/addediting/ADDediting'
 		 
 	}
 	
@@ -80,12 +83,10 @@ class url {
 		if( !u) return;
 		
 		let type = arr.get(params,'type','navigateTo');
-		
 		if( this.tabBar.indexOf(pa) > -1 ) type = 'switchTab';
 		
 		//url ?之后的部分，如 name=Tom&age=16
 		let opt = arr.get(params,'options','');
-		
 		switch( type ){
 			case 'navigateTo':
 				uni.navigateTo({

@@ -13,7 +13,6 @@
 		},
 		onLoad(options) {
 			this.url = options.url ? decodeURIComponent(options.url) : '';
-			console.log(this.url)
 		},
 		methods: {
 			

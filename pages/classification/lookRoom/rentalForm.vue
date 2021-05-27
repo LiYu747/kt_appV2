@@ -1,10 +1,6 @@
 <template>
 	<view class="">
-		<subunit titel='我要出租' class="fixed"></subunit>
-		<view class="topLine">
-
-		</view>
-
+		<subunit titel='我要出租' ></subunit> 
 		<view class="layoutBox flex ">
 			标题
 			<textarea autoHeight="true" class="textBox" maxlength="30" v-model="value" placeholder="请输入标题(30字以内)" />
@@ -99,7 +95,7 @@
 				<view class="flex al-center">
 					联系人
 					<view class=" m-l3 fz-14">
-						{{username}}
+					<input type="text" v-model="username" value="" />
 					</view>
 				</view>
 				<view class="Hline">
@@ -108,7 +104,7 @@
 			    <view class=" flex al-center">
 			    	联系电话
 					<view class=" m-l3 fz-14">
-						{{tel}}
+						<input type="text" v-model="tel" value="" />
 					</view>
 			    </view>
 			</view>
@@ -170,10 +166,8 @@ data () {
 	  rentNum:'',//租金
 	  cash:'',//押金
 	  cashShow:false,//押金
-	  cashList:[[{value:1,label:'不需要'}],[]],//押金数据
+	  cashList:[[],[]],//押金数据
 	  defaultCash:[],//押金默认
-	  rents_bet:'',//押几
-	  rents_pay:'',//付几
 	  image:[],//图片数据
 	  isLoding:false,
 	  coverImg:'',//封面图片
@@ -233,7 +227,7 @@ data () {
 		   if(!this.coverImg){
 			   faceimg = this.image[0]
 		   }
-		   uni.showLoading({
+		   uni.showLoading({ 
 		   	title:'提交中'
 		   })
 		 home.releaseRent({
@@ -250,17 +244,15 @@ data () {
 				 zx:this.celFit,
 				 rents:this.rentNum,
 				 album:this.image,
-				 village:this.formlist[0].value,
+				 address_name:this.formlist[0].value,
 				 desc:this.textvalue,
 				 tel:this.tel,
 				 contact_name:this.username,
-				// 可选
-				  rents_bet: this.rents_bet,
-				  rents_pay: this.rents_pay,
-				  location:this.addDetails,
-				  lgt:this.lgt,
+				  rent_pay_method:this.cash, //押金方式
+				  address:this.addDetails,
+				  lng:this.lgt,
 				  lat:this.lat,
-				  faceimg:faceimg
+				  cover:faceimg
 			 },
 			 fail: () => {
 				 uni.hideLoading()
@@ -321,16 +313,7 @@ data () {
 	  },
 	  //选择押金
 	  confirmCash(e){
-		  let text =  e[0].label != '不需要'?e[0].label:''
-		  let rents = ''
-		  if(e[0].extra){
-			  rents = e[0].extra
-		  }else{
-			   rents = ''
-		  }
-		  this.rents_bet = rents
-		  this.rents_pay = e[1].value
-		  this.cash = text +  e[1].label
+		  this.cash = e[0].label +  e[1].label
 		  let Default = []
 		 e.map( item => {
 			 Default.push(item.value-1)
@@ -348,9 +331,11 @@ data () {
 	  confirmFitment(e){
 		 this.formlist[3].value = e[0].label
 		 this.celFit = e[0].value
-		 let Default = []
-		 Default.push(e[0].extra)
-		 this.defaultFitment = Default
+		 let extra = e[0].extra
+		 if(extra == undefined){
+			   extra = 0
+		 }
+		 this.defaultFitment = [extra]
 	  },
 	  // 选择楼层
 	  confirmFloor(e){
@@ -463,7 +448,7 @@ data () {
 		 }
 		 // 押金数据
 		 for( var i=1 ; i<13 ; i++){
-		 	 let floor = {value:i+1,label:'押'+i,extra:i}
+		 	 let floor = {value:i,label:'押'+i,extra:i}
 		 	let allFloor = {value:i,label:'付'+i}
 		 	this.cashList[0].push(floor)
 		 	this.cashList[1].push(allFloor)
@@ -475,7 +460,7 @@ data () {
 		   let that = this 
 		  uni.chooseLocation({
 		      success: function (res) {
-				  that.formlist[0].value = res.name
+				  that.formlist[0].value = res.name 
 				  that.addDetails = res.address
 				  that.lgt = res.longitude.toFixed(6)//经度
 				  that.lat = res.latitude.toFixed(6)//纬度
@@ -580,14 +565,31 @@ data () {
 						if (res.statusCode != 200) return;
 						if (res.data.code != 200) return;
 						let Users = res.data.data
+						if (!Users.id_card_no) {
+							uni.showModal({
+								content: '请完善您的身份信息',
+								success: function(res) {
+									if (res.confirm) {
+										uni.navigateTo({
+											url: '/pages/user/realInformation/realInformation'
+										})
+									} else if (res.cancel) {
+										uni.navigateBack({
+											delta: 1
+										})
+									}
+								}
+							})
+							return;
+						}
 						this.username = Users.username
 						this.tel = Users.tel
 					},
 				})
 			},
 			fail: () => {
-				uni.switchTab({
-					url: '/pages/index/index'
+				uni.navigateBack({
+					delta:1
 				})
 			}
 		})
@@ -656,15 +658,11 @@ data () {
 				this.formlist[4].value = data.area
 				this.formlist[5].value = data.ele
 				this.rentNum = data.rents
-				let rents = data.rents_bet?'押' + data.rents_bet : ''
-				this.cash =  rents + '付' +data.rents_pay 
-				if(!data.rents_bet){
-					data.rents_bet = 0
-				}
-				this.defaultCash = [data.rents_bet,data.rents_pay-1]
+				this.cash = data.rent_pay_method
+				this.defaultCash = [data.rent_pay_method.substring(1,2) - 1 ,data.rent_pay_method.substring(3,4) - 1]
 				this.textvalue = data.desc
 				this.image = data.album
-				this.coverImg = data.faceimg
+				this.coverImg = data.cover
 				this.floor = data.floor
 				this.totalFloor = data.total_floor
 				this.rents_bet = data.rents_bet
@@ -762,7 +760,7 @@ data () {
 	this.getData(val.id)
   },
   onShow() {
-  	this.loadUserData()
+  	this.loadUserData() 
   },
   filters: {
 
@@ -794,15 +792,14 @@ data () {
 	padding: 20rpx 30rpx;
 	color: #333333;
 	font-size: 32rpx;
-		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+	box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 }
 .textBox{
 	width: 540rpx;
 	margin-left: 20rpx;
-	height: 40rpx;
 	font-size: 14px;
 	color: #666666;
-	margin-top: 4rpx;
+	margin-top: 4rpx; 
 	}
 
 .contentBox{

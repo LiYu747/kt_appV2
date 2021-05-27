@@ -141,7 +141,7 @@
 						if (res.statusCode != 200) return
 						if (res.data.code != 200) return
 						let data = res.data.data
-						this.informmsg = data.total_unread
+						this.informmsg = data.unread
 						// console.log(data);
 					}
 				})

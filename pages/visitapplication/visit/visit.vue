@@ -1,28 +1,31 @@
 <template>
 	<view class="">
-		<subunit  titel="拜访申请"></subunit>
-	<view class="navBox" :style="{height:  this.$store.state.customBar + 'rpx'}">
-		<view @click="gorecord" class="pos-abs  location">
-			申请记录
+		<subunit titel="拜访申请"></subunit>
+		<view class="navBox" :style="{height:  this.$store.state.customBar + 'rpx'}">
+			<view @click="gorecord" class="pos-abs  location">
+				申请记录
+			</view>
 		</view>
-	</view>
 		<view class="flex-d al-center">
 			<view class=" message">
 				<view class="text flex al-center">
 					基本信息
 				</view>
 				<view class="">
-					<view class="item flex al-center pos-rel" @click="itemlabel(index)" v-for="(item,index) in  record" :key='item.id'
-					 :class="{'dv':index===record.length-1}">
-						<u-field v-model="item.value " :label="item.label" :placeholder="item.placeholder" :clearable=false :required='item.required'
-						 input-align='right' :disabled="item.disabled" label-width="170">
+					<view class="item flex al-center pos-rel" @click="itemlabel(index)" v-for="(item,index) in  record"
+						:key='item.id' :class="{'dv':index===record.length-1}">
+						<u-field v-model="item.value " :label="item.label" :placeholder="item.placeholder"
+							:clearable=false :required='item.required' input-align='right' :disabled="item.disabled"
+							label-width="170">
 						</u-field>
 						<view v-if="index===record.length-1" class="pos-abs righ">
-							<image src="https://oss.kuaitongkeji.com/static/img/app/home/xiala.png" class="xiala" mode=""></image>
+							<image src="https://oss.kuaitongkeji.com/static/img/app/home/xiala.png" class="xiala"
+								mode=""></image>
 						</view>
 					</view>
 				</view>
-				<u-select v-model="show" mode="mutil-column-auto" :default-value='value' :list="renderVillageLists" @confirm="confirm"></u-select>
+				<u-select v-model="show" mode="mutil-column-auto" :default-value='value' :list="renderVillageLists"
+					@confirm="confirm"></u-select>
 			</view>
 			<!-- 上传文件 -->
 			<view class="uploadFiles">
@@ -32,17 +35,18 @@
 						(*您可以上传外卖或者快递的图片给用户)
 					</view>
 				</view>
-				<view class="filesBox flex">
-					<view v-if="images" class="" >
-						<image :src="images" class="itemImg" mode="aspectFill"></image>
+				<view class="filesBox flex al-center">
+					<view v-for="item in images" :key="item.id" class="">
+						<image :src="item" class="itemImg" mode="aspectFill"></image>
 					</view>
 					<view @click="succ" class="puls flex-d al-center ju-center">
-						<image src="https://oss.kuaitongkeji.com/static/img/app/home/push.png" class="pushimg" mode=""></image>
+						<image src="https://oss.kuaitongkeji.com/static/img/app/home/push.png" class="pushimg" mode="">
+						</image>
 						添加
 					</view>
 				</view>
 			</view>
-		
+
 			<!-- 备注 -->
 			<view class="pos-rel reMessage">
 				<view class="textTil flex al-center">
@@ -59,11 +63,12 @@
 					提交
 				</view>
 			</view>
-		
+
 			<view v-show="isLoding == true" class="showloding flex al-center ju-center">
 				<view class="loding flex-d al-center ju-center">
 					<view class=" ">
-						<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+						<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif"
+							mode=""></image>
 					</view>
 					上传中
 				</view>
@@ -92,6 +97,7 @@
 		props: {},
 		data() {
 			return {
+				Villid: '', //小区id
 				record: [{
 						label: '拜访人姓名',
 						value: '',
@@ -133,10 +139,10 @@
 				id: [],
 				show: false,
 				value: [], //小区列表默认选择的对象
-				images: '', //要上传的文件
-				text:'' ,//默认备注
+				images: [], //要上传的文件
+				text: '', //默认备注
 				isLoding: false,
-				textShow:false
+				textShow: false
 			}
 		},
 		methods: {
@@ -154,7 +160,7 @@
 				let value = []
 				val.map(items => {
 					id.push(items.extra)
-					if(items.value != null) {
+					if (items.value != null) {
 						text += items.label
 					}
 					if (items.value == null) {
@@ -218,9 +224,9 @@
 								rej(jres.msg);
 								return;
 							}
-								that.images = jres.data.url 
+							that.images.push(jres.data.url) 
 							// console.log(jres.data.url);
-							
+
 							res(jres);
 						}
 					})
@@ -243,20 +249,20 @@
 					})
 					return;
 				}
-				if(this.isLoding == true) return;
+				if (this.isLoding == true) return;
 				uni.showLoading({
 					title: '提交中...'
 				})
 				home.VisitApplication({
 					data: {
-						hostName: this.record[3].value,
-						villageId: this.id[0],
-						buildingId: this.id[1],
-						apartmentId: this.id[2],
-						floorId: this.id[3],
-						roomId: this.id[4],
-						visitorRemark: this.text,
-						ext_img:this.images
+						host_name: this.record[3].value,
+						village_id: this.Villid,
+						building_id: this.id[0],
+						apartment_id: this.id[1],
+						floor_id: this.id[2],
+						room_id: this.id[3],
+						visitor_remark: this.text,
+						pics: this.images
 					},
 					fail: () => {
 						uni.hideLoading()
@@ -287,7 +293,7 @@
 							title: res.data.msg,
 							duration: 2000
 						});
-						
+
 						const time = setTimeout(() => {
 							uni.redirectTo({
 								url: '/pages/visitapplication/goRecord/goRecord'
@@ -306,11 +312,12 @@
 				})
 			},
 
-			loadVillageLists() {
-				let that = this;
-				// 小区列表
-				village.selectLists({
-					data: {},
+			villDils() {
+				village.displayInformation({
+					data: {
+						id: this.Villid,
+						need_buildings: '1'
+					},
 					fail: (err) => {
 						uni.showToast({
 							title: '网络错误',
@@ -318,15 +325,14 @@
 						})
 					},
 					success: (res) => {
-
-						if (res.statusCode != 200) return;
-
-						if (res.data.code != 200) return;
-
-						this.orgVillageLists = res.data.data;
+						this.isLoding = false
+						if (res.statusCode != 200) return
+						if (res.data.code != 200) return
+						// console.log('小区展示', res);
+						let data = res.data.data.buildings
+						this.orgVillageLists = data;
 						this.renderMSelect();
-					},
-
+					}
 				})
 			},
 
@@ -340,8 +346,8 @@
 
 				//进行修改
 				let tmp = [];
-
 				this.orgVillageLists.forEach((item, index) => {
+					//楼栋
 					let villages = {
 						label: item.name,
 						value: index,
@@ -349,64 +355,48 @@
 						children: [],
 					};
 
-					if (!item.buildings) return true;
-					//楼栋
-					item.buildings.forEach((item2, idx2) => {
-						let buildings = {
+					if (!item.apartments) return true;
+					//单元
+					item.apartments.forEach((item2, idx2) => {
+						let apartments = {
 							label: item2.name,
 							value: idx2,
 							extra: item2.id,
 							children: [],
 						};
 						// console.log('buildings', item2, !item2.apartments)
-						if (!item2.apartments) return true;
-						item2.apartments.forEach((item5, idx3) => {
+						if (!item2.floors) return true;
+						//楼层
+						item2.floors.forEach((item5, idx3) => {
 
-							//单元楼
-							let ap = {
+							//楼层
+							let floors = {
 								label: item5.name,
 								value: idx3,
 								extra: item5.id,
 								children: [],
 							};
 
-							if (!item5.floors) return true;
+							if (!item5.rooms) return true;
 
-							item5.floors.forEach((item3, index3) => {
-
-								//楼层
-								let floors = {
-									label: item3.name,
-									value: index3,
-									extra: item3.id,
-									children: [],
-								};
-
-								// console.log('item3', item3)
-								if (!item3.rooms) return true;
-								//门牌号
-								item3.rooms.forEach((item4, idx4) => {
-									floors.children.push({
-										label: item4.room_number,
-										value: idx4,
-										extra: item4.id,
-									});
-								})
-
-								ap.children.push(floors);
+							item5.rooms.forEach((item4, idx4) => {
+								floors.children.push({
+									label: item4.name,
+									value: idx4,
+									extra: item4.id,
+								});
 							})
 
+							apartments.children.push(floors);
 
-							buildings.children.push(ap);
 
 						})
+						villages.children.push(apartments);
 
-						villages.children.push(buildings);
 					})
 
 					tmp.push(villages);
 				})
-
 
 				this.renderVillageLists = tmp;
 				// console.log(tmp);
@@ -415,7 +405,7 @@
 			// 获取用户资料
 			// 判断是否登录
 			loadUserData() {
-				
+
 				jwt.doOnlyTokenValid({
 					showModal: true,
 					keepSuccess: false,
@@ -433,7 +423,8 @@
 								if (res.data.code != 200) return;
 								let Users = res.data.data
 								this.record[0].value = Users.username
-								this.record[1].value = Users.tel.slice(0, 3) + '****' + Users.tel.slice(7, 11)
+								this.record[1].value = Users.tel.slice(0, 3) + '****' + Users.tel
+									.slice(7, 11)
 								if (!Users.id_card_no) {
 									uni.showModal({
 										content: '请完善您的身份信息',
@@ -451,8 +442,9 @@
 									})
 									return;
 								}
-								this.record[2].value = Users.id_card_no.slice(0, 3) + '**********' + Users.id_card_no.slice(Users.id_card_no
-									.length - 4, Users.id_card_no.length)
+								this.record[2].value = Users.id_card_no.slice(0, 3) +
+									'**********' + Users.id_card_no.slice(Users.id_card_no
+										.length - 4, Users.id_card_no.length)
 							},
 						})
 					},
@@ -466,19 +458,20 @@
 			},
 		},
 		mounted() {
-			this.loadVillageLists();
-			this.loadUserData()
+			this.villDils()
 		},
 		onShow() {
-			
+        this.loadUserData()
 
 		},
 		onLoad(option) {
-		   if(option.text)  {
-			   this.text = option.text
-			   this.textShow = true
-		   }
-          
+			if (option.text) {
+				this.text = option.text
+				this.textShow = true
+			}
+			if (option.id) {
+				this.Villid = option.id
+			}
 		},
 		filters: {
 
@@ -503,6 +496,7 @@
 		position: fixed;
 		z-index: 99;
 	}
+
 	.message {
 		margin-top: 30rpx;
 		width: 644rpx;
@@ -570,7 +564,7 @@
 	.top {
 		margin-top: 20rpx;
 	}
-	
+
 	.reMessage {
 		margin-top: 22rpx;
 		width: 644rpx;
@@ -581,14 +575,14 @@
 		padding-left: 20rpx;
 		padding-right: 26rpx;
 	}
-	
+
 	.textTil {
 		height: 69rpx;
 		font-size: 30rpx;
 		color: #666666;
 		border-bottom: 1rpx solid #BFBFBF;
 	}
-	
+
 	.tar {
 		margin-top: 20rpx;
 		padding: 10rpx;
@@ -619,7 +613,7 @@
 		text-align: center !important;
 	}
 
-	
+
 
 	.uploadFiles {
 		margin-top: 40rpx;
@@ -627,7 +621,7 @@
 		padding: 0 20rpx;
 		background: #FFFFFF;
 		border-radius: 10rpx;
-     	box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 		color: #666666;
 	}
 
@@ -661,9 +655,10 @@
 
 	.itemImg {
 		width: 140rpx;
-		height: 140rpx;
+		height: 160rpx;
 		margin-right: 20rpx;
 		margin-bottom: 10rpx;
+		border-radius: 10rpx;
 	}
 
 	.showloding {

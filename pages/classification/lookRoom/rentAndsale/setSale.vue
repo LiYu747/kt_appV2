@@ -7,10 +7,10 @@
 					更改可见性
 					<u-switch v-model="checked" size='40' @change="change" inactive-color='#eeeeee' active-color='#F07535'></u-switch>
 				</view>
-				<view  @click="updatamsg" class="item flex al-center ju-between">
+			<!-- 	<view  @click="updatamsg" class="item flex al-center ju-between">
 					更新数据
 					<image class="reimg" src="https://oss.kuaitongkeji.com/static/img/app/address/retrue.png" mode=""></image>
-				</view>
+				</view> -->
 				<view class="flex-d al-center">
 					<view @click="aadDel" class="delBox fz-16 flex al-center ju-center">
 						删除
@@ -144,7 +144,7 @@ data () {
 
   },
   onLoad (val) {
-   let isShow =  cache.get('isShow')
+    let isShow =  this.$store.state.userIschenge
    if(isShow == 0){
    	this.checked = false
    }

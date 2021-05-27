@@ -79,6 +79,7 @@
 <script>
 	import subunit from '../../../../components/sub-unit/subunit.vue'
 	import user from '../../../../vendor/user/userDetails.js'
+	import sms from '../../../../vendor/sms/sms.js'
 	export default {
 		name: "",
 		components: {
@@ -88,8 +89,11 @@
 		data() {
 			const validatePass = (rule, value, callback) => {
 				if (value === "") {
-					callback(new Error("请输入密码"));
-				} else {
+					callback(new Error("请新输入密码"));
+				}  else if (value == this.form.oldPassword) {
+					callback(new Error("新密码不能与旧密码相同"));
+				}
+				else {
 					callback();
 				}
 			};
@@ -105,7 +109,7 @@
 			return {
 				falgWay:false,
 				setWay:'使用旧密码修改',
-				verify_method:'sms_code',//修改密码的方式 old_password：验证旧密码；sms_code：短信验证码
+				verify_method:'sms_code',//修改密码的方式 old_secret：验证旧密码；sms_code：短信验证码
 				flag: false,
 				text: '获取验证码',
 				code: true,
@@ -119,20 +123,17 @@
 				},
 				rules: {
 					password: [
-						// 对电话字段格式验证
 						{
 							min: 6,
 							message: '密码至少6位',  
 							trigger: 'blur'
 						},
-						// 对电话字段进行必填验证
 						{
 							validator: validatePass,
 							trigger: "blur"
 						}
 					],
 					cfmPassword: [
-						// 对电话字段进行必填验证
 						{
 							validator: validatePass2,
 							trigger: "blur"
@@ -151,21 +152,30 @@
 					this.setWay = '使用旧密码修改'
 				}
 				if(this.falgWay == true){
-					this.verify_method = 'old_password'
+					this.verify_method = 'old_secret'
 					this.setWay = '手机验证码修改'
 				}
 			},
 			//保存新密码
 			save(){
+				if(this.verify_method == "sms_code"){
+					this.codeWay()
+				}
+				if(this.verify_method == "old_secret"){
+					this.oldpasswordWay()
+				}
+				
+			},
+			//验证码方式
+			codeWay(){
 				uni.showLoading({
 					title:'加载中'
 				})
 				user.steNewpaw({
 					data:{
-						verify_method:this.verify_method,
+						method:this.verify_method,
 						new_secret: this.form.password,
-						new_secret2: this.form.cfmPassword,
-						old_password: this.form.oldPassword,
+						new_secret_confirmation: this.form.cfmPassword,
 						sms_code:this.form.Verification
 					},
 					fail: () => {
@@ -200,11 +210,69 @@
 							    uni.navigateBack({
 							    	delta:1
 							    })
+								clearTimeout(setTime)
 						},2000)
 					}
 				})
 			},
 			
+			//旧密码方式
+			oldpasswordWay(){
+				if(this.form.oldPassword == this.form.password){
+					uni.showToast({
+						title:"新密码不能与旧密码相同",
+						icon:"none"
+					})
+					return;
+				}
+				uni.showLoading({
+					title:'加载中'
+				})
+				user.steNewpaw({
+					data:{
+						method:this.verify_method,
+						new_secret: this.form.password,
+						new_secret_confirmation: this.form.cfmPassword,
+						old_secret: this.form.oldPassword,
+						sms_code:this.form.Verification
+					},
+					fail: () => {
+						uni.hideLoading()
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					},
+					success: (res) => {
+						uni.hideLoading()
+						if (res.statusCode != 200) {
+							uni.showToast({
+								title: '网络请求出错',
+								icon: 'none'
+							});
+							return;
+						}
+						if (res.data.code != 200) {
+							uni.showToast({
+								title: res.data.msg,
+								icon: 'none'
+							});
+							return;
+						}
+					
+						uni.showToast({
+							title: res.data.msg,
+							duration:2000
+						});
+						const setTime = setTimeout( () => {
+							    uni.navigateBack({
+							    	delta:1
+							    })
+								clearTimeout(setTime)
+						},2000)
+					}
+				})
+			},
 			// 获取验证码
 			addvercode() {
 				if (this.code != true) return;
@@ -218,9 +286,10 @@
 				uni.showLoading({
 					title: '发送中...'
 				})
-				user.stePawcode({
+				sms.smsSend({
 					data: {
 						tel: this.form.phone,
+						use_to:'user_reset_password'
 					},
 					fail: () => {
 						uni.hideLoading()

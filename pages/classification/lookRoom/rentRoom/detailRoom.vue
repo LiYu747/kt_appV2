@@ -23,6 +23,14 @@
 						元/月
 					</view>
 				</view>
+				<view class="flex ju-between m-t1 fz-12 cl9 al-center">
+					<view class="  m-l1">
+						{{roomInof.rent_pay_method}}
+					</view>
+					<view class="m-r2">
+						已有{{roomInof.pv}}人浏览
+					</view>
+				</view>
 			</view>
 
 			<view class="houseType flex al-center ju-between">
@@ -59,12 +67,12 @@
 			<view @click="Address" class="addressBox m-t3 flex  fz-14">
 				<image src="https://oss.kuaitongkeji.com/static/img/app/lookroom/add.png" class="addImg" mode=""></image>
 				<view class="m-l2 addressmsg">
-					{{roomInof.village}}
+					{{roomInof.address}}
 				</view>
 			</view>
 
 			<view class="briefRoom">
-				<view class="itemvalue">
+				<view class="fz-18">
 					房屋概况
 				</view>
 				<view class="fz-12 m-t2 m-b2" style="white-space:pre-wrap">
@@ -114,6 +122,7 @@
 <script>
 	import subunit from '../../../../components/sub-unit/subunit.vue'
 	import home from '../../../../vendor/home/home.js'
+	import cache from '../../../../vendor/cache/cache.js'
 	export default {
 		name: "",
 		components: {
@@ -142,7 +151,7 @@
 		methods: {
 			//拨打电话
 			consult() {
-				if(!this.roomInof.tel) return;
+				if(!this.roomInof.tel||!cache.get('jwt')) return; 
 				uni.makePhoneCall({
 				 phoneNumber: this.roomInof.tel
 				});
@@ -150,9 +159,9 @@
 			// 地址
 			Address() {
 				if (!this.roomInof.lat) return;
-				if (!this.roomInof.lgt) return;
+				if (!this.roomInof.lng) return;
 				let latitude = Number(this.roomInof.lat)
-				let longitude = Number(this.roomInof.lgt)
+				let longitude = Number(this.roomInof.lng)
 				uni.openLocation({
 					latitude: latitude,
 					longitude: longitude,
@@ -220,8 +229,29 @@
 						if (data.ele == 1) {
 							data.ele = '有'
 						}
-
+						if(!cache.get('jwt')){
+							data.tel = data.tel.slice(0,3) + "****" + data.tel.slice(7,11)
+						}
 						this.roomInof = data
+						this.rentalView(data.id)
+					}
+				})
+			},
+			//出租房浏览统计
+			rentalView(id){
+				home.rentalView({
+					data:{
+						id:id
+					},
+					fail: () => {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					},
+					success: (res) => {
+						if (res.statusCode != 200) return; 
+						if (res.data.code != 200) return; 
 					}
 				})
 			}

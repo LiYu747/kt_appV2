@@ -1,62 +1,72 @@
 <template>
 	<view class="">
 		<subclass titel='运动'></subclass>
-		<view class="tabbar flex al-center ju-around">
-			<view class="item flex al-center" @click="add(index)" :class="{'dv':index == idx}" v-for="(item,index) in till" :key='item.id'>
-				{{item}}
+		<view class="search flex al-center ju-center">
+			<view class="searchBack flex al-center">
+				<image src="https://oss.kuaitongkeji.com/static/img/app/propertyManagement/serach.png" class="serachImg"
+					mode=""></image>
+				<input type="text" class="ipt" v-model="value" @confirm="search" placeholder="请输入关键词" />
+			</view>
+			<view @click="cancel" v-show="ISseach==true" class="cancel pos-abs">
+				取消
 			</view>
 		</view>
-          <view class="simulation">
-          	以下均为模拟数据
-          </view>
-		<view class="flex-d top al-center">
-			<view class="flex itembox pos-rel" v-for="item in getData" :key='item.id'>
-				<image :src="item.image" class="itemimg" mode=""></image>
-				<view class="m-t2 m-l2 name">
-					{{item.name}}
-					<view class="score  flex al-center">
-						<image src="https://oss.kuaitongkeji.com/static/img/app/classification/Healthcare/wujiao.png" class="wujiaoimg" mode=""></image>
-						<view class="m-l1">
-							{{item.score}}
-						</view>
-						<view class="Price">
-							{{item.Price}}
-						</view>
-						<view class="timer pos-abs">
-							10分钟 500m
-						</view>
+		<view class="topLine">
+
+		</view>
+
+		<view v-if="lists.length>0" class="flex-d al-center">
+			<view class="itemBox m-t3 flex" v-for="item in lists" :key="item.id">
+				<view class="">
+					<image :src="item.cover" class="itemCover" mode=""></image>
+				</view>
+				<view class="m-l3 ">
+					<view class="fz-16">
+						{{item.name}}
 					</view>
-					<view class="details flex">
-						{{item.titel}}
-						<view class="databox">
-							{{item.address}}
+					<view class="fz-12 cl9 m-t1 flex al-center">
+						<!-- <image src="https://oss.kuaitongkeji.com/static/img/app/lookroom/add.png" class="addicon" mode=""></image> -->
+						<view class="">
+							{{item.address_name}}
 						</view>
 					</view>
-					<view v-if="item.label" class="details m-t1">
-						{{item.label}}
-					</view>
-					<view v-if="item.tag" class="m-t1">
-						<image :src="item.tag" class="tagimg" mode=""></image>
-					</view>
-					<view class=" flex">
-						<view class="Views pos-abs flex al-center">
-							{{item.Views}}
-							<image src="https://oss.kuaitongkeji.com/static/img/app/classification/Healthcare/next.png" class="nextimg" mode=""></image>
+					<view class="m-t1 flex fz-12">
+						<view class="itemBrf">
+							{{item.brief}}
 						</view>
 					</view>
 				</view>
 			</view>
+			<view v-show="isLoding == true" class=" flex ju-center al-center lodbox">
+				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+				</image>
+				加载中...
+			</view>
+			<view class="flex ju-center notext fz-14" v-if="hasMore == false">
+				{{text}}
+			</view>
 		</view>
-
-		<view class="line">
-
+		<view v-if='lists.length == 0 && isLoding == false && ISseach == false' class="noCentent fz-14 cl9 flex ju-center">
+			暂无内容
 		</view>
-
+		<view class="noCentent fz-14 cl9 flex ju-center" v-if="ISseach == true && lists.length == 0">
+			没有您搜索的内容
+		</view>
+		<view v-show="isLoding == true&&lists.length==0" class="showloding flex al-center ju-center">
+			<view class="loding flex-d al-center ju-center">
+				<view class=" ">
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
+				</view>
+				加载中
+			</view>
+		</view>
 	</view>
 </template>
 
 <script>
 	import subclass from '../../../components/sub-class/subclass.vue'
+	import home from "../../../vendor/home/home.js"
 	export default {
 		name: "",
 		components: {
@@ -65,119 +75,80 @@
 		props: {},
 		data() {
 			return {
-				till: ['全部', '健身馆', '篮球', '羽毛球'],
-				idx: 0,
-				getData: [],
-				locadata: [{
-						image: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/logo1.png',
-						name: 'VIGOR LIFE健身训练中心（复地御香...）',
-						score: '5.0',
-						Price: '￥1035/人',
-						Views: '5624人浏览',
-						titel: ' 私教工作室   ',
-						address: ' 华阳',
-						label: '健身爱好者，力量训练爱好者的天堂',
-						tag: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/tag1.png'
-					},
-					{
-						image: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/logo2.png',
-						name: '泳力健身游泳中心',
-						score: '4.0',
-						Price: '￥60/人',
-						Views: '5587人浏览',
-						titel: ' 游泳 ',
-						address: ' 华阳',
-						label: '去过恒温泳池数一数二的了',
-					},
-					{
-						image: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/logo3.png',
-						name: '99PARK篮球公园',
-						score: '3.5',
-						Price: '￥20/人',
-						Views: '87865人浏览',
-						titel: ' 篮球    ',
-						address: ' 航空港',
-						label: '免费停车',
-					},
-					{
-						image: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/logo4.png',
-						name: '弘羽羽毛球馆',
-						score: '4.0',
-						Price: '暂无均价',
-						Views: '2896人浏览',
-						titel: ' 羽毛球  ',
-						address: ' 高新区',
-						label: '健身爱好者，力量训练爱好者的天堂',
-						tag: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/tag2.png'
-					}
-				],
-				locadata1: [{
-						image:'https://oss.kuaitongkeji.com/static/img/app/classification/motion/logo5.png',
-						name: '原始 Fitness',
-						score: '4.0',
-						Price: '￥60/人',
-						Views: '2587人浏览',
-						titel: ' 私教工作室 ',
-						address: ' 华阳',
-						label: '是周围数个健身房数一数二的质量了',
-					},
-					{
-						image: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/logo1.png',
-						name: 'VIGOR LIFE健身训练中心（复地御香...）',
-						score: '5.0',
-						Price: '￥1035/人',
-						Views: '5624人浏览',
-						titel: ' 私教工作室   ',
-						address: ' 华阳',
-						label: '健身爱好者，力量训练爱好者的天堂',
-						tag: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/tag1.png'
-					},
-				],
-				locadata2: [{
-					image: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/logo3.png',
-					name: '99PARK篮球公园',
-					score: '3.5',
-					Price: '￥20/人',
-					Views: '87865人浏览',
-					titel: ' 篮球    ',
-					address: ' 航空港',
-					label: '免费停车',
-				}, ],
-				locadata3: [{
-					image: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/logo4.png',
-					name: '弘羽羽毛球馆',
-					score: '4.0',
-					Price: '暂无均价',
-					Views: '2896人浏览',
-					titel: ' 羽毛球  ',
-					address: ' 高新区',
-					label: '健身爱好者，力量训练爱好者的天堂',
-					tag: 'https://oss.kuaitongkeji.com/static/img/app/classification/motion/tag2.png'
-				}]
+				value: "",
+				ISseach: false,
+				hasMore: true,
+				isLoding: false,
+				page: 1,
+				pageSize:15,
+				lists: [],
+				text:''
 			}
 		},
 		methods: {
-			add(index) {
-				this.idx = index
-				if (index == 0) {
-					this.getData = this.locadata
-				}
-				if (index == 1) {
-					this.getData = this.locadata1
-				}
-				if (index == 2) {
-					this.getData = this.locadata2
-				}
-				if (index == 3) {
-					this.getData = this.locadata3
-				}
+			//取消
+			cancel(){
+				this.value = ""
+				this.ISseach = false
+				this.page = 1
+				this.lists = []
+				this.getData()
+			},
+			search() {
+				this.text = ''
+				this.ISseach = true
+				this.page = 1
+				this.lists = []
+				this.getData()
+			},
+			getData() {
+				this.isLoding = true
+				home.motionshop({
+					data: {
+						kw: this.value,
+						page:this.page,
+						pageSize:this.pageSize
+					},
+					fail: () => {
+						this.isLoding = false
+						uni.showToast({
+							title: "网络错误",
+							icon: "none"
+						})
+					},
+					success: (res) => {
+						this.isLoding = false
+						if (res.statusCode != 200) {
+							uni.showToast({
+								title: "网络出错了",
+								icon: "none"
+							})
+							return;
+						}
+						if (res.data.code != 200) {
+							uni.showToast({
+								title: res.data.msg,
+								icon: "none"
+							})
+							return;
+						}
+						let data = res.data.data
+						this.hasMore = data.next_page_url ? true : false
+						this.page = data.current_page + 1
+						this.lists = this.lists.concat(data.data)
+					}
+				})
 			}
 		},
-		onShow() {
-			this.getData = this.locadata
-		},
+		onShow() {},
 		mounted() {
-
+			this.getData()
+		},
+		// 下拉触底
+		onReachBottom() {
+			this.text = '没有更多了'
+			if (this.isLoding == true || this.hasMore == false) return;
+			this.getData();
 		},
 		onLoad() {
 
@@ -198,121 +169,117 @@
 </script>
 
 <style scoped lang="scss">
-	.tabbar {
+	.wid {
+		width: 400rpx;
+		// background: red;
+	}
+
+	.search {
+		position: fixed;
 		width: 100%;
 		height: 88rpx;
 		background: #FFFFFF;
-		color: #666;
-		font-size: 30rpx;
-		border-bottom: 1rpx solid #D2D2D2;
-		position: fixed;
-		z-index: 9;
+		border-bottom: 1px solid #eeeeee;
+		z-index: 99;
 	}
 
-	.top {
-		// margin-top: 88rpx;
-	}
-
-	.item {
+	.topLine {
 		height: 88rpx;
 	}
 
-	.dv {
-		color: #F07535;
-		height: 84rpx;
-		border-top: 1px solid #ffffff;
-		border-bottom: 1px solid #F07535;
+	.searchBack {
+		width: 494rpx;
+		height: 54rpx;
+		background: rgba(204, 204, 204, 0.35);
+		border-radius: 27rpx;
 	}
 
-	.itemimg {
-		width: 144rpx;
-		height: 144rpx;
+
+	.cancel {
+		font-size: 14px;
+		color: #666666;
+		margin-left: 30rpx;
+		right: 50rpx;
+	}
+
+	.serachImg {
+		width: 34rpx;
+		height: 34rpx;
 		margin-left: 20rpx;
-		margin-top: 20rpx;
 	}
 
-	.wujiaoimg {
-		width: 20rpx;
-		height: 20rpx;
+	.ipt {
+		margin-left: 20rpx;
+		width: 400rpx;
+		font-size: 14px;
 	}
 
-	.jianbimg {
-		width: 120rpx;
-		height: 38rpx;
+	.uni-input-placeholder {
+		font-size: 12px;
 	}
 
-	.itembox {
-		width: 690rpx;
-		padding-bottom: 50rpx;
-		background: #FFFFFF;
+	.itemBox {
+		width: 650rpx;
+		padding: 20rpx;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 		border-radius: 10rpx;
-		margin-top: 30rpx;
-			box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 	}
 
-	.name {
-		color: #333333;
-		font-size: 32rpx;
+	.itemCover {
+		width: 150rpx;
+		height: 150rpx;
+		border-radius: 10rpx;
 	}
 
-	.score {
-		color: #FFA800;
-		font-size: 24rpx;
-		margin: 10rpx 0;
+	.itemBrf {
+		border: 1px solid #F07535;
+		border-radius: 30rpx;
+		padding: 2rpx 14rpx;
+		color: #F07535;
 	}
 
-	.timer {
-		color: #9A9A9A;
-		right: 20rpx;
-	}
-
-	.Price {
-		color: #9A9A9A;
-		margin-left: 15rpx;
-	}
-
-	.details {
-		color: #999999;
-		font-size: 24rpx;
-	}
-
-	.databox {
-		margin-left: 40rpx;
-	}
-
-	.Hours {
-		width: 120rpx;
-		height: 38rpx;
-		color: #FFFFFF;
-		font-size: 24rpx;
-	}
-
-	.Views {
-		color: #999999;
-		font-size: 22rpx;
-		right: 20rpx;
-	}
-
-	.nextimg {
-		width: 10rpx;
-		height: 20rpx;
-		margin-left: 15rpx;
-	}
-
-	.line {
-		height: 30rpx;
-	}
-
-	.tagimg {
-		width: 240rpx;
-		height: 30rpx;
+	.noCentent {
+		padding: 50rpx 0;
 	}
 	
-	.simulation{
-		display: flex;
-		justify-content: center;
-		margin-top: 108rpx;
-		font-size: 30rpx;
-		color: #b3b3b3;
+	.notext {
+		padding: 30rpx 0;
+		font-size: 12px;
+	}
+	
+	.lodimg {
+		width: 30rpx;
+		height: 30rpx;
+		margin-right: 20rpx;
+	}
+	
+	.lodbox {
+		padding: 20rpx 0;
+		font-size: 24rpx;
+	}
+	
+	.showloding {
+		position: absolute;
+		width: 100%;
+		height: 100vh;
+		top: 0;
+		color: #FFFFFF;
+	}
+	
+	.loimg {
+		width: 50rpx;
+		height: 50rpx;
+	}
+	
+	.loding {
+		width: 260rpx;
+		height: 200rpx;
+		background: rgba(88, 88, 88, 0.8);
+		border-radius: 10rpx;
+	}
+	
+	.addicon {
+		width: 20rpx;
+		height: 24rpx;
 	}
 </style>

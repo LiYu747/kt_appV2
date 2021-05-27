@@ -55,14 +55,14 @@
 					<image src="https://oss.kuaitongkeji.com/static/img/app/propertyManagement/accessBack.png" class="checkBack pos-abs"
 					 mode=""></image>
 					<view class="">
-						<image src="https://oss.kuaitongkeji.com/static/img/app/propertyManagement/contract.png" class="contractImg" mode=""></image>
+						<image src="../../../image/home/nifo.png" class="contractImg" mode=""></image>
 					</view>
 					<view class="">
 						<view class="checktex1">
-							进出记录
+							小区信息
 						</view>
 						<view class="checktex2">
-							用户入住申请查看及审核
+							管理的小区信息
 						</view>
 					</view>
 				</view>
@@ -131,10 +131,10 @@
 					url: '/pages/propertyManagement/CheckToSee/CheckToSee'
 				})
 			},
-			//出入记录
+			//小区信息
 			comeAndGo() {
 				uni.navigateTo({
-					url: '/pages/propertyManagement/accessToInformation/accessToInformation'
+					url: '/pages/propertyManagement/Villageletter/Villageletter'
 				})
 			},
 			// 帖子管理
@@ -171,7 +171,7 @@
 <style scoped lang="scss">
 	.contenBox {
 		margin-top: 20rpx;
-		width: 100%;
+		width: 690rpx;
 		padding: 30rpx;
 	}
 
@@ -303,17 +303,19 @@
 	.trilateral {
 		width: 0;
 		height: 0;
-		border: 10rpx solid;
+		border: 14rpx solid;
 		border-color: transparent transparent white white;
 	}
 	
 	.nomenBox{
+		margin-top: -10rpx;
 		border-radius: 10rpx;
 		width: 240rpx;
 	    padding: 20rpx 30rpx;
 		background: #FFFFFF;
 		font-size: 14px;
 		color: #666666;
+		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 	}
 	
 	.showBox{

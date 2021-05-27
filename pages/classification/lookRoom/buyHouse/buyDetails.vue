@@ -17,7 +17,13 @@
 				<view class="nameDetail">
 					{{roomInof.title}}
 				</view>
-				<view class="fz-12 m-t2 haveSeen">
+				<view class="pritext flex m-t1">
+					{{roomInof.avg_price}}
+					<view class="fz-12">
+						元/㎡
+					</view>
+				</view>
+				<view class="fz-12 haveSeen">
 					已有{{roomInof.pv}}人浏览
 				</view>
 			</view>
@@ -71,7 +77,7 @@
 			<view @click="Address" class="addressBox m-t3 flex  fz-14">
 				<image src="https://oss.kuaitongkeji.com/static/img/app/lookroom/add.png" class="addImg" mode=""></image>
 				<view class="m-l2 addressmsg">
-					{{roomInof.village}}
+					{{roomInof.address}}
 				</view>
 			</view>
 
@@ -107,6 +113,7 @@
 <script>
 	import subunit from '../../../../components/sub-unit/subunit.vue'
 	import home from '../../../../vendor/home/home.js'
+	import cache from '../../../../vendor/cache/cache.js'
 	export default {
 		name: "",
 		components: {
@@ -135,7 +142,7 @@
 		methods: {
 			//拨打电话
 			consult(){
-				if(!this.roomInof.tel) return;
+				if(!this.roomInof.tel||!cache.get('jwt')) return;
 				uni.makePhoneCall({
 				    phoneNumber:  this.roomInof.tel
 				});
@@ -143,9 +150,9 @@
 			// 地址
 			Address(){
 				if(!this.roomInof.lat) return;
-				if(!this.roomInof.lgt) return;
+				if(!this.roomInof.lng) return;
 				let latitude = Number(this.roomInof.lat)
-				let longitude = Number(this.roomInof.lgt)
+				let longitude = Number(this.roomInof.lng)
 				uni.openLocation({
 				    latitude: latitude,
 				    longitude: longitude, 
@@ -213,8 +220,26 @@
 						if (data.ele == 1) {
 							data.ele = '有'
 						}
-
+                        if(!cache.get('jwt')){
+                        	data.tel = data.tel.slice(0,3) + "****" + data.tel.slice(7,11)
+                        }
 						this.roomInof = data
+						this.saleView(data.id)
+					}
+				})
+			},
+			saleView(id){
+				home.saleView({
+					data:{id:id},
+					fail: () => {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					},
+					success: (res) => {
+						if(res.statusCode != 200) return;
+						if(res.data.code != 200) return;
 					}
 				})
 			}

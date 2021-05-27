@@ -27,14 +27,17 @@
 					</view>
 					<view v-if="rentingRoom.length>0" class="flex ">
 						<view class="items m-b1" @click="gotoDetails(items)" v-for=" items in rentingRoom" :key='items.id'>
-							<image v-if="items.faceimg" :src="items.faceimg" class="itemsimg" mode="aspectFill"></image>
+							<image v-if="items.cover" :src="items.cover" class="itemsimg" mode="aspectFill"></image>
 							<image v-else src="https://oss.kuaitongkeji.com/upload/2021/02/20/Kztg485iqwsrKNrDLXKIeQ7apbhuyi4v1SHpslOv.jpeg"
 							 class="itemsimg" mode="aspectFill"></image>
 							<view class="itemsname m-t1 fz-14">
 								{{items.title}}
 							</view>
 							<view class="fz-12 bricolor">
-								{{items.introduce}}/{{items.area}}㎡
+								{{items.introduce}}
+								<view v-if="items.area" class="">
+									/{{items.area}}㎡
+								</view>
 							</view>
 							<view class="pritext flex m-t1">
 								{{items.rents}}
@@ -59,7 +62,7 @@
 					</view>
 					<view v-if="sellRoom.length>0" class="flex ">
 						<view class="items" @click="gotoBuy(items)" v-for=" items in sellRoom" :key='items.id'>
-							<image v-if="items.faceimg" :src="items.faceimg" class="itemsimg" mode="aspectFill"></image>
+							<image v-if="items.cover" :src="items.cover" class="itemsimg" mode="aspectFill"></image>
 							<image v-else src="https://oss.kuaitongkeji.com/upload/2021/02/20/Kztg485iqwsrKNrDLXKIeQ7apbhuyi4v1SHpslOv.jpeg"
 							 class="itemsimg" mode="aspectFill"></image>
 							<view class="itemsname m-t1 fz-14">
@@ -175,8 +178,7 @@
 						}
 						let data = res.data.data.data
 						data.map(item => {
-							let hall = item.hall != null ? item.hall + '厅' : '';
-							item.introduce = item.room + '室' + hall
+							item.introduce = item.room + '室' + item.hall + '厅' 
 						})
 						if (data.length == 0) {
 							this.notext = '还没有人发布租房信息'
@@ -215,8 +217,7 @@
 						}
 						let data = res.data.data.data
 						data.map(item => {
-							let hall = item.hall != null ? item.hall + '厅' : '';
-							item.introduce = item.room + '室' + hall
+							item.introduce = item.room + '室' + item.hall + '厅' 
 						})
 						if (data.length == 0) {
 							this.notext2 = '还没有人发布卖房信息'
@@ -236,7 +237,7 @@
 			this.getSell()
 		},
 		onLoad() {
-
+         
 		},
 		filters: {
 
@@ -294,6 +295,7 @@
 	.itemsimg {
 		width: 200rpx;
 		height: 160rpx;
+		border-radius: 10rpx;
 	}
 
 	.bricolor {
@@ -302,7 +304,7 @@
 
 	.pritext {
 		color: #F07535;
-		font-size: 34rpx;
+		font-size: 32rpx;
 		align-items: baseline;
 	}
 

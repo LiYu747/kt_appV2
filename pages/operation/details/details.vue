@@ -29,12 +29,14 @@
 				</view>
 			</view>
 			<u-picker :default-time='invalid_at' @confirm="ok" mode="time" v-model="show" :params="params"></u-picker>
-			<view v-if="redIMG" class="">
+			<view v-if="redIMG.length>0" class="">
 				<view class="tex1">
 					补充图片
 				</view>
 				<view class="imgBox">
-					<image :src="redIMG" class="redImg" mode="aspectFill"></image>
+					<view class="" v-for="item in redIMG" :key="item.id">
+						<image :src="item" class="redImg m-r1" mode="aspectFill"></image>
+					</view>
 				</view>
 			</view>
 
@@ -87,7 +89,7 @@
 				valuetime: '', //二维码有效时间
 				show: false,
 				invalid_at: '', //传的时间
-				redIMG: '', //图片
+				redIMG: [], //图片
 				params: {
 					year: true,
 					month: true,
@@ -123,9 +125,19 @@
 			},
 			// 确定
 			ok(val) {
-				this.invalid_at = val.year + '-' + val.month + '-' + val.day + ' ' + val.hour + ':' + val.minute + ':' + val.second
-				let time = val.year + '年' + val.month + '月' + val.day + '日' + ' ' + val.hour + ':' + val.minute + ':' + val.second
-				this.valuetime = time
+			
+				let time = val.year + '-' + val.month + '-' + val.day + ' ' + val.hour + ':' + val.minute + ':' + val.second
+				let tampLogin =  new Date(time).getTime() - new Date().getTime() 
+				if(tampLogin < 0){
+					uni.showToast({
+						title:"选择的时间必须大于当前时间",
+						icon:"none"
+					})
+					return;
+				}else{
+					this.invalid_at = time
+					this.valuetime = val.year + '年' + val.month + '月' + val.day + '日' + ' ' + val.hour + ':' + val.minute + ':' + val.second
+				}
 			},
 			// 数据
 			getData() {
@@ -150,17 +162,24 @@
 						if (res.data.code != 200) return;
 						// console.log(res.data.data);
 						let data = res.data.data
-						this.text = data.verify_text
+						switch(data.verify_status){
+							case 1:
+							this.text = "待处理"
+							break;
+							case 2:
+							this.text = "同意"
+							break;
+							case 3:
+							this.text = "未同意"
+							break;
+						}
 						this.locadata[0].value = data.own_visitor.username
 						this.locadata[1].value = data.own_visitor.tel.slice(0, 3) + '****' + data.own_visitor.tel.slice(7, 11)
 						this.locadata[2].value = data.created_at.slice(0, 16)
-						if (data.own_village) {
-							this.locadata[3].value = '' + data.own_village.name + data.own_building.name + data.own_apartment.name +
-								data.own_floor.name + data.own_room.room_number
-						}
+						this.locadata[3].value = data.place
 						this.remarks = data.visitor_remark
 						this.result = data.verify_text
-						this.redIMG = data.ext_img
+						this.redIMG = data.pics
 					}
 				})
 			},
@@ -171,10 +190,20 @@
 			},
 			// 不通过
 			nopass() {
-				this.userDo(3,'')   
+				this.userDo(3,this.invalid_at)   
 			},
 			// 操作数据
 			userDo(status,invalid) {
+				if(!this.textvalue){
+					switch(status){
+						case 2:
+						this.textvalue = "通过"
+						break;
+						case 3:
+						this.textvalue = "未通过"
+						break;
+					}
+				}
 				uni.showLoading({
 					title: '加载中...',
 				})
@@ -183,7 +212,7 @@
 						id: this.id,
 						verify_status: status,
 						verify_msg: this.textvalue,
-						invalid_at: invalid
+						valid_end: invalid
 					},
 					fail: () => {
 						uni.hideLoading()
@@ -227,6 +256,9 @@
 					year: nowDate.getFullYear(),
 					month: nowDate.getMonth() + 1,
 					date: nowDate.getDate(),
+				}
+				if(date.month<10){
+					date.month = "0" + date.month
 				}
 				this.valuetime = date.year + '年' + date.month + '月' + date.date + '日' + '23:59:00'
 				this.invalid_at = date.year + '-' + date.month + '-' + date.date + ' ' + '23:59:00'

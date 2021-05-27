@@ -1,6 +1,6 @@
 <template>
 	<view>
-			<subunit titel='添加用户'></subunit>
+		<subunit titel='添加用户'></subunit>
 		<view class="fidex">
 			<view class="searchBox">
 				<view class="itemBox flex al-center" v-for="item in locdata" :key='item.id'>
@@ -32,7 +32,7 @@
 		</view>
 
 		<view class="resultBox flex-d al-center">
-			<view v-if="result.username"  class="listsBox">
+			<view v-if="result.username" class="listsBox">
 				<view class=" flex-d  ju-center">
 					<view class=" resultItem flex al-center">
 						<view class="">
@@ -42,20 +42,12 @@
 							{{result.username}}
 						</view>
 					</view>
-					<view class="resultItem flex al-center">
+					<view class="resultItem flex al-center noBtm">
 						<view class="">
 							手机号码
 						</view>
 						<view class="m-l2">
 							{{result.tel}}
-						</view>
-					</view>
-					<view class="resultItem flex al-center nobtm">
-						<view class="">
-							身份证号
-						</view>
-						<view class="m-l2">
-							{{result.id_card_no}}
 						</view>
 					</view>
 				</view>
@@ -66,14 +58,17 @@
 		<view v-if="result.username" class="showBox m-t3  flex al-center ju-center">
 			<view class="showCentent">
 				<view @click="addYse" class="flex al-center m-t1">
-					<image v-show="isYse==true" class="zrimg" src="https://oss.kuaitongkeji.com/static/img/app/address/yes.png" mode=""></image>
-					<image v-show="isYse==false" class="zrimg" src="https://oss.kuaitongkeji.com/static/img/app/address/zro.png" mode=""></image>
+					<image v-show="isYse==true" class="zrimg"
+						src="https://oss.kuaitongkeji.com/static/img/app/address/yes.png" mode=""></image>
+					<image v-show="isYse==false" class="zrimg"
+						src="https://oss.kuaitongkeji.com/static/img/app/address/zro.png" mode=""></image>
 					<view class="m-l2">
 						是否允许添加其他成员
 					</view>
 				</view>
 				<view @click="timeshow = !timeshow , showType=false" class="flex m-t3 al-center">
-					<image src="https://oss.kuaitongkeji.com/static/img/app/address/blckpd.png" class="blckpdImg" mode=""></image>
+					<image src="https://oss.kuaitongkeji.com/static/img/app/address/blckpd.png" class="blckpdImg"
+						mode=""></image>
 					<view class="m-l2">
 						有效期限
 					</view>
@@ -86,9 +81,32 @@
 						{{item.label}}
 					</view>
 				</view>
-				<u-picker @confirm="ok"  mode="time" v-model="show" :default-time='defaultTime' :params="params"></u-picker>
+				<u-picker @confirm="ok" mode="time" v-model="show" :default-time='defaultTime' :params="params">
+				</u-picker>
+				<view v-show="starTimeshow==true" class="">
+					<view @click="cleStantime" class="m-t2 flex al-center">
+						<view class="starTxt flex cl9 al-center  fz-14">
+							开始时间
+							<view class="m-l2">
+								<input type="text" disabled="true" class="iptstyle" :value="valid_begin"
+									placeholder="请选择开始时间" />
+							</view>
+						</view>
+					</view>
+					<view @click="cleEndtime" class="m-t2 flex al-center ">
+						<view class="flex cl9 al-center starTxt fz-14">
+							截止时间
+							<view class="m-l2">
+								<input type="text" disabled="true" class="iptstyle" :value="valid_end"
+									placeholder="请选择结束时间" />
+							</view>
+						</view>
+					</view>
+				</view>
+
 				<view @click="showType = !showType , timeshow = false" class="flex m-t3 al-center">
-					<image src="https://oss.kuaitongkeji.com/static/img/app/address/blckpd.png" class="blckpdImg" mode=""></image>
+					<image src="https://oss.kuaitongkeji.com/static/img/app/address/blckpd.png" class="blckpdImg"
+						mode=""></image>
 					<view class="m-l2">
 						选择用户类型
 					</view>
@@ -101,26 +119,19 @@
 						{{item.label}}
 					</view>
 				</view>
-				<view class="m-t3 flex">
-					<view class="remarkTxt">
-						备注
-					</view>
-					<view class="">
-						<textarea class="reArea" v-model="reValue" maxlength="10" placeholder="(10字以内)" />
-						</view>
-				</view>
-				
-				<view  class="flex al-center ju-around m-t2">
+
+				<view class="flex al-center ju-around m-t2">
 					<view @click="affirm" class="btnr flex al-center ju-center">
-					<image src="https://oss.kuaitongkeji.com/static/img/app/qrcode/2.png" class="btnimg" mode=""></image>
+						<image src="https://oss.kuaitongkeji.com/static/img/app/qrcode/2.png" class="btnimg" mode="">
+						</image>
 						<view class=" pos-abs">
-						  确认
+							确认
 						</view>
 					</view>
 				</view>
-			 </view>
+			</view>
 		</view>
-		
+
 	</view>
 </template>
 
@@ -135,30 +146,46 @@
 		props: {},
 		data() {
 			return {
-				timeList:[
-					{label:'永久',
-					id:0},
-				    { label:'临时',
-					id:1}],
-					timeshow:false, //是否显示选择时间
-					timenum:0,//默认永久
-				show:false,//选择时间
-				isYse:false,//选择打勾
-				types:[
-					{id:3,label:'租户'},
-					{id:2,label:'家庭成员'}
-				],//用户类型
-				showType:false,//是否显示用户类型
-				typeTet:'', //选择的类型
-				typeId:'',//选择类型的id
-				time:'',//有效时间
-				reValue:'',//备注
+				timeList: [{
+						label: '永久',
+						id: 0
+					},
+					{
+						label: '临时',
+						id: 1
+					}
+				],
+				timeshow: false, //是否显示选择时间
+				timenum: 0, //默认永久
+				show: false, //选择时间
+				isYse: false, //选择打勾
+				types: [{
+						id: 3,
+						label: '租户'
+					},
+					{
+						id: 2,
+						label: '家庭成员'
+					}
+				], //用户类型
+				showType: false, //是否显示用户类型
+				typeTet: '', //选择的类型
+				typeId: '', //选择类型的id
+				time: '', //有效时间
+				reValue: '', //备注
+				starTimeshow: false, //显示开始结束时间
+				isStarend: 0, //判断是选择开始还是结束，开始是0，结束是1.
+				valid_begin: '', //开始
+				valid_end: '', //结束
 				params: {
 					year: true,
 					month: true,
-					day: true,
+					day: true,	
+					hour: true,
+					minute: true,
+					second: true
 				},
-				addressid:'',//用户地址id
+				addressid: '', //用户地址id
 				locdata: [{
 						label: '姓名',
 						value: '',
@@ -174,119 +201,169 @@
 					}
 				],
 				result: {},
-				defaultTime:'',
-			
+				defaultTime: '',
 			}
 		},
 		methods: {
 			// 表单确定选择
-			affirm(){
-				if(!this.typeId){
-				 uni.showToast({
-				 	title:'选择用户类型',
-					icon:"none"
-				 })
-				 return;
+			affirm() {
+				if(!this.time){
+					uni.showToast({
+						title: '选择有效时间',
+						icon: "none"
+					})
+					return;
 				}
-			    uni.showModal({
-			      content:'您确定添加该用户吗',
-			      success:(res) => {
-					  if(res.cancel){
-						
-					  }
-			    	if(res.confirm){
-						let allow = 0
-						if(this.isYse==true){
-							allow = 1
-						}
-						if(this.isYse==false){
-							allow = 0
-						}
-						uni.showLoading({
-							title:'加载中'
+				if (!this.typeId) {
+					uni.showToast({
+						title: '选择用户类型',
+						icon: "none"
+					})
+					return;
+				}
+				if(this.timenum == 1){
+					if(!this.valid_begin){
+						uni.showToast({
+							title: '选择开始时间',
+							icon: "none"
 						})
-			    	address.pushMember({
-			    		data:{
-			    			id:this.addressid,
-			    			member_id:this.result.id,
-			    			allow_edit_member:allow,
-			    			type:this.typeId,
-			    			valid_type:this.timenum,
-			    			valid_end:this.time,
-			    			host_remark:this.reValue
-			    		},
-			    		fail: () => {
-			    			uni.hideLoading()
-			    			uni.showToast({
-			    				title: '网络错误',
-			    				icon: 'none',
-			    				duration:4000
-			    			})
-			    		},
-			    		success: (res) => {
-			    			uni.hideLoading()
-			    			// console.log(res);
-			    			if (res.statusCode != 200) {
-			    				uni.showToast({
-			    					title: '网络出错了',
-			    					icon: 'none',
-			    					duration:4000
-			    				})
-			    				return;
-			    			}
-			    			if (res.data.code != 200) {
-			    				uni.showToast({
-			    					title: res.data.msg,
-			    					icon: 'none',
-			    					duration:4000
-			    				})
-			    				return;
-			    			}
-			    			uni.showToast({
-			    				title:res.data.msg
-			    			})
-							this.locdata[0].value = ''
-							this.locdata[1].value = ''
-							this.result = {}
-			    		}
-			    	})
-			    	}
-			    	
-			      }
-			    })
-				
+						return;
+					}
+					if(!this.valid_end){
+						uni.showToast({
+							title: '选择结束时间',
+							icon: "none"
+						})
+						return;
+					}
+				}
+				uni.showModal({
+					content: '您确定添加该用户吗',
+					success: (res) => {
+						if (res.cancel) {
+
+						}
+						if (res.confirm) {
+							let allow = 0
+							if (this.isYse == true) {
+								allow = 1
+							}
+							if (this.isYse == false) {
+								allow = 0
+							}
+							uni.showLoading({
+								title: '加载中'
+							})
+							address.pushMember({
+								data: {
+									house_id: this.addressid,
+									uuid: this.result.uuid,
+									allow_edit_member: allow,
+									type: this.typeId,
+									valid_type: this.timenum,
+									valid_begin:this.valid_begin,
+									valid_end: this.valid_end,
+								},
+								fail: () => {
+									uni.hideLoading()
+									uni.showToast({
+										title: '网络错误',
+										icon: 'none',
+										duration: 4000
+									})
+								},
+								success: (res) => {
+									uni.hideLoading()
+									// console.log(res);
+									if (res.statusCode != 200) {
+										uni.showToast({
+											title: '网络出错了',
+											icon: 'none',
+											duration: 4000
+										})
+										return;
+									}
+									if (res.data.code != 200) {
+										uni.showToast({
+											title: res.data.msg,
+											icon: 'none',
+											duration: 4000
+										})
+										return;
+									}
+									uni.showToast({
+										title: res.data.msg
+									})
+									this.locdata[0].value = ''
+									this.locdata[1].value = ''
+									this.result = {}
+								}
+							})
+						}
+
+					}
+				})
+
 			},
-			//时间选择
-			selTime(item){
+			//开始时间选择
+			cleStantime() {
+				this.isStarend = 0
+				this.show = true
+			},
+			//结束时间选择
+			cleEndtime() {
+				if(this.valid_begin == ''){
+					uni.showToast({
+						title:'请先选择开始时间',
+						icon:"none",
+					})
+					return;
+				}
+				this.isStarend = 1
+				this.show = true
+			},
+			//时间类型选择
+			selTime(item) {
 				this.timeshow = false
 				this.timenum = item.id
-				if(item.id == 0){
-					this.time = item.label
-				}
-				if( item.id == 1){
-					this.show = true
-					if(this.time != '永久'){
-					  this.defaultTime = this.time
-						}
+				this.time = item.label
+				if (item.id == 1) {
+					this.starTimeshow = true
+				} else {
+					this.starTimeshow = false
 				}
 			},
 			// 点击打钩选择
-			addYse(){
+			addYse() {
 				this.isYse = !this.isYse
 			},
 			// 时间确定选择
-			ok(val){
-				// console.log(val);
-				this.time = val.year + '-' + val.month + '-' + val.day
-				},
+			ok(val) {
+				let time  = val.year + '-' + val.month + '-' + val.day + ' ' + val.hour + ':' + val.minute + ":" + val.second
+				if (this.isStarend == 0) {
+					this.valid_begin = time
+					this.defaultTime = time
+				}
+				if (this.isStarend == 1) {
+					let	tampLogin = new Date(time).getTime() - new Date(this.valid_begin).getTime();
+					if(tampLogin>0){
+						this.valid_end = time
+						this.defaultTime = time
+					}else{
+					uni.showToast({
+						title:'必须大于起始时间',
+						icon:"none"
+					})
+					}
+				}
+			},
 			//选择用户类型	
-			selType(item){
+			selType(item) {
 				this.showType = false
 				this.typeTet = item.label
 				this.typeId = item.id
-				// console.log(item);
 			},
-			
+
 			//搜索
 			search() {
 				if (this.locdata[0].value == '') {
@@ -304,12 +381,12 @@
 					return;
 				}
 				uni.showLoading({
-					title:'加载中'
+					title: '加载中'
 				})
 				address.findUser({
-					data:{
-						username:this.locdata[0].value,
-						tel:this.locdata[1].value
+					data: {
+						username: this.locdata[0].value,
+						tel: this.locdata[1].value
 					},
 					fail: () => {
 						uni.hideLoading()
@@ -317,14 +394,14 @@
 							title: '网络错误',
 							icon: 'none'
 						})
-						},
+					},
 					success: (res) => {
 						uni.hideLoading()
 						if (res.statusCode != 200) {
 							uni.showToast({
 								title: '网络出错了',
 								icon: 'none',
-								duration:4000
+								duration: 4000
 							})
 							return;
 						}
@@ -332,27 +409,28 @@
 							uni.showToast({
 								title: res.data.msg,
 								icon: 'none',
-								duration:4000
+								duration: 4000
 							})
 							return;
 						}
 						let data = res.data.data
 						this.result = data
-                        // console.log(data);
-					}	
+						// console.log(data);
+					}
 				})
-				
+
 			}
 		},
 		mounted() {
 
 		},
 		onLoad(option) {
-			this.addressid =  option.addressid
-			if(option.typeid==3){
-				this.types =[
-					{id:3,label:'租户'},
-				]
+			this.addressid = option.addressid
+			if (option.typeid == 3) {
+				this.types = [{
+					id: 3,
+					label: '租户'
+				}, ]
 			}
 		},
 		filters: {
@@ -361,8 +439,7 @@
 		computed: {
 
 		},
-		watch: {
-		},
+		watch: {},
 		directives: {
 
 		}
@@ -370,24 +447,24 @@
 </script>
 
 <style scoped lang="scss">
-	.fidex{
+	.fidex {
 		width: 100%;
 		position: fixed;
 		z-index: 9;
 	}
-	
-	.topLine{
+
+	.topLine {
 		height: 340rpx;
 	}
-	
+
 	.searchBox {
 		width: 94%;
 		padding: 0 3%;
 		height: 260rpx;
 		background: #FFFFFF;
 	}
-	
-	.timeBox{
+
+	.timeBox {
 		margin-top: 10rpx;
 		width: 170rpx;
 		background: #FFFFFF;
@@ -429,33 +506,32 @@
 	.resultTil {
 		width: 100%;
 		height: 60rpx;
-		background: #FFFFFF; 
+		background: #FFFFFF;
 		font-size: 12px;
 		border-top: 1px solid #eee;
 	}
-	
-	.listsBox{
+
+	.listsBox {
 		width: 650rpx;
 		padding: 0 20rpx;
 		background: #FFFFFF;
 		border-radius: 10rpx;
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 	}
-	
-	.resultItem{
+
+	.resultItem {
 		height: 80rpx;
 		border-bottom: 1px solid #CCCCCC;
 		font-size: 14px;
 	}
-	
-	.noBtm{
+
+	.noBtm {
 		border-bottom: none;
 	}
-	
-	
-	.showCentent{
+
+
+	.showCentent {
 		width: 500rpx;
-		height: 380rpx;
 		border-radius: 20rpx;
 		padding: 30rpx;
 		background: #FFFFFF;
@@ -463,50 +539,50 @@
 		color: #666666;
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 	}
-	
+
 	.zrimg {
 		width: 30rpx;
 		height: 30rpx;
 	}
-	
-	.blckpdImg{
-	  width: 28rpx;
-	  height: 20rpx;
-		}
-		
-	.remarkTxt{
-	 	margin-left: 50rpx;
-		}
-		
-	.reArea{
+
+	.blckpdImg {
+		width: 28rpx;
+		height: 20rpx;
+	}
+
+	.remarkTxt {
+		margin-left: 50rpx;
+	}
+
+	.reArea {
 		margin-left: 20rpx;
 		width: 350rpx;
 		height: 40rpx;
 		// background: red;
 		font-size: 15px;
-	}	
-	
+	}
+
 	.btnr {
 		margin-top: 20rpx;
 		color: #FFFFFF;
 		font-size: 28rpx;
 	}
-	
+
 	.btnimg {
 		width: 200rpx;
 		height: 60rpx;
 	}
-	
-	.nofind{
+
+	.nofind {
 		margin-top: 50rpx;
 		font-size: 14px;
 	}
-	
-	.nobtm{
+
+	.nobtm {
 		border-bottom: none;
 	}
-	
-	.typeBox{
+
+	.typeBox {
 		margin-top: 10rpx;
 		width: 170rpx;
 		background: #FFFFFF;
@@ -516,7 +592,22 @@
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 		padding-bottom: 20rpx;
 	}
-	.itemType{
+
+	.itemType {
 		margin-top: 20rpx;
+	}
+
+	.starTxt {
+		margin-left: 50rpx;
+	}
+
+	.iptstyle {
+		width: 300rpx;
+		font-size: 14px;
+	}
+
+	.uni-input-placeholder {
+		font-size: 12px;
+		color: #999999;
 	}
 </style>

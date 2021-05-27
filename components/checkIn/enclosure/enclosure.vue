@@ -178,11 +178,13 @@
 		width: 260rpx;
 		height: 200rpx;
 		background: rgba(88, 88, 88, 0.8);
+		border-radius: 10rpx;
 	}
 
 	.itemimg {
 		width: 140rpx;
-		height: 140rpx;
+		height: 160rpx;
+		border-radius: 10rpx;
 		margin-right: 20rpx;
 		margin-bottom: 10rpx;
 	}

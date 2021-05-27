@@ -23,6 +23,14 @@
 						元/月
 					</view>
 				</view>
+				<view class="flex ju-between m-t1 fz-12 cl9 al-center">
+					<view class="  m-l1">
+						{{roomInof.rent_pay_method}}
+					</view>
+					<view class="m-r2">
+						已有{{roomInof.pv}}人浏览
+					</view>
+				</view>
 			</view>
 
 			<view class="houseType flex al-center ju-between">
@@ -59,7 +67,7 @@
 			<view @click="Address" class="addressBox m-t3 flex  fz-14">
 				<image src="https://oss.kuaitongkeji.com/static/img/app/lookroom/add.png" class="addImg" mode=""></image>
 				<view class="m-l2 addressmsg">
-					{{roomInof.village}}
+					{{roomInof.address}}
 				</view>
 			</view>
 
@@ -198,7 +206,7 @@
 						this.locdata[1].value = data.floor + '/' + data.total_floor + '层'
 						this.locdata[2].value = data.room + '室' + hall + bathroom
 						this.id = data.id
-						cache.set('isShow',data.is_show)
+						this.$store.commit('userIschenge',data.is_show)
 						if (data.zx == 'low') {
 							data.zx = '清水房'
 						}
@@ -222,7 +230,7 @@
 			// 地址
 			Address(){
 				let latitude = Number(this.roomInof.lat)
-				let longitude = Number(this.roomInof.lgt)
+				let longitude = Number(this.roomInof.lng)
 				uni.openLocation({
 				    latitude: latitude,
 				    longitude: longitude, 

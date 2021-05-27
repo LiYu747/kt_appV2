@@ -1,6 +1,6 @@
 <template>
 	<view class="fz-12">
-		<subunit  titel='小区简介'></subunit>
+		<subunit titel='小区简介'></subunit>
 		<view class="">
 			<u-swiper v-if="list.length>0" :list="list" border-radius='0' height="350"></u-swiper>
 			<u-swiper v-if="list.length==0" :list="localist" border-radius='0' height="350"></u-swiper>
@@ -8,10 +8,11 @@
 		<view class="flex-d al-center">
 			<view class="nav flex-d al-center pos-rel">
 				<view class="tex1">
-					{{arr.name}}
+					{{villinfo.name}}
 				</view>
 				<view class="tex2 flex al-center ju-center" :class="{te2:idx===0}">
-					<view class="item" v-for="(item,index) in titel" :key='item.id' @click="add(index)" :class="{'dv':index===1,'colr':idx===index}">
+					<view class="item" v-for="(item,index) in titel" :key='item.id' @click="add(index)"
+						:class="{'dv':index===1,'colr':idx===index}">
 						{{item}}
 					</view>
 					<view @click="goforum" class="">
@@ -21,42 +22,45 @@
 				<!-- 小区简介 -->
 				<view v-show="idx===0" class="content">
 					<view class="addressBox flex pos-rel">
-							<view class="addText">
-								小区地址：
-								{{detailedAddress}}
-							</view>
-							<view class="goHere flex pos-abs">
-								<!-- 去这里 -->
-								<image @click="navigation" src="https://oss.kuaitongkeji.com/static/img/app/forum/addicon.png" class="addicon" mode=""></image>
-							</view>
+						<view class="addText">
+							小区地址：
+							{{detailedAddress}}
+						</view>
+						<view class="goHere flex pos-abs">
+							<!-- 去这里 -->
+							<image @click="navigation"
+								src="https://oss.kuaitongkeji.com/static/img/app/forum/addicon.png" class="addicon"
+								mode=""></image>
+						</view>
 					</view>
 					<view class="m-t2">
-						{{arr.brief}}
+						{{villinfo.brief}}
 					</view>
 				</view>
 				<!-- 小区公告 -->
 				<view v-show="idx === 1" class="twbx m-t2">
 					<view v-if="Notice.length>0" class="">
 						<view class="" v-for="(item,index) in Notice" :key='item.id'>
-							<view @click="godils(item)" class="wid m-b1">
+							<view @click="godils(item)" class="wid m-b2">
 								{{index+1}} . {{item.title}}
 							</view>
 						</view>
 					</view>
-					<view v-else class="">
+					<view v-else class="flex ju-center p-b2 p-t2">
 						暂无公告
 					</view>
 				</view>
 			</view>
-			<view v-if="idx===0&&arr.desc" class="foot">
-				<u-parse :html="arr.desc"></u-parse>
+			<view v-if="idx===0&&villinfo.desc" class="foot">
+				<u-parse :html="villinfo.desc"></u-parse>
 			</view>
 		</view>
 
 		<view v-show="isLoding == true" class="showloding flex al-center ju-center">
 			<view class="loding flex-d al-center ju-center">
 				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 				</view>
 				加载中
 			</view>
@@ -68,6 +72,7 @@
 	import subunit from '../../../components/sub-unit/subunit.vue'
 	import village from '../../../vendor/village/village.js'
 	import jwt from '../../../vendor/auth/jwt.js'
+	import cache from '../../../vendor/cache/cache.js'
 	export default {
 		name: "",
 		components: {
@@ -81,45 +86,65 @@
 				id: '', //传的id
 				localist: ['https://oss.kuaitongkeji.com/static/img/app/forum/timg.jpg'],
 				list: [], //轮播图
-				arr: {}, //小区展示信息
+				villinfo: {}, //小区展示信息
 				titel: [
 					'简介', '公告'
 				],
 				Notice: [], // 公告数据
 				detailedAddress: '', //小区详细地址
 				idx: 0,
-				isLoding: false
+				isLoding: false,
+				page: 1,
+				userLogin: false,
 			}
 		},
 		methods: {
 			// 点击
 			add(index) {
+				if (this.userLogin == false) {
+					this.loadUserData()
+					return;
+				}
 				this.idx = index
+				if (index == 1) {
+					this.noticeData()
+				}
 			},
 			// 去论坛
 			goforum() {
+				if (this.userLogin == false) {
+					this.loadUserData()
+					return;
+				}
+				if (this.villinfo.tribune_state == 0) {
+					uni.showToast({
+						title: "暂时禁止发布和访问",
+						icon: "none",
+						duration: 3000
+					})
+					return;
+				}
 				uni.navigateTo({
 					url: `/pages/communityForum/forumlists/forumlists?id=${this.id}`
 				})
 			},
 			// 查看地方
-			navigation(){
-				let addressName = this.arr.address_name
-				let lat = this.arr.lat
-				let lng = this.arr.lng
-				   uni.openLocation({
-				            latitude: Number(this.arr.lat),
-				            longitude: Number(this.arr.lng),  
-				            success: function () {
-				                console.log('success');
-				            }
-				        });
+			navigation() {
+				uni.openLocation({
+					latitude: Number(this.villinfo.lat),
+					longitude: Number(this.villinfo.lng),
+					success: function() {
+						// console.log('success');
+					}
+				});
 			},
 			// 小区公告
 			noticeData() {
 				village.Notice({
 					data: {
-						village_id: this.id
+						village_id: this.id,
+						page: this.page,
+						pageSize: 3
 					},
 					fail: () => {
 						uni.showToast({
@@ -128,8 +153,14 @@
 						})
 					},
 					success: (res) => {
-						if (res.statusCode != 200) return
-						if (res.data.code != 200) return
+						if (res.statusCode != 200) return;
+						if (res.data.code != 200) {
+							uni.showToast({
+								title: res.data.msg,
+								icon: "none"
+							})
+							return;
+						}
 						// console.log(res.data.data.data);
 						let data = res.data.data.data
 						this.Notice = data
@@ -154,12 +185,9 @@
 						this.isLoding = false
 						if (res.statusCode != 200) return
 						if (res.data.code != 200) return
-						// console.log('小区展示', res);
-						let data = res.data.data
-						data.album.map(item => {
-							this.list.push(item.url)
-						})
-						this.arr = data
+						let data = res.data.data.info
+						this.list = data.album
+						this.villinfo = data
 						// 小区详细地址
 						this.detailedAddress = data.address + data.address_name
 					}
@@ -167,7 +195,6 @@
 			},
 			// 查看详情
 			godils(item) {
-				// console.log(item.id);
 				village.Noticeshow({
 					data: {
 						id: item.id
@@ -181,21 +208,44 @@
 					success: (res) => {
 						if (res.statusCode != 200) return
 						if (res.data.code != 200) return
-						let content = {title:res.data.data.title,content:res.data.data.content}
-						this.$store.commit("homeContent",content);
+						let content = {
+							title: res.data.data.title,
+							content: res.data.data.content
+						}
+						this.$store.commit("homeContent", content);
 						uni.navigateTo({
 							url: `/pages/InformationDetails/InformationDetails/InformationDetails`
 						})
 					}
 				})
-			}
+			},
+			// 判断是否登录
+			loadUserData() {
+				jwt.doOnlyTokenValid({
+					showModal: true,
+					keepSuccess: false,
+					success: () => {
+
+					},
+					fail: () => {
+						
+					}
+				})
+			},
 		},
 		mounted() {
-			this.noticeData()
+
 			this.Information()
 		},
 		onLoad(val) {
 			this.id = val.id
+		},
+		onShow() {
+			if (cache.get('jwt')) {
+				this.userLogin = true
+			} else {
+				this.userLogin = false
+			}
 		},
 		filters: {
 
@@ -281,17 +331,19 @@
 		font-size: 24rpx;
 		margin-bottom: 60rpx;
 	}
-	.addText{
+
+	.addText {
 		width: 500rpx;
 		// background: red;
-		word-break:break-all
+		word-break: break-all
 	}
-	
-	.addicon{	
+
+	.addicon {
 		width: 40rpx;
 		height: 40rpx;
 	}
-	.goHere{
+
+	.goHere {
 		margin-top: -40rpx;
 		color: #F07535;
 		width: 140rpx;
@@ -328,6 +380,7 @@
 		padding: 20rpx 14rpx;
 		color: #666666;
 		margin-bottom: 60rpx;
+		border-radius: 10rpx;
 	}
 
 	.wid {

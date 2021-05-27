@@ -17,6 +17,8 @@ export default new Vuex.Store({
 		saleDel:'',
 		checkIspass:'',
 		customBar: cache.get("customBar"),//用户状态栏高度
+		userIschenge:'',
+		userPhoto:'',
 	},
 	// 同步更改值
 	mutations:{
@@ -51,6 +53,14 @@ export default new Vuex.Store({
 		 checkIspass(state,info){
 			this.state.checkIspass = info  
 		 },
+		 //判断用户更改租房信息
+		 userIschenge(state,info){
+			 this.state.userIschenge = info
+		 },
+		 //用户上传的正面照片
+		 userPhoto(state,info){
+			  this.state.userPhoto = info
+		 }
 	
 	},
 	//异步

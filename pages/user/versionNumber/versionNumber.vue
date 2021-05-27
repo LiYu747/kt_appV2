@@ -10,7 +10,7 @@
 				<image src="https://oss.kuaitongkeji.com/static/img/app/address/retrue.png"  class="abimg" mode=""></image>
 			</view>
 		</view>
-		<view @click="guidance" class="tabar m-t2 flex al-center">
+	<!-- 	<view @click="guidance" class="tabar m-t2 flex al-center">
 			 新手指导
 			<view class=" flex al-center pos-abs posrigth">
 				 <view class="">
@@ -18,7 +18,7 @@
 				 </view>
 				<image src="https://oss.kuaitongkeji.com/static/img/app/address/retrue.png"  class="abimg" mode=""></image>
 			</view>
-		</view>
+		</view> -->
     </view>
 </template>
 

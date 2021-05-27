@@ -7,7 +7,7 @@
 			</view>
 		</view>
 		<image src="https://oss.kuaitongkeji.com/static/img/app/home/jx.png" class="img" mode=""></image>
-		<addList :locdata='locdata' :isLoding='isLoding'  :hasMore='hasMore'></addList>
+		<addList :locdata='locdata' :isLoding='isLoding'></addList>
 		<view v-show="showPullDownRefreshIcon == true" class="show  flex al-center ju-center">
 			<view class="showcentent flex al-center ju-between">
 				<image class="lodimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
@@ -48,12 +48,8 @@
 		props: {},
 		data() {
 			return { 
-				updata:0,
 				locdata: [], //数据列表
-				page: 1,
-				ps: 15,
 				isLoding: false,
-				hasMore: true,
 				showPullDownRefreshIcon: false,
 				Gshow: 0,
 				flag:false,
@@ -67,7 +63,7 @@
 				}
 				this.flag = false
 				uni.navigateTo({
-					url: '/pages/residence/checkIn/checkIn'
+					url: '/pages/residence/seachVill/seachVill?code=1'
 				})
 			},
 			gotohome() {
@@ -80,11 +76,7 @@
 					url: '/pages/index/index'
 				})
 			},
-			// 入驻申请
-			add(val) {
-				this.flag = val
-			},
-			// 去入驻申请
+		
 
 			// 下拉刷新
 			stopRefreshIcon() {
@@ -94,8 +86,42 @@
 				}
 			},
 			// 用户所有地址
+			userAlladd(){
+				 this.isLoding = true
+				 
+				 address.alladd({
+				 	data: {
+				 	},
+				 	fail: () => {
+				 		this.isLoding = false;
+				 		this.stopRefreshIcon();
+				 		uni.showToast({
+				 			title: '网络错误',
+				 			icon: 'none'
+				 		})
+				 	},
+				 	success: (res) => {
+				             
+				 		this.stopRefreshIcon();
+				 
+				 		this.isLoding = false;
+				 
+				 		if (res.statusCode != 200) return;
+				 
+				 		if (res.data.code != 200) return;
+				 
+				 		let data = res.data.data;
+				 		data.map(item => {
+				 			if (item.own_village) {
+				 				item.address = item.own_village.name + item.own_building.name + item.own_apartment.name + item.own_floor
+				 					.name + item.own_room.name
+				 			}
+				 		})
+				 	this.locdata = data
+				 	}
+				 })
+			},
 			loadPageData() {
-
 				jwt.doOnlyTokenValid({
 					showModal: true,
 					keepSuccess: false,
@@ -105,58 +131,13 @@
 						}else{
 							   uni.showTabBar()								
 						} 
-						this.isLoding = true
-
-						address.alladd({
-							data: {
-								page: this.page,
-								pageSize: this.ps,
-							},
-							fail: (err) => {
-								this.isLoding = false;
-								this.stopRefreshIcon();
-								uni.showToast({
-									title: '网络错误',
-									icon: 'none'
-								})
-							},
-							success: (res) => {
-                                    
-								this.stopRefreshIcon();
-
-								this.isLoding = false;
-
-								if (res.statusCode != 200) return;
-
-								if (res.data.code != 200) return;
-
-								let data = res.data.data;
-
-								// console.log(data);
-								this.hasMore = data.next_page_url ? true : false;
-								this.page = data.current_page + 1
-								// console.log(res.data.data.data); 
-								// let data = res.data.data.data
-								data.data.map(item => {
-									if (item.own_village) {
-										item.address = item.own_village.name + item.own_building.name + item.own_apartment.name + item.own_floor
-											.name + item.own_room.room_number
-									}
-								})
-								if(this.updata == 0){
-										this.locdata = data.data
-								}else{
-									this.locdata =this.locdata.concat(data.data) 
-								}
-							
-								// console.log(this.locdata);
-							}
-						})
+						this.userAlladd()
 					},
 					fail: () => {
 						this.isLoding = false
 						this.stopRefreshIcon();
 						this.locdata = []
+						this.page = 1
 						if(cache.get('Gshow')){
 							cache.set('Gshow',{'key':'开启',value:0})
 						}
@@ -184,22 +165,16 @@
 		onHide() {
           this.Gshow = 0
 		  this.flag = false
-		  this.page = 1
-		  this.updata = 0
 		},
 		// 下拉刷新
 		onPullDownRefresh() {
 			this.locdata = [];
-			this.page = 1;
-			this.hasMore = true;
 			this.showPullDownRefreshIcon = true;
-			this.loadPageData();
+			this.userAlladd();
 		},
 		// 下拉加载更多
 		onReachBottom() {
-			if (this.isLoding == true || this.hasMore == false) return;
-			this.updata = 1
-			this.loadPageData()
+			
 		},
 		
 		filters: {
