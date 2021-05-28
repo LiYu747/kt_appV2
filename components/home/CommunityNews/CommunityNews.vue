@@ -2,7 +2,7 @@
 	<view class="">
 		<view class="box">
 			<view class="text">
-				社区新闻
+				小区新闻
 			</view>
 			<view v-if="news.length>0" class="cententBox pos-rel flex al-center">
 				<view class="conTxt">
@@ -12,7 +12,7 @@
 				</view>
 			</view>
 			<view  v-else class=" fz-12 nonews">
-				暂无社区新闻...
+				暂无小区新闻...
 			</view>
 		</view>
 		<view class="line">

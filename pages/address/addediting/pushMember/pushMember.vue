@@ -345,7 +345,7 @@
 					this.defaultTime = time
 				}
 				if (this.isStarend == 1) {
-					let	tampLogin = new Date(time).getTime() - new Date(this.valid_begin).getTime();
+					let	tampLogin = new Date(time.replace(/-/g,'/')).getTime() - new Date(this.valid_begin.replace(/-/g,'/')).getTime();
 					if(tampLogin>0){
 						this.valid_end = time
 						this.defaultTime = time

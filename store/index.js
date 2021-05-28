@@ -16,9 +16,10 @@ export default new Vuex.Store({
 		roomisDel:'',
 		saleDel:'',
 		checkIspass:'',
-		customBar: cache.get("customBar"),//用户状态栏高度
+		customBar: uni.getSystemInfoSync().statusBarHeight + 128,//用户状态栏高度
 		userIschenge:'',
 		userPhoto:'',
+		userAdd:null
 	},
 	// 同步更改值
 	mutations:{
@@ -60,6 +61,10 @@ export default new Vuex.Store({
 		 //用户上传的正面照片
 		 userPhoto(state,info){
 			  this.state.userPhoto = info
+		 },
+		 //用户选择的地址
+		 userAdd(state,info){
+			 this.state.userAdd = info
 		 }
 	
 	},

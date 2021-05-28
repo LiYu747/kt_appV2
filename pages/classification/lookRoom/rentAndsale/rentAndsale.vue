@@ -23,10 +23,10 @@
 							<view class="m-l2 rigBox fz-16 pos-rel">
 								{{item.title}}
 								<view class="flex fz-12 m-t1 cl9">
-									<view class="">
+									<view v-if="item.area" class="">
 										{{item.area}}㎡
 									</view>
-									<view class="m-l1">
+									<view v-if="item.introduce" class="m-l1">
 										{{item.introduce}}/{{item.zx}}
 									</view>
 								</view>
@@ -208,7 +208,9 @@
 						this.page = data.current_page + 1;
 						this.hasMore = data.next_page_url ? true : false;
                           data.data.map(item => {
-							  item.introduce = item.room + '室' + item.hall + '厅' + item.bathroom + '卫'
+							  if(item.room){
+								  item.introduce = item.room + '室' + item.hall + '厅' + item.bathroom + '卫'
+							  }
 							  if (item.zx == 'low') {
 							  	item.zx = '清水房'
 							  }

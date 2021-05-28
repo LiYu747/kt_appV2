@@ -127,7 +127,7 @@
 			ok(val) {
 			
 				let time = val.year + '-' + val.month + '-' + val.day + ' ' + val.hour + ':' + val.minute + ':' + val.second
-				let tampLogin =  new Date(time).getTime() - new Date().getTime() 
+				let tampLogin =  new Date(time.replace(/-/g,'/')).getTime() - new Date().getTime() 
 				if(tampLogin < 0){
 					uni.showToast({
 						title:"选择的时间必须大于当前时间",

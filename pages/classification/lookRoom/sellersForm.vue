@@ -130,6 +130,7 @@
 	import home from '../../../vendor/home/home.js'
 	import jwt from '../../../vendor/auth/jwt.js'
 	import user from '../../../vendor/user/userDetails.js'
+	import cfg from '../../../vendor/config/config.js'
 export default {
 name: "",
 components: {
@@ -429,15 +430,16 @@ data () {
 	  },
 	  // 定位
 	  location(){
-		   let that = this 
-		  uni.chooseLocation({
-		      success: function (res) {
-				  that.formlist[0].value = res.name
-				  that.addDetails = res.address
-				  that.lgt = res.longitude.toFixed(6)//经度
-				  that.lat = res.latitude.toFixed(6)//纬度
-		      }
-		  });
+		  cfg.ready((data) => {
+		  	if (!data) return;
+		  	let qqMap = "https://apis.map.qq.com/tools/locpicker"
+		  	let url = qqMap + "?search=1&type=1&key=" + data.map.qq_map.qqmap_app_key + "&referer=" + data
+		  		.map.qq_map.qqmap_app_name
+		  	uni.navigateTo({
+		  		url: '/pages/classification/lookRoom/Celaddress/Celaddress?url=' +
+		  			encodeURIComponent(url)
+		  	})
+		  })
 	  },
 	 //判断
     iSfill(){
@@ -731,6 +733,16 @@ data () {
   },
   onShow() {
   	  this.loadUserData()
+  	  if (this.$store.state.userAdd) {
+  	  	let res = this.$store.state.userAdd
+  	  	this.formlist[0].value = res.poiname
+  	  	this.addDetails = res.poiaddress
+  	  	this.lgt = res.latlng.lng.toFixed(6) //经度
+  	  	this.lat = res.latlng.lat.toFixed(6) //纬度 
+  	  } 
+  },
+  onUnload(){
+    this.$store.commit("userAdd",null) 
   },
   filters: {
 

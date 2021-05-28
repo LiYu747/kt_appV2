@@ -1,7 +1,7 @@
 
 <template>
    <view class="">
-   		<view class="topbox pos-rel" :style="{height: this.$store.state.customBar + 'rpx' }">
+   		<view class="topbox pos-rel" :style="{height: customBar + 'rpx' }">
    			<view class="content pos-abs flex al-center">
    				<image @click="remove" src="https://oss.kuaitongkeji.com/static/img/app/login/1729908969cd5d7d911e096d6db3c70.png" class="remove" mode=""></image>
    				<view class="m-l2">
@@ -9,7 +9,7 @@
    				</view>
    			</view>
    		</view>
-		<view :style="{height: this.$store.state.customBar + 'rpx' }">
+		<view :style="{height: customBar + 'rpx' }">
 			
 		</view>
 
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+	import cache from "../../vendor/cache/cache.js"
 export default {
 name: "",
 components: {
@@ -34,6 +35,7 @@ props: {
 },
 data () {
   return {
+	  customBar:0
     }
   },
   methods: {
@@ -43,23 +45,12 @@ data () {
 			delta:1
 		})
 	},
-	// 定位
-	// pos(){
-		// console.log(111);
-		// uni.getLocation({
-		//     type: 'wgs84',
-		//     success: function (res) {
-		//         console.log('当前位置的经度：' + res.longitude);
-		//         console.log('当前位置的纬度：' + res.latitude);
-		//     }
-		// });
-		// },
   },
   onShow() {
   	
   },
   mounted () {
-   // this.pos()
+   this.customBar =  cache.get("customBar")
   },
   onLoad () {
 

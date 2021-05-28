@@ -1,7 +1,7 @@
 //测试域名
-let host = 'http://v2.kuaitongkeji.com/'    
+let host = 'https://test.kuaitongkeji.com/'    
 // 线上域名
-// let host = 'https://api.kuaitongkeji.com/'; 
+// let host = 'http://v2.kuaitongkeji.com/'; 
 // 新版本本地域名
 // let host = 'http://chat.local.cn/'   
 let apiPath = host + 'api/'; 

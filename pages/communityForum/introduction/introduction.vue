@@ -73,6 +73,7 @@
 	import village from '../../../vendor/village/village.js'
 	import jwt from '../../../vendor/auth/jwt.js'
 	import cache from '../../../vendor/cache/cache.js'
+	import cfg from '../../../vendor/config/config.js'
 	export default {
 		name: "",
 		components: {
@@ -129,14 +130,15 @@
 				})
 			},
 			// 查看地方
-			navigation() {
-				uni.openLocation({
-					latitude: Number(this.villinfo.lat),
-					longitude: Number(this.villinfo.lng),
-					success: function() {
-						// console.log('success');
-					}
-				});
+			navigation() { 
+					cfg.ready((data) => {
+						if(!data) return;
+						let qqMap = "https://apis.map.qq.com/tools/poimarker"
+						let url = qqMap + "?type=1&keyword="+ this.detailedAddress + "&center="+this.villinfo.lat+',' + this.villinfo.lng +"&radius=1000&key="+ data.map.qq_map.qqmap_app_key + "&referer=" + data.map.qq_map.qqmap_app_name
+						uni.navigateTo({ 
+							url: '/pages/web/index/index?url=' + encodeURIComponent(url) 
+						})
+					})
 			},
 			// 小区公告
 			noticeData() {

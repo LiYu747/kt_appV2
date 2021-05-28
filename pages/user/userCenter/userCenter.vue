@@ -6,7 +6,7 @@
 			<view class="imgLoca pos-abs">
 				<image @click="install"  src="https://oss.kuaitongkeji.com/static/img/app/user/Settings.png" class="setimg" mode=""></image>
 			</view>
-			<view v-if='idx==0&&Gshow==6' class="pos-abs flex staTex" :style="{top: this.$store.state.customBar + 'rpx'}">
+		<!-- 	<view v-if='idx==0&&Gshow==6' class="pos-abs flex staTex" :style="{top: this.$store.state.customBar + 'rpx'}">
 				<view class="flex-d al-center m-l3 m-r2 m-t6 setTex">
 					信息设置 
 					<view class="bai">
@@ -14,7 +14,7 @@
 					</view>
 				</view>
 				<image src="https://oss.kuaitongkeji.com/static/img/app/Newguidance/arrowsRU.png" mode="" class="arrowsRU "></image>
-			</view>
+			</view> -->
 		</view>
 		<view class="">
 			<image src="https://oss.kuaitongkeji.com/static/img/app/home/jx.png" mode="" class="jximg"></image>
@@ -102,6 +102,7 @@
 				})
 			},
 			nextT() {
+				return;
 				if(this.idx==2)return;
 					this.idx++
 			},

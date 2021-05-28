@@ -170,6 +170,12 @@
 							title: res.data.msg,
 							duration:2000
 						});
+						const authtime = setInterval(() => {
+						     uni.navigateBack({
+						     	delta:1
+						     })
+							 clearInterval(authtime)
+						}, 2000)
 					}
 				})
 			},

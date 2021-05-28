@@ -69,7 +69,7 @@
 					title: '我的位置', //地图标题 
 					latitude: '',
 					longitude: '', 
-					iconPath: '../../../static/pos.png'  //ios为iospos  安卓为pos 
+					iconPath: '../../../static/iospos.png'  //ios为iospos  安卓为pos 
 				}],
 				city: '', //自动获取的城市
 				golat: '', //要去地方的经度
@@ -105,10 +105,10 @@
 					geocode: true, //设置该参数为true可直接获取经纬度及城市信息
 					success: (res) => {
 						uni.hideLoading()
-							  this.latitude = res.latitude
-							  this.longitude = res.longitude
-							  this.markers[0].latitude = res.latitude
-							  this.markers[0].longitude = res.longitude 
+						  this.latitude = res.latitude
+						  this.longitude = res.longitude
+						  this.markers[0].latitude = res.latitude
+						  this.markers[0].longitude = res.longitude 
 						this.city = res.address.city
 						// console.log(res);
 					}, 

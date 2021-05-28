@@ -198,9 +198,10 @@
 				if (this.isStarend == 0) {
 					this.valid_begin = time
 					this.defaultTime = time
+					return;
 				}
 				if (this.isStarend == 1) {
-					let tampLogin = new Date(time).getTime() - new Date(this.valid_begin).getTime();
+					let tampLogin = new Date(time.replace(/-/g,'/')).getTime() - new Date(this.valid_begin.replace(/-/g,'/')).getTime();
 					if (tampLogin > 0) {
 						this.valid_end = time
 						this.defaultTime = time
@@ -216,7 +217,6 @@
 			//选择永久还是临时
 			radioGroupChange(val) {
 				this.timeCode = val == "临时" ? 1 : 0
-				console.log(this.timeCode);
 			},
 
 			// 获取数据

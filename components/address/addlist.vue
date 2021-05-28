@@ -27,7 +27,9 @@
 						</view>
 					</view>
 				</view>
-
+			</view>
+			<view class="btmLine">
+				
 			</view>
 		</view>
 		<view v-if="locdata.length==0 && isLoding==false" class="nono flex al-center ju-center">
@@ -332,5 +334,9 @@
 
 	.lodbox {
 		font-size: 24rpx;
+	}
+	
+	.btmLine{
+		height: 20rpx;
 	}
 </style>

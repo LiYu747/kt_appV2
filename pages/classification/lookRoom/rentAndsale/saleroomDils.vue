@@ -112,6 +112,7 @@
 	import subunit from '../../../../components/sub-unit/subunit.vue'
 	import home from '../../../../vendor/home/home.js'
 	import cache from '../../../../vendor/cache/cache.js'
+	import cfg from '../../../../vendor/config/config.js' 
 	export default {
 		name: "",
 		components: {
@@ -222,15 +223,14 @@
 			},
 			// 地址
 			Address(){
-				let latitude = Number(this.roomInof.lat)
-				let longitude = Number(this.roomInof.lng)
-				uni.openLocation({
-				    latitude: latitude,
-				    longitude: longitude, 
-				    success: function () {
-				        console.log('success');
-				    }
-				});
+				cfg.ready((data) => {
+					if(!data) return; 
+					let qqMap = "https://apis.map.qq.com/tools/poimarker"
+					let url = qqMap + "?type=1&keyword="+ this.roomInof.address + "&center="+this.roomInof.lat+',' + this.roomInof.lng +"&radius=1000&key="+ data.map.qq_map.qqmap_app_key + "&referer=" + data.map.qq_map.qqmap_app_name
+					uni.navigateTo({ 
+						url: '/pages/web/index/index?url=' + encodeURIComponent(url) 
+					})
+					}) 
 			},
 		},
 		mounted() {

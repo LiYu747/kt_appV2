@@ -112,8 +112,7 @@
 			<!-- 资讯 -->
 			<information ref="infor"></information>
 			<!-- 社区新闻 -->
-			<!-- <CommunityNews ref='news' v-if='user'></CommunityNews> -->
-			<CommunityNews ref='news' ></CommunityNews>
+			<CommunityNews ref='news' v-if='user'></CommunityNews>
 			<!-- 周边 -->
 			<periphery ref='peri'></periphery>
 

@@ -265,7 +265,8 @@
 		},
 		created() {
 			// 监听从裁剪页发布的事件，获得裁剪结果
-			uni.$on('uAvatarCropper', path => {
+			uni.$on('uAvatar', path => {
+				if(!path) return; 
 				this.isLoding = true
 				// 可以在此上传到服务端
 				uni.uploadFile({
@@ -291,12 +292,15 @@
 							});
 							return;
 						}
+						if( data.data.url){
 						uni.showToast({
 							title: '上传成功',
 							icon: 'none'
 						})
 						this.image = data.data.url
 						this.flag = false
+						}
+						
 					}
 				});
 			})

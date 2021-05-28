@@ -60,9 +60,8 @@
 			}
 		},
 		created() {
-
 			// 监听从裁剪页发布的事件，获得裁剪结果
-			uni.$on('uAvatarCropper', path => {
+			uni.$on('uAvatar', path => {
 				// 可以在此上传到服务端
 				this.isLoding = true
 				uni.uploadFile({
@@ -72,7 +71,7 @@
 					complete: (res) => {
 
 						this.isLoding = false
-
+                                
 						if (res.statusCode != 200) {
 							uni.showToast({
 								title: '网络请求出错',
@@ -83,7 +82,7 @@
 
 						let data = JSON.parse(res.data)
 
-						if (data.code != 200) {
+						if (data.code != 200) { 
 							uni.showToast({
 								title: data.msg,
 								icon: 'none'
@@ -92,8 +91,12 @@
 						}
 						this.img = data.data.url
 						this.$store.commit("userPhoto",data.data.url)
+						uni.showToast({
+							title: "上传成功",
+							icon: 'none'
+						});
 					}
-				});
+				}); 
 			})
 		},
 		mounted() {
