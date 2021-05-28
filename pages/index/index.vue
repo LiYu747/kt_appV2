@@ -338,10 +338,17 @@
 					this.cover = movie.image
 					this.paly = true
 					return;
-				} else {
+				} 
+				if(movie.page){
 					urlUtil.to({
 						pageAlias: movie.page,
 						options: movie.params,
+					})
+					return;
+				}
+				if(movie.web_url){
+					uni.navigateTo({
+						url : '/pages/web/index/index?url='+encodeURIComponent(movie.web_url),
 					})
 				}
 			},

@@ -19,7 +19,8 @@ export default new Vuex.Store({
 		customBar: uni.getSystemInfoSync().statusBarHeight + 128,//用户状态栏高度
 		userIschenge:'',
 		userPhoto:'',
-		userAdd:null
+		userAdd:null,
+		userphoto:''
 	},
 	// 同步更改值
 	mutations:{
@@ -65,6 +66,10 @@ export default new Vuex.Store({
 		 //用户选择的地址
 		 userAdd(state,info){
 			 this.state.userAdd = info
+		 },
+		 //用户上传的头像
+		 userphoto(state,info){
+			 this.state.userphoto = info
 		 }
 	
 	},

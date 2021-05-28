@@ -74,6 +74,7 @@
 					{
 						label: '正面免冠照',
 						value: '',
+						disabled:true
 					},
 					{
 						label: '设置新密码',
@@ -238,9 +239,15 @@
 				})
 			}
 		},
-		created() {
-			// 监听从裁剪页发布的事件，获得裁剪结果
-			uni.$on('uAvatarCropper', path => {
+		mounted() {
+            this.getUserinfo()
+		},
+		onShow() {
+			if(this.$store.state.userPhoto){
+				this.photo = this.$store.state.userPhoto
+			}
+			if (this.$store.state.userphoto) {
+				let path = this.$store.state.userphoto
 				this.isLoding = true
 				// 可以在此上传到服务端
 				uni.uploadFile({
@@ -256,9 +263,9 @@
 							});
 							return;
 						}
-		
+						
 						let data = JSON.parse(res.data)
-		
+						
 						if (data.code != 200) {
 							uni.showToast({
 								title: data.msg,
@@ -275,19 +282,17 @@
 						this.$store.commit('userPhoto', data.data.url)
 					}
 				});
-			})
-		},
-		mounted() {
-            this.getUserinfo()
-		},
-		onShow() {
-			if(this.$store.state.userPhoto){
-				this.photo = this.$store.state.userPhoto
 			}
 			
 		},
 		onLoad() {
 
+		},
+		onHide() {
+			this.$store.commit("userphoto",'')
+		},
+		onUnload() {
+			this.$store.commit("userphoto",'')
 		},
 		filters: {
 

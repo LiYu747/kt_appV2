@@ -77,11 +77,13 @@
 				还没有任何评论哦
 			</view>
 			
-			<view v-show="flag===true" class="posbot flex al-center pos-rel">
-				<textarea :autoHeight="auto" @input="change" id="area" placeholder='评论' v-model="context"
-					class="ch flex al-center"></textarea>
-				<view @click="send" class="btn flex pos-abs al-center ju-center" :class="context != ''?'sendStyle':''">
-					发送
+			<view v-show="flag===true" class="posbot flex al-center ">
+				<view class="pos-rel">
+					<textarea @focus="onChange" :autoHeight="auto"  id="area" placeholder='评论' v-model="context"
+						class="ch flex al-center"></textarea>
+					<view @click="send" class="btn flex pos-abs al-center ju-center" :class="context != ''?'sendStyle':''">
+						发送
+					</view>
 				</view>
 			</view>
 			<!-- 查看图片 -->
@@ -195,6 +197,7 @@
 							})
 							return;
 						}
+						this.$store.commit("isComment", res.data.code);
 						this.text = ''
 						uni.showToast({
 							title: res.data.msg,
@@ -229,6 +232,7 @@
 							})
 							return;
 						}
+						this.$store.commit("isComment", res.data.code);
 						this.text = ''
 						uni.showToast({
 							title: res.data.msg,
@@ -345,14 +349,6 @@
 				this.see = false
 			},
 
-			change() {
-				const query = uni.createSelectorQuery().in(this);
-				query.select('#area').boundingClientRect(data => {
-					if (data.height > 80) {
-						this.auto = false
-					}
-				}).exec();
-			},
 			// 发送评论
 			send() {
 				if (this.context == '') {
@@ -403,11 +399,14 @@
 					}
 				})
 			},
-
+			
+			onChange(e){
+				this.text = ""
+			}
+			
 		},
 		mounted() {
 			this.getUser()
-		
 			
 		},
 
@@ -423,9 +422,7 @@
 		onLoad(val) {
 			this.id = val.id
 		},
-		onPageScroll() {
-			this.flag = false
-		},
+		
 		filters: {
 
 		},
@@ -627,19 +624,19 @@
 		background: rgb(239, 239, 239);
 		font-size: 28rpx;
 		padding: 30rpx 20rpx;
+		padding-bottom: 50rpx;
 		border-top: 1px solid rgba(204, 204, 204, 0.6);
 	}
 
 	.btn {
-		margin-left: 50rpx;
 		width: 90rpx;
 		height: 50rpx;
 		font-size: 26rpx;
 		background: rgba(204, 204, 204, 0.8);
 		color: #FFFFFF;
-		right: 90rpx;
-		bottom: 35rpx;
+		right: -140rpx;
 		border-radius: 10rpx;
+		bottom: 5rpx;
 	}
 
 	.btom {

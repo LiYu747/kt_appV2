@@ -1,43 +1,48 @@
 <template>
-<view class="">
-	<subunit titel="个人信息" ></subunit>
-	<view class="whole flex-d al-center">
-		<view @click="UploadAvatar" class="activ flex al-center ju-center">
-			<image :src="image" class="img" mode="aspectFill"></image>
-		</view>
-		<view @click="UploadAvatar" class="text">
-			上传头像
-		</view>
-		<view class="postop">
-			<view class="fied flex al-center" :class="index == 4 ? 'nodv':''" v-for="(item,index) in parameter" @click="xuaz(index)" :key='item.id' >
-				<u-field label-width=270 v-model="item.value" :label="item.label" :clearable=false input-align='right' :disabled="item.disabled">
-				</u-field>
-				<view v-if="index>1" @click="add(index)" class="">
-					<image v-show="item.show == false"  src="../../../image/user/onshow.png" class="onshow" mode=""></image>
-					<image v-show="item.show == true" src="../../../image/user/show.png" class="onshow"  mode=""></image>
+	<view class="">
+		<subunit titel="个人信息"></subunit>
+		<view class="whole flex-d al-center">
+			<view @click="UploadAvatar" class="activ flex al-center ju-center">
+				<image :src="image" class="img" mode="aspectFill"></image>
+			</view>
+			<view @click="UploadAvatar" class="text">
+				上传头像
+			</view>
+			<view class="postop">
+				<view class="fied flex al-center" :class="index == 4 ? 'nodv':''" v-for="(item,index) in parameter"
+					@click="xuaz(index)" :key='item.id'>
+					<u-field label-width=270 v-model="item.value" :label="item.label" :clearable=false
+						input-align='right' :disabled="item.disabled">
+					</u-field>
+					<view v-if="index>1" @click="add(index)" class="">
+						<image v-show="item.show == false" src="../../../image/user/onshow.png" class="onshow" mode="">
+						</image>
+						<image v-show="item.show == true" src="../../../image/user/show.png" class="onshow" mode="">
+						</image>
+					</view>
+				</view>
+				<u-select v-model="show" :default-value='value' @confirm='ok' :list="list"></u-select>
+			</view>
+
+			<!-- 提交 -->
+			<view @click="Submit" class="end flex al-center ju-center">
+				<image src="https://oss.kuaitongkeji.com/static/img/app/login/ccuc.png" class="enimg" mode=""></image>
+				<view class=" pos-abs">
+					提交
 				</view>
 			</view>
-			<u-select v-model="show" :default-value='value' @confirm='ok' :list="list"></u-select>
-		</view>
-	
-		<!-- 提交 -->
-		<view @click="Submit" class="end flex al-center ju-center">
-			<image src="https://oss.kuaitongkeji.com/static/img/app/login/ccuc.png" class="enimg" mode=""></image>
-			<view class=" pos-abs">
-				提交
-			</view>
-		</view>
-	
-		<view v-show="isLoding == true" class="showloding flex al-center ju-center">
-			<view class="loding flex-d al-center ju-center">
-				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+
+			<view v-show="isLoding == true" class="showloding flex al-center ju-center">
+				<view class="loding flex-d al-center ju-center">
+					<view class=" ">
+						<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif"
+							mode=""></image>
+					</view>
+					上传中
 				</view>
-				上传中
 			</view>
 		</view>
 	</view>
-</view>
 </template>
 
 <script>
@@ -66,19 +71,19 @@
 						value: '',
 						label: '真实姓名',
 						disabled: true,
-						show:false
+						show: false
 					},
 					{
 						value: '',
 						label: '手机号码',
 						disabled: true,
-						show:false
+						show: false
 					},
 					{
 						value: '',
 						label: '身份证号码',
 						disabled: true,
-						show:false
+						show: false
 					}
 				],
 				show: false, //打开性别选择
@@ -95,36 +100,39 @@
 				flag: false, //判断用户是否选择了头像
 				faceimg: '', //证件照
 				value: [], //默认选择
-				isLoding: false ,//上传照片
-				usermsg:{} //用户资料
-			} 
+				isLoding: false, //上传照片
+				usermsg: {} //用户资料
+			}
 		},
 		methods: {
-			add(index){
-				this.parameter.map( (item,idx) => {
-					if(index == idx){
+			add(index) {
+				this.parameter.map((item, idx) => {
+					if (index == idx) {
 						item.show = !item.show
-						if(item.show == true){
-							switch(index){
+						if (item.show == true) {
+							switch (index) {
 								case 2:
-								item.value = this.usermsg.username
-								break;
+									item.value = this.usermsg.username
+									break;
 								case 3:
-								item.value =  this.usermsg.tel
-								break;
+									item.value = this.usermsg.tel
+									break;
 								case 4:
-								item.value = this.usermsg.id_card_no
+									item.value = this.usermsg.id_card_no
 							}
-						}else{
-							switch(index){
+						} else {
+							switch (index) {
 								case 2:
-								item.value = this.usermsg.username.slice(0,1) + '**'
-								break;
+									item.value = this.usermsg.username.slice(0, 1) + '**'
+									break;
 								case 3:
-								item.value =  this.usermsg.tel.slice(0,3) + '****' +this.usermsg.tel.slice(7,11)
-								break;
+									item.value = this.usermsg.tel.slice(0, 3) + '****' + this.usermsg.tel.slice(7,
+										11)
+									break;
 								case 4:
-								item.value =  this.usermsg.id_card_no.slice(0,3) + '**********' + this.usermsg.id_card_no.slice(this.usermsg.id_card_no.length-4,this.usermsg.id_card_no.length)
+									item.value = this.usermsg.id_card_no.slice(0, 3) + '**********' + this.usermsg
+										.id_card_no.slice(this.usermsg.id_card_no.length - 4, this.usermsg
+											.id_card_no.length)
 							}
 						}
 					}
@@ -184,7 +192,7 @@
 						uni.hideLoading()
 						uni.showToast({
 							title: '网络错误',
-							icon:'none'
+							icon: 'none'
 						})
 					},
 					success: (res) => {
@@ -192,7 +200,7 @@
 						if (res.statusCode != 200) {
 							uni.showToast({
 								title: '网络请求出错',
-								icon:'none'
+								icon: 'none'
 							});
 							return;
 						}
@@ -220,7 +228,7 @@
 						uni.hideLoading()
 						uni.showToast({
 							title: '网络错误',
-							icon:'none'
+							icon: 'none'
 						})
 					},
 					success: (res) => {
@@ -228,23 +236,23 @@
 						if (res.statusCode != 200) {
 							uni.showToast({
 								title: '网络请求出错',
-								icon:'none'
+								icon: 'none'
 							});
 							return;
 						}
 						if (res.data.code != 200) {
 							uni.showToast({
-								title:res.data.msg,
-								icon:'none'
+								title: res.data.msg,
+								icon: 'none'
 							});
 							return;
 						}
 						// console.log(res.data.data);
 						let data = res.data.data
 						this.usermsg = data
-						if(data.avatar == 'https://oss.kuaitongkeji.com/static/img/avatar/male_64.png'){
+						if (data.avatar == 'https://oss.kuaitongkeji.com/static/img/avatar/male_64.png') {
 							this.flag = true
-						}	
+						}
 						this.faceimg = data.faceimg
 						this.image = data.avatar
 						this.parameter[0].value = data.nickname
@@ -254,19 +262,23 @@
 						if (data.sex == 2) {
 							this.parameter[1].value = '女'
 						}
-						this.parameter[2].value = data.username.slice(0,1) + '**'
-						this.parameter[3].value =   data.tel.slice(0,3) + '****' +data.tel.slice(7,11)
-						if(data.id_card_no){
-							this.parameter[4].value =  data.id_card_no.slice(0,3) + '**********' + data.id_card_no.slice(data.id_card_no.length-4,data.id_card_no.length)
+						this.parameter[2].value = data.username.slice(0, 1) + '**'
+						this.parameter[3].value = data.tel.slice(0, 3) + '****' + data.tel.slice(7, 11)
+						if (data.id_card_no) {
+							this.parameter[4].value = data.id_card_no.slice(0, 3) + '**********' + data
+								.id_card_no.slice(data.id_card_no.length - 4, data.id_card_no.length)
 						}
 					},
 				})
 			}
 		},
-		created() {
-			// 监听从裁剪页发布的事件，获得裁剪结果
-			uni.$on('uAvatar', path => {
-				if(!path) return; 
+		mounted() {
+			this.UserData()
+		},
+		onLoad(val) {},
+		onShow() {
+			if (this.$store.state.userphoto) {
+				let path = this.$store.state.userphoto
 				this.isLoding = true
 				// 可以在此上传到服务端
 				uni.uploadFile({
@@ -282,9 +294,9 @@
 							});
 							return;
 						}
-		
+
 						let data = JSON.parse(res.data)
-		
+
 						if (data.code != 200) {
 							uni.showToast({
 								title: data.msg,
@@ -292,26 +304,25 @@
 							});
 							return;
 						}
-						if( data.data.url){
-						uni.showToast({
-							title: '上传成功',
-							icon: 'none'
-						})
-						this.image = data.data.url
-						this.flag = false
+						if (data.data.url) {
+							uni.showToast({
+								title: '上传成功',
+								icon: 'none'
+							})
+							this.image = data.data.url
+							this.flag = false
 						}
-						
+
 					}
 				});
-			})
-		
+			}
+
 		},
-		mounted() {
-           this.UserData()
+		onUnload() {
+			this.$store.commit("userphoto",'')
 		},
-		onLoad(val) {},
-		onShow() {
-			
+		onHide() {
+			this.$store.commit("userphoto",'')
 		},
 		filters: {
 
@@ -329,12 +340,12 @@
 </script>
 
 <style scoped lang="scss">
-	
-	.onshow{
+	.onshow {
 		width: 32rpx;
 		height: 20rpx;
 		margin-right: 12rpx;
 	}
+
 	.activ {
 		width: 148rpx;
 		height: 148rpx;
@@ -363,6 +374,7 @@
 		background: #FFFFFF;
 		border-bottom: 1px solid #BFBFBF;
 		font-size: 15px;
+
 		/deep/ .u-field {
 			width: 100%;
 			padding: 0;
@@ -378,8 +390,7 @@
 		border: none;
 	}
 
-	/deep/ 
-	.uni-input-input{
+	/deep/ .uni-input-input {
 		width: 300rpx;
 	}
 
@@ -417,8 +428,8 @@
 		background: rgba(88, 88, 88, 0.8);
 		border-radius: 10rpx;
 	}
-	
-	.nodv{
+
+	.nodv {
 		border-bottom: none;
 	}
 </style>

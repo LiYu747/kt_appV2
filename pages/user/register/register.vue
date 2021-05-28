@@ -362,47 +362,6 @@
 				})
 			},
 		},
-		created() {
-			// 监听从裁剪页发布的事件，获得裁剪结果
-			uni.$on('uAvatar', path => {
-				if(!path) return; 
-				this.isLoding = true
-				// 可以在此上传到服务端
-				uni.uploadFile({
-					url: route.services.file.upload,
-					filePath: path,
-					name: 'file',
-					complete: (res) => {
-						this.isLoding = false;
-						if (res.statusCode != 200) {
-							uni.showToast({
-								title: '网络请求出错',
-								icon: 'none'
-							});
-							return;
-						}
-
-						let data = JSON.parse(res.data)
-
-						if (data.code != 200) {
-							uni.showToast({
-								title: data.msg,
-								icon: 'none'
-							});
-							return;
-						}
-						if( data.data.url){
-						uni.showToast({
-							title: '上传成功',
-							icon: 'none'
-						})
-						this.avatar = data.data.url	
-						}
-					}
-				});
-			})
-
-		},
 		mounted() {
 
 		},
@@ -410,7 +369,46 @@
 			this.$refs.uForm.setRules(this.rules);
 		},
 		onShow() {
-
+		 if(this.$store.state.userphoto){
+			 let path = this.$store.state.userphoto
+			 this.isLoding = true
+			 // 可以在此上传到服务端
+			 uni.uploadFile({
+			 	url: route.services.file.upload,
+			 	filePath: path,
+			 	name: 'file',
+			 	complete: (res) => {
+			 		this.isLoding = false;
+			 		if (res.statusCode != 200) {
+			 			uni.showToast({
+			 				title: '网络请求出错',
+			 				icon: 'none'
+			 			});
+			 			return;
+			 		}
+			 
+			 		let data = JSON.parse(res.data)
+			 
+			 		if (data.code != 200) {
+			 			uni.showToast({
+			 				title: data.msg,
+			 				icon: 'none'
+			 			});
+			 			return;
+			 		}
+			 		if( data.data.url){
+			 		uni.showToast({
+			 			title: '上传成功',
+			 			icon: 'none'
+			 		})
+			 		this.avatar = data.data.url	
+			 		}
+			 	}
+			 });
+		 }
+		},
+		onUnload() {
+			this.$store.commit("userphoto",'')
 		},
 		onLoad() {
 

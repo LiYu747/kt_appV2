@@ -2,7 +2,7 @@
 	<!-- 个人中心 -->
 	<view class="whole">
 		<submit :retur='false' titel="个人中心"></submit>
-		<view class=" location" @click="nextT" :style="{height: this.$store.state.customBar + 'rpx'}" :class="Gshow==6&&idx==0?'zIndex':''" >
+		<view class=" location"  :style="{height: this.$store.state.customBar + 'rpx'}" :class="Gshow==6&&idx==0?'zIndex':''" >
 			<view class="imgLoca pos-abs">
 				<image @click="install"  src="https://oss.kuaitongkeji.com/static/img/app/user/Settings.png" class="setimg" mode=""></image>
 			</view>
@@ -185,7 +185,7 @@
 		onLoad(val) {},
 		onShow() {
 			if (cache.get('Gshow')) {
-				this.Gshow = cache.get('Gshow').value
+				// this.Gshow = cache.get('Gshow').value
 			} 
 			this.getUser()
 			this.loadUserData();

@@ -3,8 +3,10 @@
 		<submit titel="更多新闻"></submit>
 		<view v-if="locdata.length>0" class="conBox m-t2">
 			<view class="itemBox" @click="godils(item)" v-for="item in locdata" :key="item.id">
-				<view v-if="flag == 0" class="flex">
-					<image :src="item.cover" class="itemImg" mode=""></image>
+				<view  class="flex">
+					<image v-if="item.cover" :src="item.cover" class="itemImg" mode=""></image>
+					<image v-else src="https://oss.kuaitongkeji.com/upload/2020/12/15/AY0xTVMZBzNuJ0acHphXphi4gewrdyJeuBoypUCH.jpeg"
+					 class="itemImg" mode=""></image>
 					<view class="content m-l2 pos-rel">
 						<view class="conTex  m-t2">
 							{{item.title}}
@@ -14,22 +16,6 @@
 							<view class="">
 								{{item.pv}}人浏览
 							</view>
-						</view>
-					</view>
-				</view>
-				<view v-if="flag == 1" class="">
-					<view class="conTex fz-14">
-						{{item.title}}
-					</view>
-					<view class="flex m-t4">
-						<image :src="item.faceimg" class="itemImg" mode=""></image>
-						<image :src="item.faceimg" class="itemImg m-l2" mode=""></image>
-						<image :src="item.faceimg" class="itemImg m-l2" mode=""></image>
-					</view>
-					<view class="flex timeBox fz-12 flex ju-between m-t3">
-						{{item.created_at}}
-						<view class="">
-							512486人浏览
 						</view>
 					</view>
 				</view>
@@ -69,7 +55,6 @@
 				locdata: [],
 				page: 1,
 				pageSize: 15,
-				flag: 0,
 				isLoding: false,
 				hasMore: true,
 				text: '',

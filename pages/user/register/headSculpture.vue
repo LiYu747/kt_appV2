@@ -1,6 +1,7 @@
 <template>
 	<view class="">
-		<image class="img" @click="goback" src="https://oss.kuaitongkeji.com/static/img/app/login/retrue.png" mode=""></image>
+		<image class="img" @click="goback" src="https://oss.kuaitongkeji.com/static/img/app/login/retrue.png" mode="">
+		</image>
 		<view class="photo flex-d al-center ju-center">
 			<image :src="img" class="phimg" mode=""></image>
 			<view @tap="chooseAvatar" class="text">
@@ -11,7 +12,8 @@
 		<view v-show="isLoding == true" class="showloding flex al-center ju-center">
 			<view class="loding flex-d al-center ju-center">
 				<view class=" ">
-					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode=""></image>
+					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
+					</image>
 				</view>
 				上传中
 			</view>
@@ -55,14 +57,16 @@
 			// 返回
 			goback() {
 				uni.navigateBack({
-					delta:1
+					delta: 1
 				})
 			}
 		},
-		created() {
-			// 监听从裁剪页发布的事件，获得裁剪结果
-			uni.$on('uAvatar', path => {
-				// 可以在此上传到服务端
+		mounted() {
+			this.img = this.$store.state.userPhoto
+		},
+		onShow() {
+			if (this.$store.state.userphoto) {
+				let path = this.$store.state.userphoto
 				this.isLoding = true
 				uni.uploadFile({
 					url: route.services.file.upload,
@@ -71,7 +75,7 @@
 					complete: (res) => {
 
 						this.isLoding = false
-                                
+
 						if (res.statusCode != 200) {
 							uni.showToast({
 								title: '网络请求出错',
@@ -82,7 +86,7 @@
 
 						let data = JSON.parse(res.data)
 
-						if (data.code != 200) { 
+						if (data.code != 200) {
 							uni.showToast({
 								title: data.msg,
 								icon: 'none'
@@ -90,19 +94,20 @@
 							return;
 						}
 						this.img = data.data.url
-						this.$store.commit("userPhoto",data.data.url)
+						this.$store.commit("userPhoto", data.data.url)
 						uni.showToast({
 							title: "上传成功",
 							icon: 'none'
 						});
 					}
-				}); 
-			})
+				});
+			}
 		},
-		mounted() {
-           this.img = this.$store.state.userPhoto
+		onUnload() {
+			this.$store.commit("userphoto",'')
 		},
-		onShow() {
+		onHide() {
+			this.$store.commit("userphoto",'')
 		},
 		onLoad(val) {
 

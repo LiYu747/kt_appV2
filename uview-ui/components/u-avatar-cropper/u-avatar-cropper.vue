@@ -203,10 +203,10 @@ export default {
 							urls: [path] // 需要预览的图片 http 链接列表
 						});
 					} else {
-						uni.$emit('uAvatar', path);
-						this.$u.route({
-							type: 'back'
-						}); 
+						this.$store.commit("userphoto",path)
+						uni.navigateBack({
+							delta: 1
+						});
 					}
 				}
 			});
