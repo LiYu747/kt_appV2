@@ -57,6 +57,7 @@
 		props: {},
 		data() {
 			return {
+				code:0,
 				image: '', //头像
 				parameter: [{
 						value: '',
@@ -262,18 +263,35 @@
 						if (data.sex == 2) {
 							this.parameter[1].value = '女'
 						}
-						this.parameter[2].value = data.username.slice(0, 1) + '**'
 						this.parameter[3].value = data.tel.slice(0, 3) + '****' + data.tel.slice(7, 11)
-						if (data.id_card_no) {
+						if (!data.id_card_no) {
+							uni.showModal({
+								content:'请完善您的身份信息',
+								success: (res) => {
+									if (res.confirm) {
+										uni.navigateTo({
+											url: '/pages/user/realInformation/realInformation'
+										})
+									} else if (res.cancel) {
+										uni.navigateBack({
+											delta: 1
+										})
+									}
+								}
+							})
+							return;
+							}
+							this.code = res.data.code
+						this.parameter[2].value = data.username.slice(0, 1) + '**'
+						
 							this.parameter[4].value = data.id_card_no.slice(0, 3) + '**********' + data
 								.id_card_no.slice(data.id_card_no.length - 4, data.id_card_no.length)
-						}
 					},
 				})
 			}
 		},
 		mounted() {
-			this.UserData()
+		
 		},
 		onLoad(val) {},
 		onShow() {
@@ -316,7 +334,8 @@
 					}
 				});
 			}
-
+			if(this.code == 200) return;
+			this.UserData()
 		},
 		onUnload() {
 			this.$store.commit("userphoto",'')

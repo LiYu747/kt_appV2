@@ -17,7 +17,7 @@
       window.addEventListener('message', function (event) {
         var loc = event.data;
         if (loc && loc.module == 'locationPicker') {
-          // console.log('location', loc);
+          console.log('location', loc);
           uni.postMessage({
             data: loc
           })

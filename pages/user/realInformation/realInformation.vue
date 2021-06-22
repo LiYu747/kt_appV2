@@ -246,6 +246,8 @@
 			if(this.$store.state.userPhoto){
 				this.photo = this.$store.state.userPhoto
 			}
+			
+			//上传
 			if (this.$store.state.userphoto) {
 				let path = this.$store.state.userphoto
 				this.isLoding = true

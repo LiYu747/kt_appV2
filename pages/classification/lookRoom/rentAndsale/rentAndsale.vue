@@ -15,8 +15,7 @@
 			</view>
 			<!-- 我的出租 -->
 			<view v-show='idx===0' class="release">
-				<scroll-view scroll-y style="height: calc(100vh - 240rpx);;width: 100%;" refresher-enabled='true'
-				 @refresherrefresh='fresh' :refresher-triggered='isPull'   @scrolltolower="onreachBottom1">
+				<scroll-view scroll-y style="height: calc(100vh - 240rpx);;width: 100%;"   @scrolltolower="onreachBottom1">
 					<view v-if="lists.length>0" class="flex-d al-center">
 						<view class="item m-t3 flex" @click="gotoD(item,index)" v-for="(item,index) in lists" :key='item.id'>
 							<image :src="item.cover" class="itemImg" mode="aspectFill"></image>
@@ -67,7 +66,7 @@
 			<!-- 我的卖房 -->
 			<view v-show="idx===1" class="release">
 				<scroll-view scroll-y style="height: calc(100vh - 240rpx);;width: 100%" 
-			refresher-enabled='true'  @refresherrefresh='fresh' :refresher-triggered='isPull'  	@scrolltolower="onreachBottom2">
+				@scrolltolower="onreachBottom2">
 					<view class="flex-d al-center" v-if="data1.length>0">
 						<view class="item m-t3 flex " @click="reply(item,index)" v-for="(item,index) in data1" :key='index'>
 							<image :src="item.cover" class="itemImg" mode="aspectFill"></image>
@@ -166,21 +165,6 @@
 			add(item, index) {
 				this.idx = index
 			},
-			 
-			 // 下拉刷新
-			 fresh(){
-					var that = this;
-					if(!this.isPull){
-						this.isPull = true; //下拉加载，先让其变true再变false才能关闭
-						//关闭加载状态 (转动的圈)，需要一点延时才能关闭
-						this.page = 1
-						this.lists = []
-						this.loadPageData()
-						this.page1 = 1
-						this.data1 = []
-						this.SelfPost()
-					}
-			 },
 			 
 			// 租房信息
 			loadPageData() {
@@ -331,16 +315,16 @@
 		
 			if(this.$store.state.roomisDel == 200){
 				this.lists.splice(this.index1,1)
+				this.text = ''
 			}
 			if(this.$store.state.saleDel == 200){
 				this.data1.splice(this.index2,1)
+				this.text1 = ''
 			}
 		},
         onHide() {
         	this.$store.commit('roomisDel','')
 			this.$store.commit('saleDel','')
-			this.text = ''
-			this.text1 = ''
         },
 		filters: {
 

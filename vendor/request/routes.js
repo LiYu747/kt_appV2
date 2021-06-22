@@ -1,13 +1,13 @@
 //测试域名
-let host = 'https://test.kuaitongkeji.com/'    
+let host = 'https://test.kuaitongkeji.com/'          
 // 线上域名
 // let host = 'http://v2.kuaitongkeji.com/'; 
 // 新版本本地域名
-// let host = 'http://chat.local.cn/'   
+// let host = 'http://chat.local.cn/'    
 let apiPath = host + 'api/'; 
 
 
-module.exports = {
+module.exports = {  
 
 	host: host,
 
@@ -15,11 +15,11 @@ module.exports = {
 
 		config: apiPath + 'open/config/base',
 
-		// reg: apiPath + 'auth/client',
+		reg: apiPath + 'auth/client',
 
 		// version: {
 		// 	latest: apiPath + 'app/version/latest',
-		// }
+		// } 
 	},
 
 	services: {
@@ -260,7 +260,7 @@ module.exports = {
 			relComments: apiPath + 'open/village/post/comment',
 
 			//删除帖子
-			delPost: apiPath + 'user/post',
+			deluserpost: apiPath + 'user/post',
 
 			//修改帖子可见性
 			visiblePost: apiPath + 'user/villageTribune/visible',

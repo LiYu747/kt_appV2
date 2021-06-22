@@ -2,8 +2,8 @@
     "name" : "快通信息",
     "appid" : "__UNI__B8CB42C",
     "description" : "",
-    "versionName" : "1.0.30",
-    "versionCode" : "100",
+    "versionName" : "1.0.31",
+    "versionCode" : "1031",
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -13,6 +13,11 @@
         "compatible" : {
             // true表示忽略版本检查提示框，HBuilderX1.9.0及以上版本支持
             "ignoreVersion" : true
+        },
+        "safearea" : {
+            "bottom" : {
+                "offset" : "none"
+            }
         },
         "splashscreen" : {
             "alwaysShowBeforeRender" : true,
@@ -24,7 +29,8 @@
         "modules" : {
             "VideoPlayer" : {},
             "iBeacon" : {},
-            "Maps" : {}
+            "Maps" : {},
+            "Geolocation" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -43,6 +49,7 @@
                     "<uses-permission android:name=\"android.permission.CAMERA\"/>",
                     "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CONTROL_LOCATION_UPDATES\"/>",
                     "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
                     "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
                     "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
@@ -77,6 +84,13 @@
                 "ad" : {},
                 "maps" : {
                     "baidu" : {
+                        "appkey_ios" : "C0qDxFDsYaofdF9jdkhOlatKMAjdVV6L",
+                        "appkey_android" : "5jbnlBnHH0jVmcVGdhUVYuNKd6ZoUDIW"
+                    }
+                },
+                "geolocation" : {
+                    "baidu" : {
+                        "__platform__" : [ "ios", "android" ],
                         "appkey_ios" : "C0qDxFDsYaofdF9jdkhOlatKMAjdVV6L",
                         "appkey_android" : "5jbnlBnHH0jVmcVGdhUVYuNKd6ZoUDIW"
                     }

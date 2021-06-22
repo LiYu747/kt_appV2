@@ -1,6 +1,6 @@
 <template>
 	<view class="back">
-		<view class="nav pos-rel flex al-center ju-center">
+		<view class="nav pos-rel flex al-center ju-center" :style="{top:customBar + 'rpx'}">
 			<image @click="goback" class="img pos-abs"
 				src="https://oss.kuaitongkeji.com/static/img/app/login/fanhui.png" mode=""></image>
 			<view class="text">
@@ -111,6 +111,7 @@
 	import sms from '../../../vendor/sms/sms.js'
 	import route from '../../../vendor/request/routes.js'
 	import cache from '../../../vendor/cache/cache.js'
+	import config from '../../../vendor/config/config.js'
 	export default {
 		name: "",
 		components: {
@@ -135,6 +136,7 @@
 				}
 			};
 			return {
+				customBar:0,
 				flag: false, //验证码变量
 				text: '获取验证码',
 				code: true, //验证码按钮
@@ -367,6 +369,11 @@
 		},
 		onReady() {
 			this.$refs.uForm.setRules(this.rules);
+			this.customBar = uni.getSystemInfoSync().statusBarHeight + 67
+			  config.ready( (data) => {
+			      if(!data.base.user_default_avatar) return;
+			        this.avatar  = data.base.user_default_avatar
+			    })
 		},
 		onShow() {
 		 if(this.$store.state.userphoto){
@@ -435,11 +442,11 @@
 		height: 100vh;
 		background-repeat: no-repeat; //不重复
 		background-size: 100% 100%; // 满屏
+		 padding-bottom: 0;  
+		  padding-bottom: constant(safe-area-inset-bottom);  
+		  padding-bottom: env(safe-area-inset-bottom); 
 	}
 
-	.nav {
-		top: 67rpx;
-	}
 
 	.img {
 		width: 22rpx;

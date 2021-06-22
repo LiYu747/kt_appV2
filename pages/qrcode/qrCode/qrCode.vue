@@ -19,7 +19,7 @@
 					<image v-show="flag===0" src="https://oss.kuaitongkeji.com/static/img/app/qrcode/3.png" class="img2" mode=""></image>
 					{{text}}
 				</view>
-				<view v-show="show===1" class="m-t2 flex al-center ju-center">
+				<view v-show="show===1 && timetext" class="m-t2 flex al-center ju-center">
 					<image src="https://oss.kuaitongkeji.com/static/img/app/qrcode/2.png" class="time" mode=""></image>
 					<view class="pos-abs texts bai">
 						{{timetext}}
@@ -65,11 +65,11 @@
 				lv: 3, // 二维码容错级别 ， 一般不用设置，默认就行
 				onval: true, // val值变化时自动重新生成二维码
 				loadMake: true, // 组件加载完成后自动生成二维码
-				text: '刷新成功',
+				text: '',
 				flag: 1,
 				show: 0,
-				time: 60,
-				timetext: '有效时间:60s',
+				time: 0,
+				timetext: '',
 				isLoding:false,
 				code:0
 			}
@@ -105,6 +105,7 @@
 						if (this.time <= 0 || this.flag === 0) {
 							this.time = 60
 							this.show = 0
+							this.timetext = ''
 							clearInterval(Urtime)
 						}
 					}
@@ -132,15 +133,6 @@
 							})
 							return;
 						}
-
-						if (res.data.code != 200 && res.data.code != 4405) {
-							uni.showToast({
-								title: res.data.msg,
-								icon: 'none'
-							})
-							return
-						}
-						
 						if(res.data.code == 4405){
 							uni.showModal({
 								content:'请完善您的身份信息',
@@ -158,6 +150,15 @@
 							})
 							return;
 						}
+
+						if (res.data.code != 200) {
+							uni.showToast({
+								title: res.data.msg,
+								icon: 'none'
+							})
+							return
+						}
+						
 						this.code = res.data.code
 						this.val = res.data.data.content
 						this.text = '刷新成功'
@@ -167,15 +168,16 @@
 						const time = setTimeout(() => {
 							this.text = '手动刷新'
 							this.flag = 1
-							this.countdown()
 							this.show = 1
 							clearTimeout(time)
-						}, 2000)
+						}, 1000)
+							this.countdown()
 					}
 				})
 			}
 		},
 		onShow() {
+				if(this.code == 200) return;
 			this.loadUserData()
 		},
 		mounted() {
@@ -210,7 +212,7 @@
 		position: relative;
 		top: -75rpx;
 		width: 690rpx;
-		height: 800rpx;
+		height: 820rpx;
 		background: #FFFFFF;
 		border-radius: 20rpx;
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;

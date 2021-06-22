@@ -9,14 +9,17 @@
 				</view>
 				<view class="boxs">
 					<view class="qrimg">
-						<tki-qrcode cid="qrcode1" ref="qrcode" :val="val" :size="size" :unit="unit" :background="background" :foreground="foreground"
-						 :pdground="pdground" :icon="icon" :iconSize="iconsize" :lv="lv" :showLoading='false' :onval="onval" :loadMake="loadMake"
-						 :usingComponents="true" />
+						<tki-qrcode cid="qrcode1" ref="qrcode" :val="val" :size="size" :unit="unit"
+							:background="background" :foreground="foreground" :pdground="pdground" :icon="icon"
+							:iconSize="iconsize" :lv="lv" :showLoading='false' :onval="onval" :loadMake="loadMake"
+							:usingComponents="true" />
 					</view>
 				</view>
 				<view class="cortt flex al-center" @click="add">
-					<image v-show="flag===1" src="https://oss.kuaitongkeji.com/static/img/app/qrcode/1.png" class="img1" mode=""></image>
-					<image v-show="flag===0" src="https://oss.kuaitongkeji.com/static/img/app/qrcode/3.png" class="img2" mode=""></image>
+					<image v-show="flag===1" src="https://oss.kuaitongkeji.com/static/img/app/qrcode/1.png" class="img1"
+						mode=""></image>
+					<image v-show="flag===0" src="https://oss.kuaitongkeji.com/static/img/app/qrcode/3.png" class="img2"
+						mode=""></image>
 					{{text}}
 				</view>
 				<view v-show="show===1" class="m-t2 flex al-center ju-center">
@@ -45,6 +48,7 @@
 		props: {},
 		data() {
 			return {
+				code:0,
 				val: '', // 要生成的二维码值
 				size: 500, // 二维码大小
 				unit: 'upx', // 单位
@@ -59,26 +63,31 @@
 				text: '刷新成功',
 				flag: 1,
 				show: 0,
-				time: 60,
-				timetext: '有效时间:60s',
+				time: 0,
+				timetext: '',
 			}
 		},
 		methods: {
+
 			// 手动刷新
 			add() {
-				if(this.flag == 0 ) return;
+				if (this.flag == 0) return;
 				this.loadUserData()
-				// this.timetext = '有效时间:60s'
 			},
 			// 判断是否登录
 			loadUserData() {
-				this.data()
-				const time = setTimeout(() => {
-					this.text = '手动刷新'
-					this.flag = 1
-					this.countdown()
-					this.show = 1
-				}, 2000)
+				jwt.doOnlyTokenValid({
+					showModal: true,
+					keepSuccess: false,
+					success: () => {
+						this.data()
+					},
+					fail: () => {
+						uni.switchTab({
+							url: '/pages/index/index'
+						})
+					}
+				})
 			},
 			// 倒计时
 			countdown() {
@@ -87,8 +96,9 @@
 						this.time--
 						this.timetext = '有效时间:' + this.time + 's'
 						if (this.time <= 0 || this.flag === 0) {
-							this.time = 60
+							this.time = 61
 							this.show = 0
+							this.timetext = ''
 							clearInterval(Urtime)
 						}
 					}
@@ -96,20 +106,18 @@
 			},
 			// 获取二维码
 			data() {
-				uni.showLoading({
-					title: '加载中'
-				})
-				home.passQr({
+				this.isLoding = true
+				home.obtaincode({
 					data: {},
-					fail: (err) => {
-						uni.hideLoading()
+					fail: () => {
+						this.isLoding = false
 						uni.showToast({
 							title: '网络错误',
 							icon: 'none'
 						})
 					},
 					success: (res) => {
-						uni.hideLoading()
+						this.isLoding = false
 						// console.log(res.data.data.content);
 						if (res.statusCode != 200) {
 							uni.showToast({
@@ -118,42 +126,55 @@
 							})
 							return;
 						}
-
-						if (res.data.code == 403) {
+						if (res.data.code == 4405) {
 							uni.showModal({
-								content: res.data.msg,
+								content: '请完善您的身份信息',
 								success: (res) => {
-									uni.navigateBack({
-										delta: 1
-									})
+									if (res.confirm) {
+										uni.navigateTo({
+											url: '/pages/user/realInformation/realInformation'
+										})
+									} else if (res.cancel) {
+										uni.navigateBack({
+											delta: 1
+										})
+									}
 								}
 							})
 							return;
 						}
-						if (res.data.code == 200) {
-							this.text = '刷新成功'
-							this.flag = 0
-							this.show = 0
-							this.time = 60
-							this.val = res.data.data.content
-						} else {
+
+						if (res.data.code != 200) {
 							uni.showToast({
 								title: res.data.msg,
 								icon: 'none'
 							})
-							return;
+							return
 						}
-						// console.log(res);
 
+						this.code = res.data.code
+						this.val = res.data.data.content
+						this.text = '刷新成功'
+						this.flag = 0
+						this.show = 0
+						this.time = 61
+						const time = setTimeout(() => {
+							this.text = '手动刷新'
+							this.flag = 1
+							this.show = 1
+							clearTimeout(time)
+						}, 1000)
+						this.countdown()
 					}
 				})
 			}
 		},
 		onShow() {
+			if(this.code == 200) return;
 			this.loadUserData()
 		},
 		mounted() {
-
+       
 		},
 		onLoad() {
 

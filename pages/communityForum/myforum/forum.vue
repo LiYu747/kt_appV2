@@ -25,12 +25,12 @@
 								{{item.content}}
 							</view> -->
 							<!-- 图片 -->
-							<view v-if="item.album" class="flex al-center m-t4">
+							<view  class="flex al-center m-t4">
 								<view v-for="(items,indexs) in item.album.slice(0,3)" :key='items.id'>
 									<image :src="items" class="items" :class="(indexs+1)%3 == 0?'onmargin':''" mode="aspectFill"></image>
 								</view>
 							</view>
-							<view class="time" :class="!item.album?'m-t3':''">
+							<view class="time">
 								{{item.created_at.slice(0,16)}}
 							</view>
 							<view class="Hline">

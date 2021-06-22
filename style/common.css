@@ -110,6 +110,10 @@
 	margin-left: 50rpx;
 }
 
+.m-r0{
+	margin-right: 0 !important;
+}
+
 .m-r1 {
 	margin-right: 10rpx;
 }

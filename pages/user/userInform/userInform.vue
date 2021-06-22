@@ -77,7 +77,7 @@
 		methods: {
 			click(index) {
 				uni.showModal({
-					content:'您确定要删除',
+					content:'您确定要删除吗?',
 					success: (res) => {
 						if(res.confirm){
 							this.delmsg(index)
@@ -177,6 +177,7 @@
 					})
 				}
 				if (!item.page) return;
+				if(item.page == 'deal_move_in_apply_detail') return;
 				urlUtil.to({
 					pageAlias: item.page,
 					options: item.params,

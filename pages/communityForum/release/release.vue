@@ -1,5 +1,5 @@
 <template>
-	<view class="">
+	<view  class="">
 		<subunit titel='发布'  :retur='false'></subunit>
 		<view class="flex-d color al-center"> 
 			<image src="https://oss.kuaitongkeji.com/static/img/app/home/jx.png" class="img" mode=""></image>
@@ -7,9 +7,9 @@
 				<view v-if="image.length===0" class="top flex al-center ju-center">
 					<image class="timg" src="https://oss.kuaitongkeji.com/static/img/app/forum/tuceng.png" mode=""></image>
 				</view>
-				<view v-else class="back flex al-center">
+				<view v-else class="back flex al-center" :class="image.length<3?'center':''">
 					<view class="" v-for="(item,index) in image" :key='item.id'>
-						<image v-if="index<3" class="itemimg" :src="item" mode="aspectFill"></image>
+						<image class="itemimg" :class="{'dv':(index+1)%3==0,'mar':image.length>1}" :src="item" mode="aspectFill"></image>
 					</view>
 				</view>
 				<view @click="add" class="btn flex al-center ju-center">
@@ -20,7 +20,7 @@
 			<!-- //标题 -->
 			<view class="titel flex ">
 				<view class="tex1">
-					标题 ：
+					标题 : 
 				</view>
 				<!-- <input class="ipt" v-model="title" type="text" value="" /> -->
 				<textarea value="" auto-height="true" class="ipt" v-model="title" placeholder="" />
@@ -59,7 +59,7 @@
 				<view class="tex1">
 					内容 :
 				</view>
-				<textarea class="are" v-model="content" maxlength='1000'></textarea>
+				<textarea  class="are" v-model="content" maxlength='1000'></textarea>
 			</view>
              <!-- //自己可见 -->
          <!--    <view @click="seeShow = true" class="celShow flex al-center pos-rel">
@@ -257,6 +257,13 @@
 					})
 					return;
 				}
+				if(this.choiceID.length == 0){
+					uni.showToast({
+						title:"请选择类别",
+						icon:"none"
+					})
+					return;
+				}
 				if(this.content == ''){
 					uni.showToast({
 						title:"请填写内容",
@@ -377,13 +384,14 @@
 	}
 
 	.nav {
-		width: 689rpx;
-		padding: 30rpx 0;
+		width: 630rpx;
+		padding: 30rpx ;
 		border-radius: 20rpx;
 		background: #FFFFFF;
 		position: relative;
 		top: -125rpx;
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+		
 	}
 
 	.top {
@@ -394,15 +402,17 @@
 	}
 
 	.back {
+		width: 630rpx;
 		margin-top: 28rpx;
 		background: #FFFFFF;
-		height: 182rpx;
+		flex-wrap: wrap;
 	}
 
 	.itemimg {
 		width: 180rpx;
 		height: 180rpx;
-		margin-right: 10rpx;
+		
+		margin-bottom: 10rpx;
 		border-radius: 10rpx;
 	}
 
@@ -443,8 +453,22 @@
 	.ipt {
 		font-size: 14px;
 		width: 500rpx;
-		margin-top: 5rpx;
+		margin-top: 4rpx;
+		margin-left: 10rpx;
 		// background: red;
+	}
+	
+	
+	
+	.center{
+		justify-content: center;
+	}
+	
+	.mar{
+		margin-right: 40rpx;
+	}
+	.dv{
+		margin-right: 0;
 	}
 	
 	.celShow{
@@ -469,7 +493,7 @@
 	}
 
 	.are {
-		margin-top: 5rpx;
+		margin-top: 4rpx;
 		margin-left: 10rpx;
 		height: 200rpx;
 		width: 550rpx;

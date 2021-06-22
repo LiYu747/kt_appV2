@@ -264,6 +264,23 @@
 						}
 						if (res.data.code != 200) return;
 						let Users = res.data.data
+						if (!Users.id_card_no) {
+							uni.showModal({
+								content:'请完善您的身份信息',
+								success: (res) => {
+									if (res.confirm) {
+										uni.navigateTo({
+											url: '/pages/user/realInformation/realInformation'
+										})
+									} else if (res.cancel) {
+										uni.navigateBack({
+											delta: 1
+										})
+									}
+								}
+							})
+							return;
+							}
 						this.locdata[0].value = Users.username
 						// console.log(Users);
 					},
@@ -271,7 +288,10 @@
 			}
 		},
 		mounted() {
-        this.getuserinfo()
+       
+		},
+		onShow() {
+			 this.getuserinfo()
 		},
 		onLoad() {
 

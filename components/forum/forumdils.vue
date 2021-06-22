@@ -1,7 +1,7 @@
 <template>
-	<view class="">
+	<view  class="">
 		<subunit titel="详情"></subunit>
-		<view v-if="code == 200" class="">
+		<view 	 v-if="code == 200" class="">  
 			<view class="woer"> 
 				<view class="nav flex">
 					<image class="img" :src="user.avatar" mode="aspectFill"></image>
@@ -26,7 +26,7 @@
 				</view>
 				<!-- 图片 -->
 				<view class="flex al-center imgbx">
-					<view class="" v-for="(item,index) in arr.album" @click="look(item)" :key='item.id'>
+					<view class="" v-for="(item,index) in arr.album" @click="look(item,index)" :key='item.id'>
 						<image class="itemimg" :src="item" :class="(index+1)%3 == 0?'dv':''" mode="aspectFill"></image>
 					</view>
 				</view>
@@ -57,7 +57,7 @@
 						</view>
 						<!-- 时间 -->
 						<view class="postime m-t1 m-b2 flex">
-							<view v-show="item.Isdel==true" @click="delmsg(item,index)" class="fz-12  delTxt ">
+							<view v-show="item.Isdel==true" @click="delmsg(item,index)" class="fz-12  m-r2 ">
 								删除
 							</view>{{item.created_at}}
 						</view>
@@ -76,19 +76,14 @@
 			<view class="nono flex al-center ju-center" v-if="comments.length==0&&isLoding==false">
 				还没有任何评论哦
 			</view>
-			
-			<view v-show="flag===true" class="posbot flex al-center ">
+			<view v-show="flag===true" class="posbot flex al-center " :style="{bottom: inputOffsetBottom > 0 ? inputOffsetBottom + 'px' : '0'}">
 				<view class="pos-rel">
-					<textarea @focus="onChange" :autoHeight="auto"  id="area" placeholder='评论' v-model="context"
-						class="ch flex al-center"></textarea>
+					<textarea   :adjust-position="false"  :autoHeight="auto"   placeholder='评论' v-model="context"
+						class="chText flex al-center"></textarea>
 					<view @click="send" class="btn flex pos-abs al-center ju-center" :class="context != ''?'sendStyle':''">
-						发送
+						发送 
 					</view>
 				</view>
-			</view>
-			<!-- 查看图片 -->
-			<view v-show="see == true" @click="off" class="look flex al-center ju-center">
-				<image :src="src" class="srcimg" mode="aspectFit"></image>
 			</view>
 		</view>
 
@@ -126,13 +121,12 @@
 				comments: [], //获取评论
 				flag: false,
 				context: '',
-				src: '', //查看图片路径
-				see: false, //图片遮罩层
 				page: 1,
 				pageSize: 15,
 				isLoding: false,
 				hasMore: true,
 				text: '',
+				inputOffsetBottom:0
 
 			}
 		},
@@ -168,10 +162,6 @@
 				}
 
 			},
-			//长按显示删除
-			logoTime(item, index) {
-				
-			},
 			//删除自己帖子的评论
 			deluserPost(id) {
 				village.deluserPost({
@@ -206,6 +196,8 @@
 					}
 				})
 			},
+			
+			
 			
 			//删除自己的评论
 			delPost(id) {
@@ -340,15 +332,15 @@
 				this.flag = !this.flag
 			},
 			// 查看图片
-			look(item) {
-				this.see = true
-				this.src = item
+			look(item,index) {
+				// 预览图片
+				uni.previewImage({
+					urls:this.arr.album, 
+					current: index,
+					indicator:"default",
+				});
+			
 			},
-			// 关闭
-			off() {
-				this.see = false
-			},
-
 			// 发送评论
 			send() {
 				if (this.context == '') {
@@ -382,7 +374,6 @@
 							this.comments = []
 							this.loadPageData()
 							this.flag = false
-							this.auto = true
 							uni.showToast({
 								title: res.data.msg,
 								icon: 'none',
@@ -400,14 +391,19 @@
 				})
 			},
 			
-			onChange(e){
-				this.text = ""
-			}
-			
 		},
 		mounted() {
 			this.getUser()
 			
+		},
+		onReady() {
+		  // 监听键盘高度变化，以便设置输入框的高度
+		  uni.onKeyboardHeightChange(res => {
+		    this.inputOffsetBottom = res.height
+		    if (res.height === 0) {
+		      this.focus = false
+		    }
+		  })
 		},
 
 		onShow() {
@@ -601,7 +597,7 @@
 		justify-content: flex-end;
 	}
 
-	.ch {
+	.chText {
 		margin-left: 20rpx;
 		border-radius: 5rpx;
 		padding: 10rpx;
@@ -699,7 +695,5 @@
 		background: #F07535;
 	}
 
-	.delTxt {
-		margin-right: 20rpx;
-	}
+	
 </style>

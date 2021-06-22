@@ -3,8 +3,7 @@
 		<subunit titel='小区信息'></subunit>
 		<view v-if="code == 200" class="flex-d al-center">
 			<view class="swpBox m-t3">
-				<u-swiper v-if="list.length>0" :list="list" border-radius='10' height="350"></u-swiper>
-				<u-swiper v-if="list.length==0" :list="localist" border-radius='10' height="350"></u-swiper>
+				<u-swiper @click="look" :list="list" border-radius='10' height="350"></u-swiper>
 			</view>
 			<view class="conBox m-t4">
 				<view class="fz-16">
@@ -98,12 +97,22 @@
 						} 
 						this.code = res.data.code
 						let data = res.data.data
-						this.list = data.album
+						let img = ['https://oss.kuaitongkeji.com/upload/2020/12/15/AY0xTVMZBzNuJ0acHphXphi4gewrdyJeuBoypUCH.jpeg']
+						this.list = !data.album || data.album.length == 0 ? img : data.album
 						this.villinfo = data
 					}
 				})
 			},
-		
+		  // 查看图片
+		  look(index) {
+		  	// 预览图片
+		  	uni.previewImage({
+		  		urls:this.list, 
+		  		current: index,
+		  		indicator:"default",
+		  	});
+		  
+		  },
 		
 		},
 		mounted() {

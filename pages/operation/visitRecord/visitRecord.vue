@@ -70,6 +70,7 @@
 		props: {},
 		data() {
 			return {
+				code:0,
 				idx:0,
 				text: '', //没有有更多提示
 				lists: [], //数据列表
@@ -110,7 +111,7 @@
 						if (res.statusCode != 200) return;
 
 						if (res.data.code != 200) return;
-
+						this.code = res.data.code
 						let data = res.data.data;
 
 						this.page = data.current_page + 1;
@@ -131,7 +132,7 @@
 							}
 						})
 						this.lists = this.lists.concat(data.data);
-
+             
 						// console.log(this.lists);
 					},
 
@@ -148,9 +149,7 @@
 						})
 					},
 					success: () => {
-						if (this.lists.length == 0) {
 							this.getData()
-						}
 					}
 				})
 
@@ -180,6 +179,7 @@
 
 		},
 		onShow() {
+			if(this.code == 200) return;
 			this.loadPageData()
 			this.userisDo()
 		},
@@ -187,7 +187,7 @@
 		onReachBottom() {
 			this.text = '没有更多了'
 			if (this.isLoding == true || this.hasMore == false) return;
-			this.loadPageData();
+			this.getData();
 
 		},
 		onHide() {

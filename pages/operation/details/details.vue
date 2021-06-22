@@ -33,9 +33,9 @@
 				<view class="tex1">
 					补充图片
 				</view>
-				<view class="imgBox">
-					<view class="" v-for="item in redIMG" :key="item.id">
-						<image :src="item" class="redImg m-r1" mode="aspectFill"></image>
+				<view class="imgBox flex">
+					<view class="" v-for="(item,index) in redIMG" :key="item.id">
+						<image @click="look(item,index)" :src="item" class="redImg m-r3 m-b1" :class="(index + 1) %4 ==0 ? 'm-r0' :''" mode="aspectFill"></image>
 					</view>
 				</view>
 			</view>
@@ -84,7 +84,6 @@
 			return {
 				text: '', //结果
 				remarks: '', //备注
-				result: '', //结果
 				textvalue: '', //结果文本域
 				valuetime: '', //二维码有效时间
 				show: false,
@@ -167,7 +166,7 @@
 							this.text = "待处理"
 							break;
 							case 2:
-							this.text = "同意"
+							this.text = "已同意"
 							break;
 							case 3:
 							this.text = "未同意"
@@ -178,8 +177,8 @@
 						this.locadata[2].value = data.created_at.slice(0, 16)
 						this.locadata[3].value = data.place
 						this.remarks = data.visitor_remark
-						this.result = data.verify_text
-						this.redIMG = data.pics
+						this.textvalue = data.verify_msg
+						this.redIMG = data.pics ? data.pics:[]
 					}
 				})
 			},
@@ -262,7 +261,17 @@
 				}
 				this.valuetime = date.year + '年' + date.month + '月' + date.date + '日' + '23:59:00'
 				this.invalid_at = date.year + '-' + date.month + '-' + date.date + ' ' + '23:59:00'
-			}
+			},
+			// 查看图片
+			look(item,index) {
+				// 预览图片
+				uni.previewImage({
+					urls:this.redIMG, 
+					current: index,
+					indicator:"default",
+				});
+			
+			},
 		},
 		mounted() {
 			this.getData()
@@ -405,13 +414,12 @@
 		padding: 3%;
 		border-radius: 10rpx;
 		background: #FFFFFF;
-		font-size: 26rpx;
-		color: rgb(165, 165, 165);
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+		flex-wrap: wrap;
 	}
 
 	.redImg {
-		width: 130rpx;
+		width: 140rpx;
 		height: 160rpx;
 		border-radius: 10rpx;
 	}

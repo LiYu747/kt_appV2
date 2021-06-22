@@ -4,9 +4,9 @@
 		<view v-if="locdata.length>0" class="conBox m-t2">
 			<view class="itemBox" @click="godils(item)" v-for="item in locdata" :key="item.id">
 				<view  class="flex">
-					<image v-if="item.cover" :src="item.cover" class="itemImg" mode=""></image>
+					<image v-if="item.cover" :src="item.cover" class="itemImg" mode="aspectFill"></image>
 					<image v-else src="https://oss.kuaitongkeji.com/upload/2020/12/15/AY0xTVMZBzNuJ0acHphXphi4gewrdyJeuBoypUCH.jpeg"
-					 class="itemImg" mode=""></image>
+					 class="itemImg" mode="aspectFill"></image>
 					<view class="content m-l2 pos-rel">
 						<view class="conTex  m-t2">
 							{{item.title}}
@@ -35,7 +35,7 @@
 					<image class="loimg" src="https://oss.kuaitongkeji.com/static/img/app/address/loading.gif" mode="">
 					</image>
 				</view>
-				搜索中
+				加载中
 			</view>
 		</view>
 	</view>
@@ -82,10 +82,28 @@
 							content: res.data.data.content
 						}
 						this.$store.commit("homeContent", content);
+						this.newsRead(res.data.data.id)
 						uni.navigateTo({
 							url: '/pages/InformationDetails/InformationDetails/InformationDetails'
 						})
 					}
+				})
+			},
+			//阅读统计
+			newsRead(id){
+				home.newsRead({
+					data:{id:id},
+					fail: () => {
+						uni.showToast({
+							title: '网络错误',
+							icon: 'none'
+						})
+					},
+					success: (res) => {
+						if (res.statusCode != 200) return
+						if (res.data.code != 200) return
+						// console.log(res.data.data.data);
+					},
 				})
 			},
 			// 数据

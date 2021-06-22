@@ -17,9 +17,9 @@
 								{{item.title}}
 							</view>
 						</view>
-						<image v-if="item.cover" :src="item.cover" class="itemImg" mode=""></image>
+						<image v-if="item.cover" :src="item.cover" class="itemImg" mode="aspectFill"></image>
 						<image v-else src="https://oss.kuaitongkeji.com/upload/2020/12/15/AY0xTVMZBzNuJ0acHphXphi4gewrdyJeuBoypUCH.jpeg"
-						 class="itemImg" mode=""></image>
+						 class="itemImg" mode="aspectFill"></image>
 					</view>
 					<view class="fz-12 timeBox flex ju-between m-t2">
 						{{item.created_at}}
@@ -75,10 +75,11 @@
 							content: res.data.data.content
 						}
 						this.$store.commit("homeContent", content);
+						this.newsRead(res.data.data.id)
 						uni.navigateTo({
 							url: '/pages/InformationDetails/InformationDetails/InformationDetails'
 						})
-						this.newsRead(res.data.data.id)
+						
 					}
 				})
 			},
@@ -183,6 +184,7 @@
 		width: 200rpx;
 		height: 150rpx;
 		margin-left: 40rpx;
+		border-radius: 10rpx;
 	}
 
 	.itemTil {

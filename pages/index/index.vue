@@ -259,29 +259,10 @@
 				})
 			},
 			gogo() {
-				  // 预览图片
-					return;
-				uni.previewImage({
-					urls:[
-					'https://oss.kuaitongkeji.com/static/img/app/Newguidance/home.png'], 
-					current: 0,
-					indicator:"default",
-					longPressActions: {
-						itemList: [ '保存图片'],
-						success: function() {
-							    uni.showToast({
-							    	icon:"none",
-									title:'图片已保存至相册'  
-							    })
-								
-								uni.saveImageToPhotosAlbum({
-								    filePath:'https://oss.kuaitongkeji.com/static/img/app/Newguidance/home.png',    
-								}); 
-						},
-						fail: function() {
-						}
-					}
-				});
+				// uni.navigateTo({
+				// 	url: '/pages/classification/lookRoom/lookRoom'
+				// })
+				
 				return;
 				uni.navigateTo({
 					url: '/components/forum/setting/lianx'

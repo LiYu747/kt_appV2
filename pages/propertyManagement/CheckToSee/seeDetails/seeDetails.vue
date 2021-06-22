@@ -24,8 +24,8 @@
 					附件
 				</view>
 				<view class="accessoryCtn flex">
-					<view class="" v-for="item in files" :key="item.id">
-						<image :src="item" class="itemUrl" mode="aspectFill"></image>
+					<view class="" @click="look(index)" v-for="(item,index) in files" :key="item.id">
+						<image :src="item" class="itemUrl" :class="(index + 1) % 4 == 0?'m-r0':''" mode="aspectFill"></image>
 					</view>
 				</view>
 			</view>
@@ -266,7 +266,7 @@
 								break;
 						}
 						this.remark = data.user_remark
-						this.files = data.pics
+						this.files = data.pics ?data.pics :[]
 						this.locdata[0].value = data.username
 						this.locdata[1].value = data.tel.slice(0, 3) + '****' + data.tel.slice(7, 11)
 						this.locdata[2].value = data.id_card_no.slice(0, 3) + '***********' + data.id_card_no
@@ -275,6 +275,7 @@
 							.own_apartment.name + data.own_floor
 							.name + data.own_room.name
 						this.locdata[4].value = data.created_at.slice(0, 16)
+						this.result = data.verify_msg
 					}
 				})
 			},
@@ -283,6 +284,9 @@
 				uni.showLoading({
 					title: '加载中'
 				})
+				if(!this.result){
+					this.result = text
+				}
 				home.auditRecord({
 					data: {
 						id: this.id,
@@ -358,7 +362,17 @@
 				}
 				this.verify_status = '3'
 				this.auditreq('未通过')
-			}
+			},
+			// 查看图片
+			look(index) {
+				// 预览图片
+				uni.previewImage({
+					urls:this.files, 
+					current: index,
+					indicator:"default",
+				});
+			
+			},
 		},
 		mounted() {
 			this.getData()
@@ -400,6 +414,7 @@
 	.ipt {
 		text-align: right;
 		font-size: 14px;
+		width: 400rpx;
 	}
 
 	.feidx {
@@ -493,7 +508,7 @@
 	}
 
 	.itemUrl {
-		margin-right: 20rpx;
+		margin-right: 30rpx;
 		margin-bottom: 10rpx;
 		width: 140rpx;
 		height: 160rpx;

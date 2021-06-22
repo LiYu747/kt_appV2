@@ -19,7 +19,7 @@
 						<image src="https://oss.kuaitongkeji.com/static/img/app/visit/time.png" class="dv3" mode="">
 						</image>
 						<view class="">
-							{{items.created_at.slice(0,16)}}
+							{{items.created_at}}
 						</view>
 					</view>
 					<view class="bx2 flex al-center">
@@ -123,6 +123,7 @@
 								this.page = data.current_page + 1;
 								this.hasMore = data.next_page_url ? true : false;
 								data.data.map(item => {
+									item.created_at = item.created_at.slice(0,16)
 									switch (item.verify_status) {
 										case 1:
 											item.verify_status = '待处理'

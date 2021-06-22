@@ -36,7 +36,7 @@
 					</view>
 					<view v-if="infomsg.album" class="flex flex-w m-t3" >
 						<view class="m-r2 m-b1" :class="(index+1)%3==0?'dv':''" v-for="(item,index) in infomsg.album" :key="item.id">
-						  <image :src="item" mode="aspectFill" class="itemImg"></image>
+						  <image @click="look(index)" :src="item" mode="aspectFill" class="itemImg"></image>
 						</view>
 					</view>
 			</view>
@@ -199,7 +199,18 @@
 						this.infomsg = data
 					}
 				})
-			}
+			},
+			
+			// 查看图片
+			look(index) {
+				// 预览图片
+				uni.previewImage({
+					urls:this.infomsg.album, 
+					current: index,
+					indicator:"default",
+				});
+			
+			},
 		},
 		mounted() {
 			this.getData()

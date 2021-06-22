@@ -168,6 +168,7 @@
 		},
 		methods: {
 			nextTo(index) {
+				return;
 				if(!cache.get('Gshow')) return;
 				this.idx++
 				if (this.idx == 3) {
@@ -203,8 +204,6 @@
 			},
 			// 点击确定
 			confirm(val) {
-				// console.log(val);
-
 				// 获取的文本
 				let arr = ''
 				// 获取默认选中
@@ -234,7 +233,6 @@
 			// 获取附件
 			add(val) {
 				this.files = val
-				// console.log(this.files);
 			},
 			// 提交
 			Submit() {
@@ -410,12 +408,12 @@
 							},
 							success: (res) => {
 								if (res.statusCode != 200) return;
-								if (res.data.code != 200) return;
+								if (res.data.code != 200 && res.data.code !=4405) return;
 								let Users = res.data.data
 								this.record[0].value = Users.username
 								this.record[1].value = Users.tel.slice(0, 3) + '****' + Users.tel
 									.slice(7, 11)
-								if (!Users.id_card_no && !cache.get('Gshow')) {
+								if (!Users.id_card_no) {
 									uni.showModal({
 										content: '请完善您的身份信息',
 										success: function(res) {
@@ -453,14 +451,13 @@
 						id: this.Villid,
 						need_buildings: '1'
 					},
-					fail: (err) => {
+					fail: () => {
 						uni.showToast({
 							title: '网络错误',
 							icon: 'none'
 						})
 					},
 					success: (res) => {
-						this.isLoding = false
 						if (res.statusCode != 200) return
 						if (res.data.code != 200) return
 						// console.log('小区展示', res);

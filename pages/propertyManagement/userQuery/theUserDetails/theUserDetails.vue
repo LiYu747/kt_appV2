@@ -119,7 +119,7 @@
 						  data.valid_end = '暂无'
 						 }
 					   this.displayBox[0].content = data.own_user.username
-					   this.displayBox[1].content = data.own_village.name
+					   this.displayBox[1].content = '' + data.own_building.name + data.own_apartment.name + data.own_floor.name + data.own_room.name
 					   this.displayBox[2].content = data.type
 					   switch(data.valid_type){
 						   case 0:

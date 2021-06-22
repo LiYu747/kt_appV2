@@ -151,7 +151,7 @@
 							uni.showLoading({
 								title: '加载中'
 							})
-							village.delPost({
+							village.deluserpost({
 								data: {
 									id: this.id
 								},

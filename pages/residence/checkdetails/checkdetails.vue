@@ -118,8 +118,8 @@
 						}
 						// console.log(data);
 						if(data.own_village){
-							this.locadata[1].value = '' + data.own_village.name + data.own_building.name + data.own_apartment.name + data.own_building
-								.name + data.own_room.name
+							this.locadata[1].value = '' + data.own_village.name + data.own_building.name + data.own_apartment.name 
+								 + data.own_room.name
 						}
 						this.locadata[2].value = data.created_at.slice(0, 16)
 						this.text = data.verify_status_text
@@ -178,8 +178,8 @@
 <style scoped lang="scss">
 	.cont {
 		width: 710rpx;
-		height: 100rpx;
 		padding: 0 20rpx;
+		padding-bottom: 50rpx;
 	}
 
 	.nav {

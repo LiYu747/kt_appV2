@@ -106,7 +106,7 @@
 				<view class="flex al-center">
 					联系人
 					<view class=" m-l3 fz-14">
-						<input type="text" v-model="username" value="" />
+						<input type="text" class="useript" v-model="username" value="" />
 					</view>
 				</view>
 				<view class="Hline">
@@ -115,7 +115,7 @@
 				<view class=" flex al-center">
 					联系电话
 					<view class=" m-l3 fz-14">
-						<input type="text" v-model="tel" value="" />
+						<input type="text" class="useript" v-model="tel" value="" />
 					</view>
 				</view>
 			</view>
@@ -522,8 +522,7 @@
 				cfg.ready((data) => {
 					if (!data) return;
 					let qqMap = "https://apis.map.qq.com/tools/locpicker"
-					let url = qqMap + "?search=1&type=1&key=" + data.map.qq_map.qqmap_app_key + "&referer=" + data
-						.map.qq_map.qqmap_app_name
+					let url = qqMap + "?search=1&type=1&key=" + "KY6BZ-QXIW4-L5WUR-XISRS-E3VV6-I6FY6" + "&referer=" + "kuaitong-app"
 					uni.navigateTo({
 						url: '/pages/classification/lookRoom/Celaddress/Celaddress?url=' +
 							encodeURIComponent(url)
@@ -602,10 +601,7 @@
 					})
 					return;
 				}
-				if (this.id) {
-					this.upData()
-					return;
-				}
+				
 				this.subunit()
 			},
 
@@ -658,171 +654,18 @@
 				})
 			},
 
-			getData(id) {
-				uni.showLoading({
-					title: "加载中"
-				})
-				home.rentDils({
-					data: {
-						id: id
-					},
-					fail: () => {
-						uni.hideLoading()
-						uni.showToast({
-							title: '网络错误',
-							icon: 'none'
-						})
-					},
-					success: (res) => {
-						uni.hideLoading()
-						if (res.statusCode != 200) {
-							uni.showToast({
-								title: '网络出错了',
-								icon: 'none'
-							})
-							return;
-						}
-						if (res.data.code != 200) {
-							uni.showToast({
-								title: res.data.msg,
-								icon: 'none'
-							})
-							return;
-						}
-						let data = res.data.data
-						this.celFit = data.zx
-						if (data.zx == 'low') {
-							data.zx = '清水房'
-							this.defaultFitment = [2]
-						}
-						if (data.zx == 'simple') {
-							data.zx = '简装'
-							this.defaultFitment = [1]
-						}
-						if (data.zx == 'well') {
-							data.zx = '精装'
-							this.defaultFitment = [0]
-						}
-						if (data.ele == 0) {
-							data.ele = '无'
-							this.defaultElevator = [0]
-						}
-						if (data.ele == 1) {
-							data.ele = '有'
-							this.defaultElevator = [1]
-						}
-						this.value = data.title
-						this.formlist[0].value = data.village
-						this.formlist[1].value = data.room + '室' + data.hall + '厅' + data.bathroom + '卫'
-						this.defaultType = [data.room - 1, data.hall - 1, data.bathroom - 1]
-						this.formlist[2].value = data.floor + '/' + data.total_floor
-						this.defaultFloor = [data.floor - 1, data.total_floor - data.floor]
-						this.formlist[3].value = data.zx
-						this.formlist[4].value = data.area
-						this.formlist[5].value = data.ele
-						this.rentNum = data.rents
-						this.cash = data.rent_pay_method
-						this.defaultCash = [data.rent_pay_method.substring(1, 2) - 1, data.rent_pay_method
-							.substring(3, 4) - 1
-						]
-						this.textvalue = data.desc
-						this.image = data.album
-						this.coverImg = data.cover
-						this.floor = data.floor
-						this.totalFloor = data.total_floor
-						this.rents_bet = data.rents_bet
-						this.rents_pay = data.rents_pay
-						this.addDetails = data.location
-						this.lgt = data.lgt
-						this.lat = data.lat
-					}
-				})
-			},
-			upData() {
-				let faceimg = this.coverImg
-				if (!this.coverImg) {
-					faceimg = this.image[0]
-				}
-				uni.showLoading({
-					title: '提交中'
-				})
-				home.updataRoom({
-					data: {
-						// 必传
-						id: this.id,
-						title: this.value,
-						room: this.defaultType[0] + 1,
-						hall: this.defaultType[1] + 1,
-						bathroom: this.defaultType[2] + 1,
-						area: this.formlist[4].value,
-						ele: this.defaultElevator[0],
-						floor: this.floor,
-						total_floor: this.totalFloor,
-						zx: this.celFit,
-						rents: this.rentNum,
-						album: this.image,
-						village: this.formlist[0].value,
-						desc: this.textvalue,
-						tel: this.tel,
-						contact_name: this.username,
-						// 可选
-						rents_bet: this.rents_bet,
-						rents_pay: this.rents_pay,
-						location: this.addDetails,
-						lgt: this.lgt,
-						lat: this.lat,
-						faceimg: faceimg
-					},
-					fail: () => {
-						uni.hideLoading()
-						uni.showToast({
-							title: '网络错误',
-							icon: 'none'
-						})
-					},
-					success: (res) => {
-						uni.hideLoading()
-						if (res.statusCode != 200) {
-							uni.showToast({
-								title: '网络出错了',
-								icon: 'none'
-							})
-							return;
-						}
-						if (res.data.code != 200) {
-							uni.showToast({
-								title: res.data.msg,
-								icon: 'none'
-							})
-							return;
-						}
-						uni.showToast({
-							title: res.data.msg,
-							icon: 'none',
-							duration: 3000
-						})
-
-						let settime = setTimeout(() => {
-							uni.navigateBack({
-								delta: 3
-							})
-						}, 3000)
-					}
-				})
-			},
 			//删除照片
 			delImage(index) {
 				this.image.splice(index, 1)
 			},
+			
 
 		},
 		mounted() {
 			this.all()
 		},
 		onLoad(val) {
-			if (!val.id) return;
-			this.id = val.id
-			this.getData(val.id)
+			
 		},
 		onShow() {
 			this.loadUserData()
@@ -868,7 +711,7 @@
 		background: #FFFFFF;
 		padding: 20rpx 30rpx;
 		color: #333333;
-		font-size: 32rpx;
+		font-size: 16px;
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
 	}
 
@@ -877,7 +720,7 @@
 		margin-left: 20rpx;
 		font-size: 14px;
 		color: #666666;
-		margin-top: 4rpx;
+		margin-top: 5rpx;
 	}
 
 	.contentBox {
@@ -1006,5 +849,9 @@
 		border-radius: 50%;
 		border: 1px solid #FFFFFF;
 		background: rgba(0, 0, 0, 0.2)
+	}
+	
+	.useript{
+		width: 400rpx;
 	}
 </style>

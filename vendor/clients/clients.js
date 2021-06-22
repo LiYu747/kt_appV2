@@ -82,11 +82,10 @@ class Clients {
 	}
 
 	create() {
-		return;
 		let that = this;
 		uni.request({
-			url: routes.client.config,
-			method: 'GET',
+			url: routes.client.reg,
+			method: 'POST',
 			header: {
 				'client-type': that.clientType,
 				'client-version': that.version,

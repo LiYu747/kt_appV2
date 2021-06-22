@@ -29,7 +29,7 @@
 				<view class="tex1">
 				  补充图片
 				</view>
-				<view class="imgBox">
+				<view class="imgBox flex">
 					<view class="" v-for="item in redIMG" :key="item.id">
 						<image :src="item" class="redImg" mode="aspectFill"></image>
 					</view>
@@ -132,7 +132,7 @@
 									data.verify_status = '审核中'
 									break;
 								case 2:
-									data.verify_status = '同意'
+									data.verify_status = '已同意'
 									break;
 								case 3:
 									data.verify_status = '未同意'
@@ -184,8 +184,8 @@
 
 	.cont {
 		width: 710rpx;
-		height: 100rpx;
 		padding: 0 20rpx;
+		padding-bottom: 50rpx;
 	}
 
 	.nav {
@@ -275,14 +275,15 @@
 		padding: 3%;
 		border-radius: 10rpx;
 		background: #FFFFFF;
-		font-size: 26rpx;
-		color: rgb(165, 165, 165);
 		box-shadow: 2rpx 2rpx 12rpx #d9d9d9;
+		flex-wrap: wrap;
 	}
 	
 	.redImg{
-		width: 130rpx;
-		height: 160rpx;
+	width: 140rpx;
+	height: 160rpx;
 		border-radius: 10rpx;
+		margin-right: 20rpx;
+		margin-bottom: 10rpx;
 	}
 </style>

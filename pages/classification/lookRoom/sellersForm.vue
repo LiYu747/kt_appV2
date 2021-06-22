@@ -89,7 +89,7 @@
 				<view class="flex al-center">
 					联系人
 					<view class=" m-l3 fz-14">
-						<input type="text" v-model="username" value="" />
+						<input type="text" class="useript" v-model="username" value="" />
 					</view>
 				</view>
 				<view class="Hline">
@@ -98,7 +98,7 @@
 			    <view class=" flex al-center">
 			    	联系电话
 					<view class=" m-l3 fz-14">
-						<input type="text" value="" v-model="tel" />
+						<input type="text" class="useript" value="" v-model="tel" />
 					</view>
 			    </view>
 			</view>
@@ -256,7 +256,7 @@ data () {
 				  if (res.statusCode != 200) {
 				  	uni.showToast({
 				  		title: '网络出错了',
-				  		icon: 'none'
+				  		icon: 'none' 
 				  	})
 				  	return;
 				  }
@@ -283,27 +283,27 @@ data () {
 		 })  
 	   },
 	  // 选择操作
-      fillIn(item,index){
+      fillIn(item,index){ 
 		  if(index == 0) {
 			  this.location()
 		  }
 		  if(index == 1){
-			this.houseType = true  
+			this.houseType = true    
 		  }
 		  if(index == 2){
 			 
 			this.Isfloor = true
 		  }
-		  if(index == 3) {
+		  if(index == 3) {   
 			  this.fitmentShow = true
 		  }
 		  if(index == 5) {
 			  this.elevatorShow = true
-		  }
+		  }    
 	  },
 	  //选择电梯
     confirmElevator(e){
-		this.formlist[5].value = e[0].label
+		this.formlist[5].value = e[0].label 
 		let Default = []
 		Default.push(e[0].value)
 		this.defaultElevator = Default
@@ -433,8 +433,7 @@ data () {
 		  cfg.ready((data) => {
 		  	if (!data) return;
 		  	let qqMap = "https://apis.map.qq.com/tools/locpicker"
-		  	let url = qqMap + "?search=1&type=1&key=" + data.map.qq_map.qqmap_app_key + "&referer=" + data
-		  		.map.qq_map.qqmap_app_name
+		  	let url = qqMap + "?search=1&type=1&key=" + "KY6BZ-QXIW4-L5WUR-XISRS-E3VV6-I6FY6" + "&referer=" + "kuaitong-app" 
 		  	uni.navigateTo({
 		  		url: '/pages/classification/lookRoom/Celaddress/Celaddress?url=' +
 		  			encodeURIComponent(url)
@@ -569,154 +568,6 @@ data () {
 		})
 	},
     
-	// 数据
-	getData(id) {
-		uni.showLoading({
-			title:"加载中"
-		})
-		home.saleDils({
-			data: {
-				id: id
-			},
-			fail: () => {
-				uni.hideLoading()
-				uni.showToast({
-					title: '网络错误',
-					icon: 'none'
-				})
-			},
-			success: (res) => {
-				uni.hideLoading()
-				if (res.statusCode != 200) {
-					uni.showToast({
-						title: '网络出错了',
-						icon: 'none'
-					})
-					return;
-				}
-				if (res.data.code != 200) {
-					uni.showToast({
-						title: res.data.msg,
-						icon: 'none'
-					})
-					return;
-				}
-				let data = res.data.data
-				this.celFit = data.zx
-				if (data.zx == 'low') {
-					data.zx = '清水房'
-					this.defaultFitment = [2]
-				}
-				if (data.zx == 'simple') {
-					data.zx = '简装'
-					this.defaultFitment = [1]
-				}
-				if (data.zx == 'well') {
-					data.zx = '精装'
-					this.defaultFitment = [0]
-				}
-				if (data.ele == 0) {
-					data.ele = '无'
-					this.defaultElevator = [0]
-				}
-				if (data.ele == 1) {
-					data.ele = '有'
-					this.defaultElevator = [1]
-				}
-				this.value = data.title
-				this.formlist[0].value = data.village
-				this.formlist[1].value = data.room + '室' + data.hall + '厅' + data.bathroom + '卫'
-				this.defaultType = [data.room-1, data.hall-1,data.bathroom-1]
-				this.formlist[2].value = data.floor + '/' + data.total_floor
-				this.defaultFloor = [data.floor-1,data.total_floor-data.floor]
-				this.formlist[3].value = data.zx 
-				this.formlist[4].value = data.area
-				this.formlist[5].value = data.ele
-				this.rentNum = data.sale_price
-				this.textvalue = data.desc
-				this.image = data.album
-				this.coverImg = data.faceimg
-				this.floor = data.floor
-				this.totalFloor = data.total_floor
-				this.rents_bet = data.rents_bet
-				this.rents_pay = data.rents_pay
-				this.addDetails = data.location
-				this.lgt = data.lgt
-				this.lat = data.lat
-			}
-		})
-	},
-	upData(){
-		let faceimg = this.coverImg
-		  if(!this.coverImg){
-			faceimg = this.image[0]
-		  }
-		  uni.showLoading({
-		  	title:'提交中'
-		  })
-		home.houseSaleUp({
-			 data:{
-				 // 必传
-				 id:this.id,
-				// 必传
-				 title: this.value,
-				 room:this.defaultType[0] + 1,
-				 hall:this.defaultType[1] + 1,
-				 bathroom:this.defaultType[2] + 1,
-				 area:this.formlist[4].value,
-				 ele:this.defaultElevator[0],
-				 floor:this.floor,
-				 total_floor:this.totalFloor,
-				 zx:this.celFit,
-				 sale_price:this.rentNum,
-				 album:this.image,
-				 village:this.formlist[0].value,
-				 desc:this.textvalue,
-				 tel:this.tel,
-				 contact_name:this.username,
-				// 可选
-				  location:this.addDetails,
-				  lgt:this.lgt,
-				  lat:this.lat,
-				  faceimg:faceimg
-			 },
-			 fail: () => {
-				 uni.hideLoading()
-				 uni.showToast({
-					title: '网络错误',
-					icon: 'none'
-				 })
-			 },
-			 success:(res) => {
-				  uni.hideLoading()
-				  if (res.statusCode != 200) {
-					uni.showToast({
-						title: '网络出错了',
-						icon: 'none'
-					})
-					return;
-				  }
-				  if (res.data.code != 200) {
-					uni.showToast({
-						title: res.data.msg,
-						icon: 'none'
-					})
-					return;
-				  }
-				  uni.showToast({
-					title: res.data.msg + ',需等待审核',
-					icon: 'none',
-					duration:3000
-				  })
-				
-				  let settime = setTimeout( () => {
-					  uni.navigateBack({
-					  	delta:3
-					  })
-				  },3000)	  
-				 }
-		})  
-	},
 	//删除照片
 	delImage(index){
 		this.image.splice(index,1)
@@ -727,9 +578,7 @@ data () {
  
   },
   onLoad (val) {
-    if(!val.id) return;
-    this.id = val.id
-    this.getData(val.id)
+  
   },
   onShow() {
   	  this.loadUserData()
@@ -911,5 +760,9 @@ data () {
 			border-radius: 50%;
 			border: 1px solid #FFFFFF;
 		    background: rgba(0,0,0,0.2) 
+		}
+		
+		.useript{
+			width: 400rpx;
 		}
 </style>

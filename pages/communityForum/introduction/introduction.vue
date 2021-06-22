@@ -2,8 +2,7 @@
 	<view class="fz-12">
 		<subunit titel='小区简介'></subunit>
 		<view class="">
-			<u-swiper v-if="list.length>0" :list="list" border-radius='0' height="350"></u-swiper>
-			<u-swiper v-if="list.length==0" :list="localist" border-radius='0' height="350"></u-swiper>
+			<u-swiper   @click="look" :list="list" border-radius='0' height="350"></u-swiper>
 		</view>
 		<view class="flex-d al-center">
 			<view class="nav flex-d al-center pos-rel">
@@ -134,7 +133,7 @@
 					cfg.ready((data) => {
 						if(!data) return;
 						let qqMap = "https://apis.map.qq.com/tools/poimarker"
-						let url = qqMap + "?type=1&keyword="+ this.detailedAddress + "&center="+this.villinfo.lat+',' + this.villinfo.lng +"&radius=1000&key="+ data.map.qq_map.qqmap_app_key + "&referer=" + data.map.qq_map.qqmap_app_name
+						let url = qqMap + "?type=1&keyword="+ this.detailedAddress + "&center="+this.villinfo.lat+',' + this.villinfo.lng +"&radius=1000&key="+ "KY6BZ-QXIW4-L5WUR-XISRS-E3VV6-I6FY6" + "&referer=" + "kuaitong-app"
 						uni.navigateTo({ 
 							url: '/pages/web/index/index?url=' + encodeURIComponent(url) 
 						})
@@ -188,7 +187,8 @@
 						if (res.statusCode != 200) return
 						if (res.data.code != 200) return
 						let data = res.data.data.info
-						this.list = data.album
+						let img = ['https://oss.kuaitongkeji.com/upload/2020/12/15/AY0xTVMZBzNuJ0acHphXphi4gewrdyJeuBoypUCH.jpeg']
+						this.list = !data.album || data.album.length == 0 ? img : data.album
 						this.villinfo = data
 						// 小区详细地址
 						this.detailedAddress = data.address + data.address_name
@@ -233,6 +233,17 @@
 						
 					}
 				})
+			},
+			
+			// 查看图片
+			look(index) {
+				// 预览图片
+				uni.previewImage({
+					urls:this.list, 
+					current: index,
+					indicator:"default",
+				});
+			
 			},
 		},
 		mounted() {

@@ -138,8 +138,12 @@
 						uni.showToast({
 							title:res.data.msg,
 						})
-						this.remak = ""
-						this.images = []
+						const timeOut = setTimeout( () => {
+							uni.navigateBack({
+								delta:1
+							})
+							clearTimeout(timeOut)
+						},2000)
 					}
 				})
 			},
@@ -232,7 +236,6 @@
 				 	},
 				 	fail: () => {
 				 		this.isLoding = false;
-				 		this.stopRefreshIcon();
 				 		uni.showToast({
 				 			title: '网络错误',
 				 			icon: 'none'
@@ -331,6 +334,7 @@
 	}
 
 	.ipt {
+		width: 400rpx;
 		text-align: right;
 		margin-right: 40rpx;
 	}

@@ -21,11 +21,11 @@
 						<input v-model="goPosition" :placeholder="goholder" />
 					</view>
 				</view>
-
-				<view class="">
-					<image @click="swap" src="https://oss.kuaitongkeji.com/static/img/app/classification/Travel/jiah.png" class="jiaoimg"
-					 mode=""></image>
-				</view>
+               
+			   <view class="">
+			   	<image @click="swap" src="https://oss.kuaitongkeji.com/static/img/app/classification/Travel/jiah.png" class="jiaoimg"
+			   	 mode=""></image>
+			   </view>
 			</view>
 		</view>
 

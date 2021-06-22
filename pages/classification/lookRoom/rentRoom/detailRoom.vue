@@ -7,8 +7,8 @@
 		<view class="flex-d al-center">
 			<view class="backBox pos-rel m-t2 flex al-center ju-center">
 				<swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
-					<swiper-item v-for="item in roomInof.album" :key="item.id" class="flex ju-center">
-						<image :src="item" class="logoImg " mode="aspectFill"></image>
+					<swiper-item v-for="(item,index) in roomInof.album" :key="item.id" class="flex ju-center">
+						<image :src="item" @click="look(index)" class="logoImg " mode="aspectFill"></image>
 					</swiper-item>
 				</swiper>
 			</view>
@@ -254,7 +254,17 @@
 						if (res.data.code != 200) return; 
 					}
 				})
-			}
+			},
+			// 查看图片
+			look(index) {
+				// 预览图片
+				uni.previewImage({
+					urls:this.roomInof.album, 
+					current: index,
+					indicator:"default",
+				});
+			
+			},
 		},
 		mounted() {
 

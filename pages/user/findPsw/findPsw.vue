@@ -5,7 +5,7 @@
 			<view class="cententBox">
 				<u-form :model="form" ref="uForm">
 					<!-- 手机号 -->
-					<u-form-item v-show="falgWay == false" label="" prop="phone">
+					<u-form-item  label="" prop="phone">
 						<view class="label">
 							手机号
 						</view>
@@ -33,7 +33,7 @@
 					</u-form-item>
 
 					<!-- 验证码 -->
-					<u-form-item v-show="falgWay == false" label="" prop="Verification">
+					<u-form-item  label="" prop="Verification">
 						<view class="label">
 							验证码
 						</view>
@@ -91,8 +91,6 @@
 				}
 			};
 			return {
-				falgWay:false,
-				setWay:'使用旧密码修改',
 				verify_method:'sms_code',
 				flag: false,
 				text: '获取验证码',

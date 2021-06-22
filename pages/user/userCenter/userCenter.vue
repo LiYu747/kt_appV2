@@ -187,9 +187,9 @@
 			if (cache.get('Gshow')) {
 				// this.Gshow = cache.get('Gshow').value
 			} 
-			this.getUser()
 			this.loadUserData();
 			this.getInform()
+			this.getUser() 
 		},
 		onHide() {
 			this.Gshow = 0

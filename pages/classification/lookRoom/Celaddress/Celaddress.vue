@@ -1,17 +1,13 @@
 <template>
-  <div class="map-warp">
-     <!--#ifdef H5-->
-     <web-view 
-       :src="url"
-       @message="onMessage">
+  <view class="map-warp">
+     <web-view :src="url"  @message="Message">
      </web-view>
-     <!--#endif-->
  
      <!--#ifdef APP-PLUS-->
      <web-view src="/static/html/map.html" @message="onMessage"></web-view>
      <!--#endif-->
   
- 	</div>
+ 	</view>
 </template>
  
 <script>
@@ -24,7 +20,7 @@
     }
   },
   onLoad(val) {
-  	this.url = val.url
+  	this.url = val.url 
   },
   onReady() {
     const self = this
@@ -44,6 +40,9 @@
     //#endif
   },
   methods: {
+	  Message(res){
+		this.getPositon(res.detail.data[0], this)
+	  },
     onMessage(res) {
       this.getPositon(res.detail.data[0], this)
     },
@@ -55,8 +54,26 @@
 		   });
 	   }
         
-     }
+     },
+	 //获取位置信息
+	 userloca() {
+	 	uni.getLocation({
+	 		type: 'gcj02',
+	 		altitude: true,
+	 		geocode: true, //设置该参数为true可直接获取经纬度及城市信息
+	 		success: (res) => {
+	 		}, 
+	 		fail: (err) => {
+	 		}
+	 	});
+	 },
+	
   },
+  mounted() {
+  //#ifdef APP-PLUS
+  this.userloca()
+   //#endif
+  }
 } 
 </script>
 

@@ -1,6 +1,6 @@
 <template>
 	<view class="back">
-		<view class="nav pos-rel flex al-center ju-center">
+		<view class="pos-rel flex al-center ju-center" :style="{top:customBar + 'rpx'}">
 			<image @click="goback" class="img pos-abs" src="https://oss.kuaitongkeji.com/static/img/app/login/fanhui.png" mode=""></image>
 			<view class="text">
 				<!-- 登录 -->
@@ -99,6 +99,7 @@
 		props: {},
 		data() {
 			return {
+				customBar:0,
 				iSlogin: false,
 				flag: false,
 				text: '获取验证码',
@@ -296,6 +297,7 @@
 		},
 		onReady() {
 			this.$refs.uForm.setRules(this.rules);
+			this.customBar = uni.getSystemInfoSync().statusBarHeight + 67
 		},
 		onLoad(val) {
 		
@@ -322,11 +324,12 @@
 		height: 100vh;
 		background-repeat: no-repeat; //不重复
 		background-size: 100% 100%; // 满屏
+		padding-bottom: 0;
+		 padding-bottom: constant(safe-area-inset-bottom);  
+		 padding-bottom: env(safe-area-inset-bottom); 
 	}
 
-	.nav {
-		top: 67rpx;
-	}
+
 
 	.img {
 		width: 22rpx;
@@ -365,7 +368,7 @@
 		}
 
 		/deep/ .uni-input-placeholder {
-			color: #FF773C !important;
+			color: #ffa67f !important;
 			font-size: 12px;
 		}
 			/deep/

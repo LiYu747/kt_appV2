@@ -69,8 +69,8 @@ class Allvillage{
 	}
 	
 	//删除帖子
-	delPost (params) {
-		params.url = routes.village.vagelist.delPost
+	deluserpost (params) {
+		params.url = routes.village.vagelist.deluserpost
 		req.delete(params)
 	}
 	
