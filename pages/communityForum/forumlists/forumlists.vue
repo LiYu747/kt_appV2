@@ -341,7 +341,7 @@
 			// 去详情
 			gotoD(item) {
 				uni.navigateTo({
-					url: `/components/forum/forumdils?id=${item.id}`
+					url: `/pages/communityForum/forum/forumdils?id=${item.id}`
 				})
 			},
 			//搜索

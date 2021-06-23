@@ -35,10 +35,9 @@ class Clients {
 		this.createOrUpdate();
 
 		//是否需要更新客户端
-		//#ifdef APP-PLUS 
+		//#ifdef APP-PLUS
 		this.askUpdateClient();
-		//#endif 
-
+    	//#endif 
 	}
 
 
@@ -181,7 +180,6 @@ class Clients {
 		params.url = routes.client.config;
 
 		if (params.header === undefined) params.header = {};
-
 		params.header['client-id'] = this.getClientId();
 		params.header['client-version'] = this.version;
 		params.header['client-type'] = this.getClientType();

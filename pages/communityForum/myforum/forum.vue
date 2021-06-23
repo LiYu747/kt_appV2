@@ -273,7 +273,7 @@
 				}
 				// console.log(item);  
 				uni.navigateTo({
-					url: `/components/forum/forumdils?id=${item.post_id}`
+					url: `/pages/communityForum/forum/forumdils?id=${item.post_id}`
 				})
 			},
 			// 获取用户资料

@@ -12,9 +12,9 @@ module.exports = {
 	host: host,
 
 	client: {
-
+         //获取一些基本配置项
 		config: apiPath + 'open/config/base',
-
+         //客户端第一次打开
 		reg: apiPath + 'auth/client',
 
 		// version: {
@@ -174,8 +174,9 @@ module.exports = {
 			newsRead : apiPath + 'open/news/read'
 		},
 
-		// 申请入住
+	
 		applecheckin: {
+				// 申请入住
 			apple: apiPath + 'user/house/moveInApply',
 			// 申请记录
 			applerecord: apiPath + 'user/house/moveInApply',
@@ -187,7 +188,7 @@ module.exports = {
 			userLook: apiPath + 'user/house/moveInApply/deal'
 		},
 
-		//拜访申请Visit record
+		
 		visitLog: {
 			// 拜访记录 && 申请拜访
 			apply: apiPath + 'user/visit',
@@ -203,8 +204,9 @@ module.exports = {
 
 		},
 
-		//来访记录
+		
 		Visitrecord: {
+			//来访记录
 			visitors: apiPath + 'user/visit/visitors',
 
 			// 来访详情
@@ -325,10 +327,6 @@ module.exports = {
 		},
 
 
-	},
-	// 导航
-	Navigation: {
-		Navmap: apiPath + 'app/config'
 	},
 
 	// 小区物业管理

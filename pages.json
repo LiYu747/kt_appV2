@@ -8,7 +8,7 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationStyle": "custom", 
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": true
 			}
 		},
@@ -113,7 +113,7 @@
 			}
 
 		},
-		 //入住申请，申请拜访搜索
+		//入住申请，申请拜访搜索
 		{
 			"path": "pages/residence/seachVill/seachVill",
 			"style": {
@@ -121,7 +121,7 @@
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom"
 			}
-		
+
 		},
 		//入住申请
 		{
@@ -220,6 +220,16 @@
 				"navigationStyle": "custom"
 			}
 
+		},
+		//帖子详情
+		{
+			"path": "pages/communityForum/forum/forumdils",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		
 		},
 		// 证件照片
 		{
@@ -783,17 +793,7 @@
 				"navigationStyle": "custom"
 			}
 
-		}, {
-			"path": "components/forum/setting/lianx",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false,
-				"navigationStyle": "custom"
-			}
-
-		}
-
-		,
+		}, 
 		//联系物业
 		{
 			"path": "pages/address/addediting/tenement/tenement",
@@ -823,47 +823,53 @@
 				"navigationStyle": "custom"
 			}
 
-		}
-	    ,
+		},
 		//小区信息
 		{
-            "path" : "pages/propertyManagement/Villageletter/Villageletter",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false,
+			"path": "pages/propertyManagement/Villageletter/Villageletter",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
 				"navigationStyle": "custom"
-            }
-            
-        }
-        ,
+			}
+
+		},
 		//找回密码
 		{
-            "path" : "pages/user/findPsw/findPsw",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false,
-					"navigationStyle": "custom"
-            }
-            
-        }
-        ,{
-            "path" : "pages/classification/lookRoom/Celaddress/Celaddress",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+			"path": "pages/user/findPsw/findPsw",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+
+		}, 
+		//选择地址
+		{
+			"path": "pages/classification/lookRoom/Celaddress/Celaddress",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		},
+		{
+			"path": "components/forum/setting/lianx",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		
+		}
+		
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
-		"scrollIndicator":"none" 
+		"scrollIndicator": "none"
 	},
 	"tabBar": {
 		"color": "#7A7E83",

@@ -111,6 +111,7 @@
 		        }
 	        },
 	    methods: {
+				
 			// 保存修改信息信息
 			Submit(){
 				uni.showLoading({
